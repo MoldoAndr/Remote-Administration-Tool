@@ -1,7 +1,6 @@
 Remote Administration Tool (RAT) - Faza Incipienta
 
 Acest proiect este un instrument de administrare la distanta (RAT) dezvoltat in C pentru Linux, folosind socket-uri pentru comunicare. Serverul centralizat poate administra mai multi agenti (clienti) instalati pe calculatoarele remote pentru colectarea datelor, executarea de comenzi si monitorizarea activitatii.
-Functionalitati
 
 Structura initiala:
 
