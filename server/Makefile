@@ -18,5 +18,8 @@ $(TARGET_EXEC): server.o
 server.o: server.c serverlib.h
 	$(CC) $(CFLAGS) -c server.c -o server.o
 
+run: $(TARGET_LIB) $(TARGET_EXEC)
+	LD_LIBRARY_PATH=. ./server
+
 clean:
 	rm -f *.o $(TARGET_LIB) $(TARGET_EXEC)
