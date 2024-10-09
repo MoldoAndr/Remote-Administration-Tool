@@ -1,15 +1,22 @@
 CC = gcc
+CFLAGS = -Wall -fPIC
+LDFLAGS = -shared
+TARGET_LIB = libserverlib.so
+TARGET_EXEC = server
 
-CFLAGS = -lpthread
+all: $(TARGET_LIB) $(TARGET_EXEC)
 
-SERVER = server
+$(TARGET_LIB): serverlib.o
+	$(CC) $(LDFLAGS) -o $(TARGET_LIB) serverlib.o
 
-SERVER_SRC = server.c
+serverlib.o: serverlib.c serverlib.h
+	$(CC) $(CFLAGS) -c serverlib.c -o serverlib.o
 
-all: $(SERVER)
+$(TARGET_EXEC): server.o
+	$(CC) -o $(TARGET_EXEC) server.o -L. -lserverlib -lpthread
 
-$(SERVER): $(SERVER_SRC)
-	$(CC) $(SERVER_SRC) -o $(SERVER) $(CFLAGS)
+server.o: server.c serverlib.h
+	$(CC) $(CFLAGS) -c server.c -o server.o
 
 clean:
-	rm -f $(SERVER) 
+	rm -f *.o $(TARGET_LIB) $(TARGET_EXEC)
