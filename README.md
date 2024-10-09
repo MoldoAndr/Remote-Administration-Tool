@@ -13,6 +13,9 @@ Structura initiala:
         Executa comenzi trimise de server.
         Captureaza screenshot-uri si monitorizeaza accesul la anumite site-uri.
 
+    Server: Biblioteci dinamice pentru flexibilitate, performanta și actualizari mai usoare.
+    Client (Agent): Biblioteci statice pentru compatibilitate, portabilitate și distributie simplificata.
+
 Structura Proiectului
 
     Server (Centralizator): Gestioneaza conexiunile cu agentii si trimite comenzi catre acestia.
