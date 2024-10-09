@@ -4,7 +4,7 @@ CFLAGS = -lpthread
 
 CLIENT = client
 
-CLIENT_SRC = client.c
+CLIENT_SRC = agent.c
 
 all: $(CLIENT)
 
