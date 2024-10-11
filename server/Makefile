@@ -1,7 +1,7 @@
-CC = gcc
-CFLAGS = -Wall -fPIC
-LDFLAGS = -shared
-TARGET_LIB = libserverlib.so
+CC 			= gcc
+CFLAGS 		= -Wall -fPIC
+LDFLAGS 	= -shared
+TARGET_LIB 	= libserverlib.so
 TARGET_EXEC = server
 
 all: $(TARGET_LIB) $(TARGET_EXEC)
@@ -19,6 +19,7 @@ server.o: server.c serverlib.h
 	$(CC) $(CFLAGS) -c server.c -o server.o
 
 run: $(TARGET_LIB) $(TARGET_EXEC)
+	sudo kill -9 $$(sudo lsof -t -i:12345) 2 > /dev/null
 	LD_LIBRARY_PATH=. ./server
 
 clean:

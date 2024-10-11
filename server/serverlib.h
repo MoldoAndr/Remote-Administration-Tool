@@ -5,19 +5,22 @@
 #include <arpa/inet.h>
 
 #define MAX_CLIENTS 10
-#define BUFFER_SIZE 2000
+#define BUFFER_SIZE 2048
 
-struct client_info {
-    int socket;
-    struct sockaddr_in address;
-    int id;
+struct client_info 
+{
+    int     socket;
+    struct  sockaddr_in address;
+    int     id;
+    char    station_info[BUFFER_SIZE];
 };
 
-void *handle_client(void *arg);
-void send_to_client(int client_id, const char *message);
-void handle_terminal_input();
-void accept_clients(int socket_desc, struct sockaddr_in *server_addr);
-void setup_server(struct sockaddr_in *server_addr, int *socket_desc);
-void cleanup_client(struct client_info *client);
+void    *handle_client(void *);
+void    send_to_client(int , const char *);
+void    handle_terminal_input();
+void    accept_clients(int , struct sockaddr_in *);
+void    setup_server(struct sockaddr_in *, int *);
+void    cleanup_client(struct client_info *);
+void    log_command(const char *, int , const char*, const char *);
 
 #endif
