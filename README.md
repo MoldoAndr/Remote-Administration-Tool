@@ -24,9 +24,3 @@ Structura Proiectului
     Agenti (Clienti): Se conecteaza la server si asteapta comenzi pentru a colecta date sau a executa actiuni pe statii
     
 <img width="1325" alt="Structura_Initiala" src="https://github.com/user-attachments/assets/c5541d8c-1365-4131-a98d-1f21fd12baaf">
-
-Cerinte
-
-    Sistem de operare: Linux
-    Limbaj: C
-    Biblioteci: POSIX sockets, pthread (pentru multi-threading)
