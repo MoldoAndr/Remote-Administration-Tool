@@ -9,7 +9,7 @@ run_client:
 run_clients:
 	@echo "Starting clients..."
 	for i in $(shell seq 1 10); do \
-		./$(CLIENT) 127.0.0.1 & \
+		./$(CLIENT) 127.0.0.1 12345  \
 	done
 
 clean:
