@@ -20,7 +20,7 @@ char *log_folder = "client_logs";
 
 #endif
 
-void setup_server(struct sockaddr_in *server_addr, int *socket_desc) 
+void setup_server(struct sockaddr_in *server_addr, int *socket_desc, char* server_address) 
 {
     struct stat st = {0};
     *socket_desc = socket(AF_INET, SOCK_STREAM, 0);
@@ -41,7 +41,7 @@ void setup_server(struct sockaddr_in *server_addr, int *socket_desc)
 
     server_addr->sin_family = AF_INET;
     server_addr->sin_port = htons(12345);
-    server_addr->sin_addr.s_addr = inet_addr("127.0.0.1");
+    server_addr->sin_addr.s_addr = inet_addr(server_address);
 
     if (bind(*socket_desc, (struct sockaddr *)server_addr, sizeof(*server_addr)) < 0) 
     {
@@ -67,6 +67,7 @@ void log_command(const char *client_ip, int client_port, const char* station_nam
     snprintf(log_filename, sizeof(log_filename), "%s/%s_%d_%s.log", log_folder, client_ip, client_port, station_name);
 
     int log_fd = open(log_filename, O_WRONLY | O_APPEND | O_CREAT, 0644);
+
     if (log_fd < 0) 
     {
         write(1, "Could not open log file\n", 24);
@@ -82,7 +83,7 @@ void log_command(const char *client_ip, int client_port, const char* station_nam
     char log_entry[BUFFER_SIZE];
     int log_entry_len = snprintf(log_entry, sizeof(log_entry), "Date/Time: %s - Command: %s\n", time_buffer, command);
 
-    if (log_entry_len > 0) 
+    if (log_entry_len > 0 || log_entry_len < BUFFER_SIZE) 
     {
         write(log_fd, log_entry, log_entry_len);
     }
@@ -223,7 +224,7 @@ void handle_terminal_input()
         }
 
         input[strcspn(input, "\n")] = 0;
-
+        
         if (strcmp(input, "exit") == 0) {
             printf("Exiting terminal input handler.\n");
             break;
@@ -242,7 +243,8 @@ void handle_terminal_input()
 
         *colon = '\0';
         int client_id = atoi(input + 6);
-        if (client_id <= 0) {
+        if (client_id <= 0 || client_id > MAX_CLIENTS) 
+        {
             printf("Invalid client ID. Must be a positive number.\n");
             continue;
         }

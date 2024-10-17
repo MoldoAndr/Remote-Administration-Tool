@@ -20,7 +20,7 @@ server.o: server.c serverlib.h
 
 run: $(TARGET_LIB) $(TARGET_EXEC)
 	sudo kill -9 $$(sudo lsof -t -i:12345) 2 > /dev/null
-	LD_LIBRARY_PATH=. ./server
+	LD_LIBRARY_PATH=. ./server $$(hostname --all-ip-addresses)
 
 clean:
 	rm -f *.o $(TARGET_LIB) $(TARGET_EXEC)

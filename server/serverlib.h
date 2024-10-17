@@ -19,7 +19,7 @@ void    *handle_client(void *);
 void    send_to_client(int , const char *);
 void    handle_terminal_input();
 void    accept_clients(int , struct sockaddr_in *);
-void    setup_server(struct sockaddr_in *, int *);
+void    setup_server(struct sockaddr_in *, int *, char*);
 void    cleanup_client(struct client_info *);
 void    log_command(const char *, int , const char*, const char *);
 
