@@ -42,3 +42,13 @@ Date/Time: 2024-10-31 18:44:17 - Command: sanatate
 Date/Time: 2024-10-31 18:45:40 - Command: Am primit token
 Date/Time: 2024-10-31 18:45:40 - Command: Server received your message, client1.
 Date/Time: 2024-10-31 18:45:47 - Command: fds
+Date/Time: 2024-10-31 19:04:12 - Command: Am primit token
+Date/Time: 2024-10-31 19:04:12 - Command: Server received your message, client1.
+Date/Time: 2024-10-31 19:04:34 - Command: te iubesc mult
+Date/Time: 2024-10-31 19:05:29 - Command: Am primit token
+Date/Time: 2024-10-31 19:05:29 - Command: Server received your message, client2.
+Date/Time: 2024-10-31 19:10:46 - Command: salut
+Date/Time: 2024-10-31 19:12:21 - Command: Am primit token
+Date/Time: 2024-10-31 19:12:21 - Command: Server received your message, client1.
+Date/Time: 2024-10-31 19:12:33 - Command: te rog
+Date/Time: 2024-10-31 19:13:27 - Command: doamne ajuta

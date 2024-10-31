@@ -1,19 +1,4 @@
 #include "client_daemon.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <arpa/inet.h>
-#include <sys/stat.h>
-#include <time.h>
-#include <syslog.h>
-#include <fcntl.h>
-#include <signal.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <libgen.h>
-#include <pwd.h>
 
 int client_socket;
 char executable_path[BUFFER_SIZE];
@@ -129,31 +114,34 @@ void authenticate_with_server(int client_socket)
     char client_info[BUFFER_SIZE];
     char token_file[BUFFER_SIZE];
     char token[37] = {0};
-
+    bool token_exists = false;
     snprintf(token_file, sizeof(token_file), "%s/%s", executable_path, TOKEN_FILENAME);
     get_username_and_station_name(client_info, sizeof(client_info));
 
     int fd = open(token_file, O_RDONLY);
     if (fd >= 0)
     {
+        token_exists = true;
         read(fd, token, sizeof(token));
         close(fd);
         strcat(client_info, " ");
         strcat(client_info, token);
     }
-    //log_command(client_info);
+    // log_command(client_info);
     send(client_socket, client_info, strlen(client_info), 0);
-    if (recv(client_socket, token, sizeof(token), 0) > 0)
+    if (!token_exists)
     {
-        log_command("Am primit token");
-        fd = open(token_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-        if (fd >= 0)
+        if (recv(client_socket, token, sizeof(token), 0) > 0)
         {
-            write(fd, token, strlen(token));
-            close(fd);
+            log_command("Am primit token");
+            fd = open(token_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+            if (fd >= 0)
+            {
+                write(fd, token, strlen(token));
+                close(fd);
+            }
         }
-        }
-
+    }
 }
 
 void connect_to_server(const char *server_ip, int server_port)
