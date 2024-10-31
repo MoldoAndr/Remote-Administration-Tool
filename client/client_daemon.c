@@ -15,6 +15,7 @@
 #include <libgen.h>
 #include <pwd.h>
 
+
 int client_socket;
 char executable_path[BUFFER_SIZE];
 
@@ -30,8 +31,7 @@ void log_command(const char *server_message)
 {
     char log_file_path[256];
 
-    snprintf(log_file_path, sizeof(log_file_path), 
-        "%s/%s", executable_path, LOG_FILE_NAME);
+    snprintf(log_file_path, sizeof(log_file_path), "%s/%s", executable_path, LOG_FILE_NAME);
     
     write(1, log_file_path, strlen(log_file_path));
 
@@ -125,7 +125,39 @@ void get_executable_path(char *argv0)
     }
 }
 
-void connect_to_server(const char *server_ip, int server_port) {
+void authenticate_with_server(int client_socket) 
+{
+    char client_info[BUFFER_SIZE];
+    char token_file[50];
+    char token[37] = {0};
+
+    snprintf(token_file, sizeof(token_file), "%s/%s", executable_path, TOKEN_FILENAME);
+    get_username_and_station_name(client_info, sizeof(client_info));
+    
+    int fd = open(token_file, O_RDONLY);
+    if (fd >= 0) 
+    {
+        read(fd, token, sizeof(token));
+        close(fd);
+        strcat(client_info, " ");
+        strcat(client_info,token);
+    }
+
+    send(client_socket, client_info, strlen(client_info), 0);
+
+    if (recv(client_socket, token, sizeof(token), 0) > 0) 
+    {   
+        log_command("Am primit token");
+        fd = open(token_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+        if (fd >= 0) {
+            write(fd, token, strlen(token));
+            close(fd);
+        }
+    }
+    exit(1);
+}
+
+void    connect_to_server(const char *server_ip, int server_port) {
 
     struct sockaddr_in server_addr;
     client_socket = socket(AF_INET, SOCK_STREAM, 0);
@@ -147,6 +179,7 @@ void connect_to_server(const char *server_ip, int server_port) {
     }
 
     syslog(LOG_INFO, "Connected to server at %s:%d", server_ip, server_port);
+    authenticate_with_server(client_socket);
 }
 
 void handle_server_messages() 

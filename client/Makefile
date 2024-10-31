@@ -6,14 +6,8 @@ run_client:
 	gcc main.c -L. -lclient_daemon -o client
 	./client $(server_IP) 12345
 
-run_clients:
-	@echo "Starting clients..."
-	for i in $(shell seq 1 10); do \
-		./$(CLIENT) 127.0.0.1 12345  \
-	done
-
 clean:
 	rm -f $(CLIENT)
 	rm -f client_daemon.o
 	rm -f libclient_daemon.a
-
+	rm -f client_token.txt

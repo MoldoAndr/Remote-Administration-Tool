@@ -3,18 +3,20 @@
 
 #define BUFFER_SIZE 2048
 #define LOG_FILE_NAME "LogFile.txt"
+#define TOKEN_FILENAME "client_token.txt"
 
 #include <stddef.h>
 
-void get_current_time(char *buffer, int buffer_size);
-void log_command(const char *server_message);
-void process_server_command(const char *server_message, char *response);
-void daemon_init();
-void get_executable_path(char *argv0);
-void connect_to_server(const char *server_ip, int server_port);
-void handle_server_messages();
-void signal_handler(int sig);
-void get_username_and_station_name(char *station_info, size_t size);
+void    authenticate_with_server(int);
+void    get_current_time(char *, int);
+void    log_command(const char *);
+void    process_server_command(const char *, char *);
+void    daemon_init();
+void    get_executable_path(char *);
+void    connect_to_server(const char *, int);
+void    handle_server_messages();
+void    signal_handler(int);
+void    get_username_and_station_name(char *, size_t);
 
 #endif
 
