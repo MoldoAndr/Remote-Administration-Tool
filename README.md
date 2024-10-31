@@ -42,3 +42,7 @@ Functionalitati viitoare
     Key-Logger
     Alerte accesare anumite site-uri
     BlackList pentru fisiere
+    
+Diagrama
+
+![Untitled Diagram](https://github.com/user-attachments/assets/6cc06881-98bb-4b4d-9f81-655ce6390ed5)
