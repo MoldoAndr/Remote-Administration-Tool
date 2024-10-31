@@ -15,29 +15,26 @@
 #include <libgen.h>
 #include <pwd.h>
 
-
 int client_socket;
 char executable_path[BUFFER_SIZE];
 
-void get_current_time(char *buffer, int buffer_size) 
+void get_current_time(char *buffer, int buffer_size)
 {
-    time_t now              = time(NULL);
-    struct tm *local_time   = localtime(&now);
-    
+    time_t now = time(NULL);
+    struct tm *local_time = localtime(&now);
+
     strftime(buffer, buffer_size, "%Y-%m-%d %H:%M:%S", local_time);
 }
 
-void log_command(const char *server_message) 
+void log_command(const char *server_message)
 {
-    char log_file_path[256];
+    char log_file_path[BUFFER_SIZE];
 
     snprintf(log_file_path, sizeof(log_file_path), "%s/%s", executable_path, LOG_FILE_NAME);
-    
-    write(1, log_file_path, strlen(log_file_path));
 
-    int log_fd = open(log_file_path, O_WRONLY | O_APPEND | O_CREAT, 0644);    
-    
-    if (log_fd < 0) 
+    int log_fd = open(log_file_path, O_WRONLY | O_APPEND | O_CREAT, 0644);
+
+    if (log_fd < 0)
         return;
 
     char time_str[100];
@@ -51,48 +48,48 @@ void log_command(const char *server_message)
     close(log_fd);
 }
 
-void process_server_command(const char *server_message, char *response) 
+void process_server_command(const char *server_message, char *response)
 {
     snprintf(response, BUFFER_SIZE, "Echoing server message: %s", server_message);
     log_command(server_message);
 }
 
-void daemon_init() 
+void daemon_init()
 {
     pid_t pid = fork();
 
-    if (pid < 0) 
+    if (pid < 0)
     {
         printf("Error: Unable to fork daemon process.\n");
         exit(EXIT_FAILURE);
     }
 
-    if (pid > 0) 
+    if (pid > 0)
     {
-        exit(0); // Parent process exits
+        exit(0);
     }
 
-    if (setsid() < 0) 
+    if (setsid() < 0)
     {
         printf("Error: Unable to set session ID.\n");
         exit(EXIT_FAILURE);
     }
 
     pid = fork();
-    if (pid < 0) 
+    if (pid < 0)
     {
         printf("Error: Unable to fork daemon process.\n");
         exit(EXIT_FAILURE);
     }
 
-    if (pid > 0) 
+    if (pid > 0)
     {
-        exit(0); // Parent process exits
+        exit(0);
     }
 
     umask(0);
 
-    if (chdir("/") < 0) 
+    if (chdir("/") < 0)
     {
         printf("Error: Unable to change directory to root.\n");
         exit(EXIT_FAILURE);
@@ -111,68 +108,72 @@ void daemon_init()
     syslog(LOG_INFO, "Daemon started.");
 }
 
-void get_executable_path(char *argv0) 
+void get_executable_path(char *argv0)
 {
     char path_buffer[BUFFER_SIZE];
 
     ssize_t len = readlink("/proc/self/exe", path_buffer, sizeof(path_buffer) - 1);
-    if (len != -1) 
+    if (len != -1)
     {
         path_buffer[len] = '\0';
         strncpy(executable_path, dirname(path_buffer), BUFFER_SIZE);
-    } else {
+    }
+    else
+    {
         strncpy(executable_path, ".", BUFFER_SIZE);
     }
 }
 
-void authenticate_with_server(int client_socket) 
+void authenticate_with_server(int client_socket)
 {
     char client_info[BUFFER_SIZE];
-    char token_file[50];
+    char token_file[BUFFER_SIZE];
     char token[37] = {0};
 
     snprintf(token_file, sizeof(token_file), "%s/%s", executable_path, TOKEN_FILENAME);
     get_username_and_station_name(client_info, sizeof(client_info));
-    
+
     int fd = open(token_file, O_RDONLY);
-    if (fd >= 0) 
+    if (fd >= 0)
     {
         read(fd, token, sizeof(token));
         close(fd);
         strcat(client_info, " ");
-        strcat(client_info,token);
+        strcat(client_info, token);
     }
-
+    //log_command(client_info);
     send(client_socket, client_info, strlen(client_info), 0);
-
-    if (recv(client_socket, token, sizeof(token), 0) > 0) 
-    {   
+    if (recv(client_socket, token, sizeof(token), 0) > 0)
+    {
         log_command("Am primit token");
         fd = open(token_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-        if (fd >= 0) {
+        if (fd >= 0)
+        {
             write(fd, token, strlen(token));
             close(fd);
         }
-    }
-    exit(1);
+        }
+
 }
 
-void    connect_to_server(const char *server_ip, int server_port) {
+void connect_to_server(const char *server_ip, int server_port)
+{
 
     struct sockaddr_in server_addr;
     client_socket = socket(AF_INET, SOCK_STREAM, 0);
 
-    if (client_socket < 0) 
+    if (client_socket < 0)
     {
         syslog(LOG_ERR, "Error creating socket");
         exit(EXIT_FAILURE);
     }
 
-    server_addr.sin_family      = AF_INET;
-    server_addr.sin_port        = htons(server_port);
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(server_port);
     server_addr.sin_addr.s_addr = inet_addr(server_ip);
 
-    if (connect(client_socket, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
+    if (connect(client_socket, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0)
+    {
         syslog(LOG_ERR, "Error connecting to server");
         close(client_socket);
         exit(EXIT_FAILURE);
@@ -182,7 +183,7 @@ void    connect_to_server(const char *server_ip, int server_port) {
     authenticate_with_server(client_socket);
 }
 
-void handle_server_messages() 
+void handle_server_messages()
 {
     char server_message[BUFFER_SIZE];
 
@@ -191,22 +192,23 @@ void handle_server_messages()
 
     int bytes_sent = send(client_socket, me, strlen(me), 0);
 
-    if (bytes_sent < 0) 
+    if (bytes_sent < 0)
     {
         syslog(LOG_ERR, "Error sending station info to server");
         close(client_socket);
         exit(EXIT_FAILURE);
     }
 
-    while (1) 
+    while (1)
     {
         memset(server_message, 0, BUFFER_SIZE);
-        if (recv(client_socket, server_message, sizeof(server_message), 0) < 0) {
+        if (recv(client_socket, server_message, sizeof(server_message), 0) < 0)
+        {
             syslog(LOG_ERR, "Error receiving message from server");
             break;
         }
 
-        if (strlen(server_message) == 0) 
+        if (strlen(server_message) == 0)
         {
             syslog(LOG_INFO, "Server disconnected.");
             break;
@@ -218,9 +220,9 @@ void handle_server_messages()
     close(client_socket);
 }
 
-void signal_handler(int sig) 
+void signal_handler(int sig)
 {
-    if (sig == SIGTERM) 
+    if (sig == SIGTERM)
     {
         syslog(LOG_INFO, "Daemon terminated.");
         close(client_socket);
@@ -228,20 +230,25 @@ void signal_handler(int sig)
     }
 }
 
-void get_username_and_station_name(char *station_info, size_t size) 
+void get_username_and_station_name(char *station_info, size_t size)
 {
     char *username = getenv("USER");
-    if (username == NULL) {
+    if (username == NULL)
+    {
         struct passwd *pw = getpwuid(getuid());
-        if (pw != NULL) {
+        if (pw != NULL)
+        {
             username = pw->pw_name;
-        } else {
+        }
+        else
+        {
             username = "unknown_user";
         }
     }
 
     char hostname[BUFFER_SIZE];
-    if (gethostname(hostname, sizeof(hostname)) == -1) {
+    if (gethostname(hostname, sizeof(hostname)) == -1)
+    {
         strncpy(hostname, "unknown_station", sizeof(hostname));
     }
 

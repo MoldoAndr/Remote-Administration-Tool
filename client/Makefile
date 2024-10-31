@@ -4,7 +4,7 @@ run_client:
 	gcc -c client_daemon.c -o client_daemon.o
 	ar rcs libclient_daemon.a client_daemon.o
 	gcc main.c -L. -lclient_daemon -o client
-	./client $(server_IP) 12345
+	./client $(IP) 12345
 
 clean:
 	rm -f $(CLIENT)

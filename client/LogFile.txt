@@ -1,1 +1,44 @@
 Date/Time: 2024-10-31 13:47:37 - Command: Am primit token
+Date/Time: 2024-10-31 17:46:13 - Command: Am primit token
+Date/Time: 2024-10-31 17:47:43 - Command: Am primit token
+Date/Time: 2024-10-31 17:57:46 - Command: s
+Date/Time: 2024-10-31 17:58:27 - Command: dvc
+Date/Time: 2024-10-31 18:09:28 - Command: andrei:main
+Date/Time: 2024-10-31 18:09:28 - Command: Am primit token
+Date/Time: 2024-10-31 18:09:28 - Command: Server received your message, client1.
+Date/Time: 2024-10-31 18:11:57 - Command: andrei:main e64ba6f0-e488-401b-b4a5-6ecfe58a4867
+Date/Time: 2024-10-31 18:15:31 - Command: andrei:main
+Date/Time: 2024-10-31 18:15:31 - Command: Am primit token
+Date/Time: 2024-10-31 18:15:31 - Command: Server received your message, client1.
+Date/Time: 2024-10-31 18:15:52 - Command: dzcx
+Date/Time: 2024-10-31 18:15:55 - Command: dsvn
+Date/Time: 2024-10-31 18:15:57 - Command: dvfdsewucnfv s
+Date/Time: 2024-10-31 18:28:07 - Command: andrei:main
+Date/Time: 2024-10-31 18:28:07 - Command: Am primit token
+Date/Time: 2024-10-31 18:28:07 - Command: Server received your message, client1.
+Date/Time: 2024-10-31 18:28:16 - Command: sanatate
+Date/Time: 2024-10-31 18:28:59 - Command: andrei:main a7907fa3-d9af-4934-997d-210c25bc3c07
+Date/Time: 2024-10-31 18:31:03 - Command: /home/andrei/Docs/Remote-Administration-Tool/clie
+Date/Time: 2024-10-31 18:31:23 - Command: /home/andrei/Docs/Remote-Administration-Tool/clie
+Date/Time: 2024-10-31 18:31:43 - Command: Am primit token
+Date/Time: 2024-10-31 18:31:43 - Command: scriere token
+Date/Time: 2024-10-31 18:31:43 - Command: Server received your message, client7.
+Date/Time: 2024-10-31 18:31:58 - Command: fdsfd
+Date/Time: 2024-10-31 18:32:02 - Command: Am primit token
+Date/Time: 2024-10-31 18:32:02 - Command: scriere token
+Date/Time: 2024-10-31 18:32:02 - Command: Server received your message, client6.
+Date/Time: 2024-10-31 18:32:18 - Command: gds
+Date/Time: 2024-10-31 18:34:58 - Command: Am primit token
+Date/Time: 2024-10-31 18:34:58 - Command: scriere token
+Date/Time: 2024-10-31 18:34:58 - Command: Server received your message, client1.
+Date/Time: 2024-10-31 18:35:05 - Command:  salutari 
+Date/Time: 2024-10-31 18:36:11 - Command: exit
+Date/Time: 2024-10-31 18:39:10 - Command: Am primit token
+Date/Time: 2024-10-31 18:39:10 - Command: Server received your message, client1.
+Date/Time: 2024-10-31 18:39:23 - Command: ddvd
+Date/Time: 2024-10-31 18:44:13 - Command: Am primit token
+Date/Time: 2024-10-31 18:44:13 - Command: Server received your message, client1.
+Date/Time: 2024-10-31 18:44:17 - Command: sanatate
+Date/Time: 2024-10-31 18:45:40 - Command: Am primit token
+Date/Time: 2024-10-31 18:45:40 - Command: Server received your message, client1.
+Date/Time: 2024-10-31 18:45:47 - Command: fds
