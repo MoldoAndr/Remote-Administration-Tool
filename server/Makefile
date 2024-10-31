@@ -1,6 +1,6 @@
 CC 			= gcc
-CFLAGS 		= -Wall -fPIC
-LDFLAGS 	= -shared
+CFLAGS 		= -Wall -fPIC 
+LDFLAGS 	= -shared 
 TARGET_LIB 	= libserverlib.so
 TARGET_EXEC = server
 
@@ -13,7 +13,7 @@ serverlib.o: serverlib.c serverlib.h
 	$(CC) $(CFLAGS) -c serverlib.c -o serverlib.o
 
 $(TARGET_EXEC): server.o
-	$(CC) -o $(TARGET_EXEC) server.o -L. -lserverlib -lpthread
+	$(CC) -o $(TARGET_EXEC) server.o -L. -lserverlib -lpthread -luuid
 
 server.o: server.c serverlib.h
 	$(CC) $(CFLAGS) -c server.c -o server.o

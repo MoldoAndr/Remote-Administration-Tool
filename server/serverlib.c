@@ -6,8 +6,10 @@
 #include <pthread.h>
 #include <sys/stat.h>
 #include <time.h>
-#include <stdbool.h>
 #include <fcntl.h>
+#include <uuid/uuid.h>
+
+#define TOKEN_FILE "client_tokens.txt"
 
 #if 1
 
@@ -20,47 +22,124 @@ char *log_folder = "client_logs";
 
 #endif
 
-void setup_server(struct sockaddr_in *server_addr, int *socket_desc, char* server_address) 
+void generate_token(char *token)
+{
+    uuid_t binuuid;
+    uuid_generate(binuuid);
+    uuid_unparse(binuuid, token);
+}
+
+void store_token(char *token)
+{
+    if (token == NULL)
+    {
+        fprintf(stderr, "Error: token is NULL\n");
+        return;
+    }
+
+    if (strlen(token) > 255)
+    {
+        fprintf(stderr, "Error: token is too long\n");
+        return;
+    }
+
+    int fd = open(TOKEN_FILE, O_WRONLY | O_CREAT | O_APPEND, 0644);
+    if (fd < 0)
+    {
+        perror("Error opening token file");
+        return;
+    }
+
+    char token2[256];
+    strcpy(token2, token);
+    strcat(token2, "\n");
+
+    ssize_t bytes_written = write(fd, token2, strlen(token2));
+    if (bytes_written < 0)
+    {
+        perror("Error writing to token file");
+    }
+    else
+    {
+        printf("%s", token2);
+    }
+
+    close(fd);
+}
+
+bool validate_token(const char *client_info, const char *received_token)
+{
+    int fd = open(TOKEN_FILE, O_RDONLY);
+    if (fd < 0)
+    {
+        return false;
+    }
+
+    char buffer[BUFFER_SIZE];
+    ssize_t bytes_read = read(fd, buffer, sizeof(buffer));
+    close(fd);
+
+    if (bytes_read <= 0)
+    {
+        return false;
+    }
+    buffer[bytes_read] = '\0';
+    char *line = strtok(buffer, "\n");
+
+    while (line != NULL)
+    {
+        char stored_client[BUFFER_SIZE], stored_token[BUFFER_SIZE];
+        sscanf(line, "%s %s", stored_client, stored_token);
+
+        if (strcmp(stored_client, client_info) == 0 && strcmp(stored_token, received_token) == 0)
+        {
+            return true;
+        }
+        line = strtok(NULL, "\n");
+    }
+    return false;
+}
+
+void setup_server(struct sockaddr_in *server_addr, int *socket_desc, char *server_address)
 {
     struct stat st = {0};
     *socket_desc = socket(AF_INET, SOCK_STREAM, 0);
 
-    if (stat(log_folder, &st) == -1) 
+    if (stat(log_folder, &st) == -1)
     {
         mkdir(log_folder, 0700);
     }
 
-
-    if (*socket_desc < 0) 
+    if (*socket_desc < 0)
     {
         perror("Error while creating socket");
         exit(EXIT_FAILURE);
     }
-    
-    write(1,"Socket created successfully\n", 29);
+
+    write(1, "Socket created successfully\n", 29);
 
     server_addr->sin_family = AF_INET;
     server_addr->sin_port = htons(12345);
     server_addr->sin_addr.s_addr = inet_addr(server_address);
 
-    if (bind(*socket_desc, (struct sockaddr *)server_addr, sizeof(*server_addr)) < 0) 
+    if (bind(*socket_desc, (struct sockaddr *)server_addr, sizeof(*server_addr)) < 0)
     {
         perror("Couldn't bind to the port");
         exit(EXIT_FAILURE);
     }
-    
+
     printf("Done with binding\n");
 
-    if (listen(*socket_desc, MAX_CLIENTS) < 0) 
+    if (listen(*socket_desc, MAX_CLIENTS) < 0)
     {
         perror("Error while listening");
         exit(EXIT_FAILURE);
     }
-    
+
     printf("\nListening for incoming connections.....\n");
 }
 
-void log_command(const char *client_ip, int client_port, const char* station_name, const char *command) 
+void log_command(const char *client_ip, int client_port, const char *station_name, const char *command)
 {
     char log_filename[BUFFER_SIZE];
 
@@ -68,7 +147,7 @@ void log_command(const char *client_ip, int client_port, const char* station_nam
 
     int log_fd = open(log_filename, O_WRONLY | O_APPEND | O_CREAT, 0644);
 
-    if (log_fd < 0) 
+    if (log_fd < 0)
     {
         write(1, "Could not open log file\n", 24);
         return;
@@ -83,7 +162,7 @@ void log_command(const char *client_ip, int client_port, const char* station_nam
     char log_entry[BUFFER_SIZE];
     int log_entry_len = snprintf(log_entry, sizeof(log_entry), "Date/Time: %s - Command: %s\n", time_buffer, command);
 
-    if (log_entry_len > 0 || log_entry_len < BUFFER_SIZE) 
+    if (log_entry_len > 0 || log_entry_len < BUFFER_SIZE)
     {
         write(log_fd, log_entry, log_entry_len);
     }
@@ -91,18 +170,18 @@ void log_command(const char *client_ip, int client_port, const char* station_nam
     close(log_fd);
 }
 
-void accept_clients(int socket_desc, struct sockaddr_in *server_addr) 
+void accept_clients(int socket_desc, struct sockaddr_in *server_addr)
 {
     int client_size;
     pthread_t thread_id;
 
-    while (1) 
+    while (1)
     {
         struct client_info *client = malloc(sizeof(struct client_info));
         client_size = sizeof(client->address);
         client->socket = accept(socket_desc, (struct sockaddr *)&client->address, &client_size);
 
-        if (client->socket < 0) 
+        if (client->socket < 0)
         {
             printf("Can't accept\n");
             free(client);
@@ -113,14 +192,14 @@ void accept_clients(int socket_desc, struct sockaddr_in *server_addr)
         client->id = ++client_count;
         pthread_mutex_unlock(&client_count_mutex);
 
-        printf("client%d connected at IP: %s and port: %i\n", 
+        printf("client%d connected at IP: %s and port: %i\n",
                client->id, inet_ntoa(client->address.sin_addr), ntohs(client->address.sin_port));
 
         pthread_mutex_lock(&clients_mutex);
         clients[client->id - 1] = client;
-        pthread_mutex_unlock(&clients_mutex);   
+        pthread_mutex_unlock(&clients_mutex);
 
-        if (pthread_create(&thread_id, NULL, handle_client, (void *)client) < 0) 
+        if (pthread_create(&thread_id, NULL, handle_client, (void *)client) < 0)
         {
             printf("Could not create thread\n");
             free(client);
@@ -131,31 +210,31 @@ void accept_clients(int socket_desc, struct sockaddr_in *server_addr)
     }
 }
 
-void send_to_client(int client_id, const char *message) 
+void send_to_client(int client_id, const char *message)
 {
     pthread_mutex_lock(&clients_mutex);
-    
-    if (client_id > 0 && client_id <= MAX_CLIENTS && clients[client_id - 1] != NULL) {
+
+    if (client_id > 0 && client_id <= MAX_CLIENTS && clients[client_id - 1] != NULL)
+    {
         struct client_info *client = clients[client_id - 1];
 
-        if (send(client->socket, message, strlen(message), 0) < 0) 
+        if (send(client->socket, message, strlen(message), 0) < 0)
         {
             printf("Failed to send message to client%d\n", client_id);
-        } 
-        else 
+        }
+        else
         {
             log_command(inet_ntoa(client->address.sin_addr), ntohs(client->address.sin_port), client->station_info, message);
         }
-        
-    } 
-    else 
+    }
+    else
     {
         printf("Client%d not found or disconnected\n", client_id);
     }
     pthread_mutex_unlock(&clients_mutex);
 }
 
-void *handle_client(void *arg) 
+void *handle_client(void *arg)
 {
     struct client_info *client = (struct client_info *)arg;
     char server_message[BUFFER_SIZE], client_message[BUFFER_SIZE];
@@ -164,45 +243,63 @@ void *handle_client(void *arg)
 
     snprintf(client_id_str, sizeof(client_id_str), "client%d", client->id);
 
-    recv(client->socket, client_message, sizeof(client_message), 0);
+    if (recv(client->socket, client_message, sizeof(client_message), 0) <= 0)
+    {
+        printf("Client disconnected before initial message, %s\n", client_id_str);
+        cleanup_client(client);
+        return NULL;
+    }
 
-    printf("Received station_info from %s: %s\n", client_id_str, client_message);
+    printf("\nReceived station_info : %s\n", client_message);
+
+    if (!strchr(client_message, ' '))
+    {
+        char token[37];
+        generate_token(token);
+        send_to_client(client->id, token);
+        store_token(token);
+    }
 
     strcpy(client->station_info, client_message);
 
-    while (1) {
-        memset(server_message, '\0', sizeof(server_message));
-        memset(client_message, '\0', sizeof(client_message));
+    while (1)
+    {
+        memset(client_message, 0, sizeof(client_message));
+        memset(server_message, 0, sizeof(server_message));
 
-        if (recv(client->socket, client_message, sizeof(client_message), 0) < 0) {
-            printf("Couldn't receive from %s\n", client_id_str);
-            break;
-        }
+        ssize_t recv_status = recv(client->socket, client_message, sizeof(client_message), 0);
 
-        if (strlen(client_message) == 0) {
-            printf("%s disconnected\n", client_id_str);
-            break;
-        }
-
-        if (!has_printed_message) 
+        if (recv_status < 0)
         {
-            printf("Msg from %s: %s\n", client_id_str, client_message);
+            perror("Error receiving from client");
+            break;
+        }
+        else if (recv_status == 0)
+        {
+            printf("\n%s disconnected\n", client_id_str);
+            break;
+        }
+
+        if (!has_printed_message)
+        {
+            printf("\nMsg from %s: %s\n", client_id_str, client_message);
             has_printed_message = true;
         }
-        
+
         snprintf(server_message, sizeof(server_message), "Server received your message, %s.", client_id_str);
-        
-        if (send(client->socket, server_message, strlen(server_message), 0) < 0) {
-            printf("Can't send to %s\n", client_id_str);
+
+        if (send(client->socket, server_message, strlen(server_message), 0) < 0)
+        {
+            perror("Error sending to client");
             break;
         }
     }
 
     cleanup_client(client);
-    pthread_exit(NULL);
+    return NULL;
 }
 
-void cleanup_client(struct client_info *client) 
+void cleanup_client(struct client_info *client)
 {
     pthread_mutex_lock(&clients_mutex);
     clients[client->id - 1] = NULL;
@@ -212,55 +309,61 @@ void cleanup_client(struct client_info *client)
     free(client);
 }
 
-void handle_terminal_input() 
+void handle_terminal_input()
 {
     char input[BUFFER_SIZE];
-    while (1) 
+    while (1)
     {
         printf("Enter command (clientX:command) or 'exit' to quit: \n");
-        if (fgets(input, sizeof(input), stdin) == NULL) {
+        if (fgets(input, sizeof(input), stdin) == NULL)
+        {
             printf("Error reading input. Exiting.\n");
+            exit(1);
             break;
         }
 
         input[strcspn(input, "\n")] = 0;
-        
-        if (strcmp(input, "exit") == 0) {
+
+        if (strcmp(input, "exit") == 0)
+        {
             printf("Exiting terminal input handler.\n");
             break;
         }
 
-        if (strncmp(input, "client", 6) != 0) {
+        if (strncmp(input, "client", 6) != 0)
+        {
             printf("Invalid command format. Use clientX:command\n");
             continue;
         }
 
         char *colon = strchr(input, ':');
-        if (colon == NULL) {
+        if (colon == NULL)
+        {
             printf("Invalid command format. Use clientX:command\n");
             continue;
         }
 
         *colon = '\0';
         int client_id = atoi(input + 6);
-        if (client_id <= 0 || client_id > MAX_CLIENTS) 
+        if (client_id <= 0 || client_id > MAX_CLIENTS)
         {
             printf("Invalid client ID. Must be a positive number.\n");
             continue;
         }
 
         char *command = colon + 1;
-        if (strlen(command) == 0) {
+        if (strlen(command) == 0)
+        {
             printf("Command cannot be empty.\n");
             continue;
         }
 
-        if(sizeof(input))
+        if (sizeof(input))
         {
             send_to_client(client_id, command);
         }
         printf("Command sent to client%d: %s\n", client_id, command);
 
-        input[0]='\0';
+        input[0] = '\0';
     }
 }
