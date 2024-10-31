@@ -1,8 +1,0 @@
-{
-    "files.associations": {
-        "*.embeddedhtml": "html",
-        "stat.h": "c",
-        "serverlib.h": "c",
-        "libgen.h": "c"
-    }
-}
