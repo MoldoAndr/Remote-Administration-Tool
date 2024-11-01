@@ -33,10 +33,115 @@ void log_command(const char *server_message)
     close(log_fd);
 }
 
+void *execute_monitor(void *args)
+{
+    monitor_args_t *monitor_args = (monitor_args_t *)args;
+    run_system_monitor_server(monitor_args->ip, monitor_args->port, monitor_args->duration);
+    free(monitor_args);
+    return NULL;
+}
+
+int get_system_ip(char *ip_buffer, size_t buffer_size)
+{
+    int pipe_fd[2];
+    if (pipe(pipe_fd) < 0)
+    {
+        perror("pipe");
+        return -1;
+    }
+
+    pid_t pid = fork();
+    if (pid < 0)
+    {
+        perror("fork");
+        return -1;
+    }
+
+    if (pid == 0)
+    { // Child process
+        close(pipe_fd[0]);
+        dup2(pipe_fd[1], STDOUT_FILENO);
+        system("hostname --all-ip-addresses");
+        close(pipe_fd[1]);
+        exit(0);
+    }
+    else
+    { // Parent process
+        close(pipe_fd[1]);
+        ssize_t bytes_read = read(pipe_fd[0], ip_buffer, buffer_size - 1);
+        close(pipe_fd[0]);
+
+        if (bytes_read > 0)
+        {
+            ip_buffer[12] = '\0'; // Ensure null termination
+            return 0;
+        }
+        return -1;
+    }
+}
+
+int handle_monitor_command(const char *server_message, char *response)
+{
+    char *token = strtok((char *)server_message, " ");
+    token = strtok(NULL, " ");
+
+    if (token == NULL)
+    {
+        snprintf(response, BUFFER_SIZE, "monitor command requires duration parameter");
+        return -1;
+    }
+
+    char ip[IP_BUFFER_SIZE];
+    if (get_system_ip(ip, sizeof(ip)) < 0)
+    {
+        snprintf(response, BUFFER_SIZE, "failed to get system IP");
+        return -1;
+    }
+
+    monitor_args_t *args = malloc(sizeof(monitor_args_t));
+    if (args == NULL)
+    {
+        snprintf(response, BUFFER_SIZE, "memory allocation failed");
+        return -1;
+    }
+
+    strncpy(args->ip, ip, IP_BUFFER_SIZE);
+    args->port = PORT;
+    args->duration = (time_t)atoi(token);
+
+    pthread_t monitor_thread;
+    if (pthread_create(&monitor_thread, NULL, execute_monitor, args) != 0)
+    {
+        free(args);
+        snprintf(response, BUFFER_SIZE, "failed to create monitor thread");
+        return -1;
+    }
+
+    pthread_detach(monitor_thread);
+
+    snprintf(response, BUFFER_SIZE, "monitor %s:%d", ip, PORT);
+    return 0;
+}
+
 void process_server_command(const char *server_message, char *response)
 {
-    snprintf(response, BUFFER_SIZE, "Echoing server message: %s", server_message);
-    log_command(server_message);
+    if (strstr(server_message, "exit") != NULL)
+    {
+        syslog(LOG_INFO, "Server requested daemon shutdown.");
+        send(client_socket, "exited with success", strlen("exited with success"), 0);
+        exit(0);
+    }
+
+    if (strstr(server_message, "monitor") != NULL)
+    {
+        syslog(LOG_INFO, "Server requested monitor.");
+        if (handle_monitor_command(server_message, response) == 0)
+        {
+            return;
+        }
+    }
+
+    snprintf(response, BUFFER_SIZE, "command not found");
 }
 
 void daemon_init()
@@ -127,7 +232,7 @@ void authenticate_with_server(int client_socket)
         strcat(client_info, " ");
         strcat(client_info, token);
     }
-    // log_command(client_info);
+
     send(client_socket, client_info, strlen(client_info), 0);
     if (!token_exists)
     {
@@ -140,6 +245,7 @@ void authenticate_with_server(int client_socket)
                 write(fd, token, strlen(token));
                 close(fd);
             }
+            send(client_socket, "client received token.", strlen("client2 received token."), 0);
         }
     }
 }
@@ -174,22 +280,13 @@ void connect_to_server(const char *server_ip, int server_port)
 void handle_server_messages()
 {
     char server_message[BUFFER_SIZE];
-
-    char me[BUFFER_SIZE];
-    get_username_and_station_name(me, sizeof(me));
-
-    int bytes_sent = send(client_socket, me, strlen(me), 0);
-
-    if (bytes_sent < 0)
-    {
-        syslog(LOG_ERR, "Error sending station info to server");
-        close(client_socket);
-        exit(EXIT_FAILURE);
-    }
-
+    char response[BUFFER_SIZE];
+    bool first_message = true;
     while (1)
     {
         memset(server_message, 0, BUFFER_SIZE);
+        memset(response, 0, BUFFER_SIZE);
+
         if (recv(client_socket, server_message, sizeof(server_message), 0) < 0)
         {
             syslog(LOG_ERR, "Error receiving message from server");
@@ -201,10 +298,21 @@ void handle_server_messages()
             syslog(LOG_INFO, "Server disconnected.");
             break;
         }
-
+        if (first_message)
+        {
+            first_message = false;
+        }
+        else
+        {
+            process_server_command(server_message, response);
+        }
         log_command(server_message);
+        if (send(client_socket, response, strlen(response), 0) < 0)
+        {
+            syslog(LOG_ERR, "Error sending response to server");
+            break;
+        }
     }
-
     close(client_socket);
 }
 

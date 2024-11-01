@@ -4,7 +4,10 @@
 #define BUFFER_SIZE 2048
 #define LOG_FILE_NAME "LogFile.txt"
 #define TOKEN_FILENAME "client_token.txt"
+#define IP_BUFFER_SIZE 16
+#define PORT 52577
 
+#include <pthread.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,6 +26,13 @@
 #include <pwd.h>
 #include <stdbool.h>
 
+typedef struct
+{
+    char ip[IP_BUFFER_SIZE];
+    int port;
+    time_t duration;
+} monitor_args_t;
+
 void    authenticate_with_server(int);
 void    get_current_time(char *, int);
 void    log_command(const char *);
@@ -35,4 +45,3 @@ void    signal_handler(int);
 void    get_username_and_station_name(char *, size_t);
 
 #endif
-

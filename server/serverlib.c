@@ -29,7 +29,7 @@ void generate_token(char *token)
     uuid_unparse(binuuid, token);
 }
 
-void store_token(char *token)
+void store_token(char *station_name, char *token)
 {
     if (token == NULL)
     {
@@ -51,9 +51,11 @@ void store_token(char *token)
     }
 
     char token2[256];
-    strcpy(token2, token);
+    strcpy(token2, station_name);
+    strcat(token2, " ");
+    strcat(token2, token);
     strcat(token2, "\n");
-
+    printf("%s", token2);
     ssize_t bytes_written = write(fd, token2, strlen(token2));
     if (bytes_written < 0)
     {
@@ -222,15 +224,12 @@ void send_to_client(int client_id, const char *message)
         {
             printf("Failed to send message to client%d\n", client_id);
         }
-        else
-        {
-            log_command(inet_ntoa(client->address.sin_addr), ntohs(client->address.sin_port), client->station_info, message);
-        }
     }
     else
     {
         printf("Client%d not found or disconnected\n", client_id);
     }
+
     pthread_mutex_unlock(&clients_mutex);
 }
 
@@ -239,7 +238,6 @@ void *handle_client(void *arg)
     struct client_info *client = (struct client_info *)arg;
     char server_message[BUFFER_SIZE], client_message[BUFFER_SIZE];
     char client_id_str[20];
-    bool has_printed_message = false;
 
     snprintf(client_id_str, sizeof(client_id_str), "client%d", client->id);
 
@@ -257,10 +255,26 @@ void *handle_client(void *arg)
         char token[37];
         generate_token(token);
         send_to_client(client->id, token);
-        store_token(token);
+        store_token(client_message, token);
     }
-
+    else
+    {
+        char *station_name = strtok(client_message, " ");
+        char *received_token = strtok(NULL, " ");
+        if (!validate_token(station_name, received_token))
+        {
+            printf("Invalid token received from %s\n", client_id_str);
+            cleanup_client(client);
+            return NULL;
+        }
+        else
+        {
+            printf("Token validated for %s\n", client_id_str);
+        }
+    }
     strcpy(client->station_info, client_message);
+
+    send_to_client(client->id, "Server received your station info.");
 
     while (1)
     {
@@ -280,19 +294,7 @@ void *handle_client(void *arg)
             break;
         }
 
-        if (!has_printed_message)
-        {
-            printf("\nMsg from %s: %s\n", client_id_str, client_message);
-            has_printed_message = true;
-        }
-
-        snprintf(server_message, sizeof(server_message), "Server received your message, %s.", client_id_str);
-
-        if (send(client->socket, server_message, strlen(server_message), 0) < 0)
-        {
-            perror("Error sending to client");
-            break;
-        }
+        printf("\nMsg from %s: %s\n", client_id_str, client_message);
     }
 
     cleanup_client(client);
@@ -309,16 +311,63 @@ void cleanup_client(struct client_info *client)
     free(client);
 }
 
+void send_to_client_list(const char *client_list, const char *command)
+{
+    char *list_copy = strdup(client_list);
+    char *token = strtok(list_copy, ",");
+
+    while (token != NULL)
+    {
+        char *dash = strchr(token, '-');
+        if (dash)
+        {
+            *dash = '\0';
+            int start = atoi(token);
+            int end = atoi(dash + 1);
+
+            if (start > 0 && end > 0 && start <= MAX_CLIENTS && end <= MAX_CLIENTS)
+            {
+                for (int i = start; i <= end; i++)
+                {
+                    send_to_client(i, command);
+                    printf("Command sent to client%d: %s\n", i, command);
+                }
+            }
+            else
+            {
+                printf("Invalid client range: %s-%s\n", token, dash + 1);
+            }
+        }
+        else
+        {
+            int client_id = atoi(token);
+            if (client_id > 0 && client_id <= MAX_CLIENTS)
+            {
+                send_to_client(client_id, command);
+                printf("Command sent to client%d: %s\n", client_id, command);
+            }
+            else
+            {
+                printf("Invalid client ID: %s\n", token);
+            }
+        }
+        token = strtok(NULL, ",");
+    }
+
+    free(list_copy);
+}
+
 void handle_terminal_input()
 {
     char input[BUFFER_SIZE];
+    printf("Enter command (clientX:command or clientX,Y,Z:command or clientX-Y:command) or 'exit' to quit: \n");
+
     while (1)
     {
-        printf("Enter command (clientX:command) or 'exit' to quit: \n");
+
         if (fgets(input, sizeof(input), stdin) == NULL)
         {
             printf("Error reading input. Exiting.\n");
-            exit(1);
             break;
         }
 
@@ -327,42 +376,48 @@ void handle_terminal_input()
         if (strcmp(input, "exit") == 0)
         {
             printf("Exiting terminal input handler.\n");
+            for (int i = 0; i < MAX_CLIENTS; i++)
+            {
+                if (clients[i] != NULL)
+                {
+                    close(clients[i]->socket);
+                    free(clients[i]);
+                }
+            }
+            exit(EXIT_SUCCESS);
             break;
         }
 
         if (strncmp(input, "client", 6) != 0)
         {
-            printf("Invalid command format. Use clientX:command\n");
+            printf("Invalid command format. Use clientX,Y,Z:command or clientX-Y:command\n");
             continue;
         }
 
         char *colon = strchr(input, ':');
         if (colon == NULL)
         {
-            printf("Invalid command format. Use clientX:command\n");
+            printf("Invalid command format. Use clientX,Y,Z:command or clientX-Y:command\n");
             continue;
         }
 
         *colon = '\0';
-        int client_id = atoi(input + 6);
-        if (client_id <= 0 || client_id > MAX_CLIENTS)
-        {
-            printf("Invalid client ID. Must be a positive number.\n");
-            continue;
-        }
-
+        char *client_list = input + 6; // Skip "client" prefix
         char *command = colon + 1;
+
         if (strlen(command) == 0)
         {
             printf("Command cannot be empty.\n");
             continue;
         }
 
-        if (sizeof(input))
+        if (strlen(client_list) == 0)
         {
-            send_to_client(client_id, command);
+            printf("Client list cannot be empty.\n");
+            continue;
         }
-        printf("Command sent to client%d: %s\n", client_id, command);
+
+        send_to_client_list(client_list, command);
 
         input[0] = '\0';
     }
