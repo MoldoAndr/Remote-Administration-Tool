@@ -176,3 +176,10 @@ Date/Time: 2024-11-01 13:32:53 - Command: monitor
 Date/Time: 2024-11-01 13:35:38 - Command: Am primit token
 Date/Time: 2024-11-01 13:35:38 - Command: Server received your station info.
 Date/Time: 2024-11-01 13:36:27 - Command: adio
+Date/Time: 2024-11-01 13:48:03 - Command: Server received your station info.
+Date/Time: 2024-11-01 13:48:07 - Command: buna ziua
+Date/Time: 2024-11-01 22:23:41 - Command: Server received your station info.
+Date/Time: 2024-11-01 22:23:42 - Command: Server received your station info.
+Date/Time: 2024-11-01 22:23:51 - Command: buna_ziua
+Date/Time: 2024-11-02 21:42:06 - Command: Server received your station info.
+Date/Time: 2024-11-02 21:42:10 - Command: buna
