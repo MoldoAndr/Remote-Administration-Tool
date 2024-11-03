@@ -1,9 +1,0 @@
-{
-    "files.associations": {
-        "*.embeddedhtml": "html",
-        "client_daemon.h": "c",
-        "stdio.h": "c",
-        "pthread.h": "c",
-        "stdlib.h": "c"
-    }
-}
