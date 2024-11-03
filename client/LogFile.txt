@@ -183,3 +183,219 @@ Date/Time: 2024-11-01 22:23:42 - Command: Server received your station info.
 Date/Time: 2024-11-01 22:23:51 - Command: buna_ziua
 Date/Time: 2024-11-02 21:42:06 - Command: Server received your station info.
 Date/Time: 2024-11-02 21:42:10 - Command: buna
+Date/Time: 2024-11-02 21:51:49 - Command: Am primit token
+Date/Time: 2024-11-02 21:51:49 - Command: Server received your station info.
+Date/Time: 2024-11-02 22:15:51 - Command: Server received your station info.
+Date/Time: 2024-11-02 22:31:22 - Command: Server received your station info.
+Date/Time: 2024-11-02 22:33:37 - Command: Server received your station info.
+Date/Time: 2024-11-02 22:34:01 - Command: Server received your station info.
+Date/Time: 2024-11-02 22:34:25 - Command: Server received your station info.
+Date/Time: 2024-11-02 22:35:03 - Command: Server received your station info.
+Date/Time: 2024-11-02 22:35:05 - Command: Server received your station info.
+Date/Time: 2024-11-02 22:35:05 - Command: Server received your station info.
+Date/Time: 2024-11-02 22:35:06 - Command: Server received your station info.
+Date/Time: 2024-11-02 22:35:06 - Command: Server received your station info.
+Date/Time: 2024-11-02 22:35:07 - Command: Server received your station info.
+Date/Time: 2024-11-02 22:36:27 - Command: Server received your station info.
+Date/Time: 2024-11-02 22:36:29 - Command: Server received your station info.
+Date/Time: 2024-11-02 22:36:30 - Command: Server received your station info.
+Date/Time: 2024-11-02 22:36:31 - Command: Server received your station info.
+Date/Time: 2024-11-02 22:36:32 - Command: Server received your station info.
+Date/Time: 2024-11-02 22:36:33 - Command: Server received your station info.
+Date/Time: 2024-11-02 22:36:33 - Command: Server received your station info.
+Date/Time: 2024-11-02 22:36:34 - Command: Server received your station info.
+Date/Time: 2024-11-02 22:36:35 - Command: Server received your station info.
+Date/Time: 2024-11-02 22:36:35 - Command: Server received your station info.
+Date/Time: 2024-11-02 22:36:49 - Command: sal
+Date/Time: 2024-11-02 22:38:14 - Command: Server received your station info.
+Date/Time: 2024-11-02 22:38:20 - Command: Server received your station info.
+Date/Time: 2024-11-02 22:41:13 - Command: Am primit token
+Date/Time: 2024-11-02 22:41:13 - Command: Server received your station info.
+Date/Time: 2024-11-02 22:50:51 - Command: Server received your station info.
+Date/Time: 2024-11-02 22:50:55 - Command: Server received your station info.
+Date/Time: 2024-11-02 23:25:10 - Command: Server received your station info.
+Date/Time: 2024-11-02 23:31:31 - Command: Server received your station info.
+Date/Time: 2024-11-02 23:31:35 - Command: ls
+Date/Time: 2024-11-02 23:31:44 - Command: pwd
+Date/Time: 2024-11-02 23:31:58 - Command: cd home
+Date/Time: 2024-11-02 23:32:02 - Command: ls
+Date/Time: 2024-11-02 23:32:09 - Command: whoami
+Date/Time: 2024-11-02 23:32:14 - Command: ls -liash
+Date/Time: 2024-11-02 23:32:24 - Command: ls -lisah -r /
+Date/Time: 2024-11-02 23:32:34 - Command:  rm
+Date/Time: 2024-11-02 23:35:19 - Command: Am primit token
+Date/Time: 2024-11-02 23:35:19 - Command: Server received your station info.
+Date/Time: 2024-11-02 23:35:25 - Command: rm
+Date/Time: 2024-11-02 23:35:30 - Command: ls
+Date/Time: 2024-11-02 23:35:34 - Command: ll
+Date/Time: 2024-11-02 23:39:25 - Command: Am primit token
+Date/Time: 2024-11-02 23:39:25 - Command: Server received your station info.
+Date/Time: 2024-11-02 23:39:28 - Command: salut
+Date/Time: 2024-11-02 23:39:39 - Command: salut
+Date/Time: 2024-11-02 23:39:41 - Command: ls
+Date/Time: 2024-11-02 23:39:44 - Command: whoami
+Date/Time: 2024-11-02 23:39:46 - Command: rm
+Date/Time: 2024-11-02 23:45:15 - Command: Am primit token
+Date/Time: 2024-11-02 23:45:15 - Command: Server received your station info.
+Date/Time: 2024-11-02 23:45:19 - Command: ls
+Date/Time: 2024-11-02 23:45:21 - Command: rm
+Date/Time: 2024-11-02 23:45:25 - Command: whoami
+Date/Time: 2024-11-02 23:45:30 - Command: whereis ls
+Date/Time: 2024-11-02 23:51:33 - Command: Am primit token
+Date/Time: 2024-11-02 23:51:33 - Command: Server received your station info.
+Date/Time: 2024-11-02 23:51:33 - Command: Server received your station info.
+Date/Time: 2024-11-02 23:51:34 - Command: Server received your station info.
+Date/Time: 2024-11-02 23:51:34 - Command: Server received your station info.
+Date/Time: 2024-11-02 23:51:34 - Command: Server received your station info.
+Date/Time: 2024-11-02 23:51:52 - Command: Server received your station info.
+Date/Time: 2024-11-02 23:51:58 - Command: whoami
+Date/Time: 2024-11-02 23:52:01 - Command: ls
+Date/Time: 2024-11-02 23:52:04 - Command: pwd
+Date/Time: 2024-11-02 23:52:09 - Command: ls -r
+Date/Time: 2024-11-02 23:58:03 - Command: Am primit token
+Date/Time: 2024-11-02 23:58:03 - Command: Server received your station info.
+Date/Time: 2024-11-02 23:58:07 - Command: ls
+Date/Time: 2024-11-02 23:58:14 - Command: whoami
+Date/Time: 2024-11-02 23:58:17 - Command: sleep1
+Date/Time: 2024-11-02 23:58:22 - Command: sleep 1
+Date/Time: 2024-11-02 23:58:26 - Command: ls
+Date/Time: 2024-11-03 00:00:11 - Command: sleep 100
+Date/Time: 2024-11-03 00:00:11 - Command: whoami
+Date/Time: 2024-11-03 00:02:12 - Command: Server received your station info.
+Date/Time: 2024-11-03 00:02:19 - Command: ls
+Date/Time: 2024-11-03 00:02:25 - Command: sl
+Date/Time: 2024-11-03 00:02:27 - Command: ls
+Date/Time: 2024-11-03 00:13:23 - Command: Server received your station info.
+Date/Time: 2024-11-03 00:13:45 - Command: ls
+Date/Time: 2024-11-03 00:13:49 - Command: whoami
+Date/Time: 2024-11-03 00:13:51 - Command: ls
+Date/Time: 2024-11-03 00:18:07 - Command: Am primit token
+Date/Time: 2024-11-03 00:18:07 - Command: Server received your station info.
+Date/Time: 2024-11-03 00:18:17 - Command: ls
+Date/Time: 2024-11-03 00:20:34 - Command: Server received your station info.
+Date/Time: 2024-11-03 00:20:40 - Command: ls
+Date/Time: 2024-11-03 00:20:42 - Command: ls
+Date/Time: 2024-11-03 00:20:44 - Command: ls
+Date/Time: 2024-11-03 00:20:50 - Command: whoami
+Date/Time: 2024-11-03 00:22:39 - Command: Server received your station info.
+Date/Time: 2024-11-03 00:23:55 - Command: Am primit token
+Date/Time: 2024-11-03 00:23:55 - Command: Server received your station info.
+Date/Time: 2024-11-03 00:26:31 - Command: Server received your station info.
+Date/Time: 2024-11-03 00:30:56 - Command: Server received your station info.
+Date/Time: 2024-11-03 00:52:30 - Command: Server received your station info.
+Date/Time: 2024-11-03 00:52:35 - Command:  ls
+Date/Time: 2024-11-03 00:57:04 - Command: Server received your station info.
+Date/Time: 2024-11-03 00:57:04 - Command: Server received your station info.
+Date/Time: 2024-11-03 00:57:05 - Command: Server received your station info.
+Date/Time: 2024-11-03 00:57:05 - Command: Server received your station info.
+Date/Time: 2024-11-03 00:57:05 - Command: Server received your station info.
+Date/Time: 2024-11-03 00:57:06 - Command: Server received your station info.
+Date/Time: 2024-11-03 00:57:06 - Command: Server received your station info.
+Date/Time: 2024-11-03 00:57:07 - Command: Server received your station info.
+Date/Time: 2024-11-03 00:57:07 - Command: Server received your station info.
+Date/Time: 2024-11-03 00:57:08 - Command: Server received your station info.
+Date/Time: 2024-11-03 00:57:19 - Command: ls
+Date/Time: 2024-11-03 00:57:19 - Command: ls
+Date/Time: 2024-11-03 00:57:19 - Command: ls
+Date/Time: 2024-11-03 00:57:19 - Command: ls
+Date/Time: 2024-11-03 00:57:19 - Command: ls
+Date/Time: 2024-11-03 00:57:19 - Command: ls
+Date/Time: 2024-11-03 00:57:19 - Command: ls
+Date/Time: 2024-11-03 00:57:19 - Command: ls
+Date/Time: 2024-11-03 00:57:19 - Command: ls
+Date/Time: 2024-11-03 00:57:19 - Command: ls
+Date/Time: 2024-11-03 11:47:59 - Command: Am primit token
+Date/Time: 2024-11-03 11:47:59 - Command: Server received your station info.
+Date/Time: 2024-11-03 11:48:10 - Command: ls
+Date/Time: 2024-11-03 11:48:18 - Command:  ls
+Date/Time: 2024-11-03 11:59:39 - Command: Server received your station info.
+Date/Time: 2024-11-03 11:59:40 - Command: Server received your station info.
+Date/Time: 2024-11-03 11:59:40 - Command: Server received your station info.
+Date/Time: 2024-11-03 11:59:41 - Command: Server received your station info.
+Date/Time: 2024-11-03 11:59:41 - Command: Server received your station info.
+Date/Time: 2024-11-03 11:59:42 - Command: Server received your station info.
+Date/Time: 2024-11-03 11:59:42 - Command: Server received your station info.
+Date/Time: 2024-11-03 11:59:42 - Command: Server received your station info.
+Date/Time: 2024-11-03 11:59:43 - Command: Server received your station info.
+Date/Time: 2024-11-03 11:59:43 - Command: Server received your station info.
+Date/Time: 2024-11-03 11:59:57 - Command: ls
+Date/Time: 2024-11-03 12:00:35 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:01:52 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:01:56 - Command:  ls
+Date/Time: 2024-11-03 12:02:32 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:02:35 - Command:  ls
+Date/Time: 2024-11-03 12:03:02 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:03:19 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:03:19 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:03:20 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:03:20 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:03:20 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:03:21 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:03:21 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:03:22 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:03:22 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:03:22 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:03:27 - Command: ls
+Date/Time: 2024-11-03 12:03:27 - Command: ls
+Date/Time: 2024-11-03 12:03:27 - Command: ls
+Date/Time: 2024-11-03 12:03:27 - Command: ls
+Date/Time: 2024-11-03 12:03:27 - Command: ls
+Date/Time: 2024-11-03 12:03:27 - Command: ls
+Date/Time: 2024-11-03 12:03:27 - Command: ls
+Date/Time: 2024-11-03 12:03:27 - Command: ls
+Date/Time: 2024-11-03 12:03:27 - Command: ls
+Date/Time: 2024-11-03 12:03:27 - Command: ls
+Date/Time: 2024-11-03 12:05:28 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:05:29 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:05:29 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:05:30 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:05:30 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:05:31 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:05:31 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:05:31 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:05:32 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:05:32 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:06:20 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:06:21 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:06:21 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:06:21 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:06:22 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:06:22 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:06:23 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:06:23 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:06:23 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:06:24 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:07:32 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:07:33 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:07:33 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:07:34 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:07:34 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:07:34 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:07:35 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:07:35 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:07:36 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:07:36 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:07:42 - Command: ls
+Date/Time: 2024-11-03 12:09:00 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:09:00 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:09:01 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:09:01 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:09:01 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:09:02 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:09:02 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:09:03 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:09:03 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:09:03 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:09:14 - Command: ls
+Date/Time: 2024-11-03 12:09:14 - Command: ls
+Date/Time: 2024-11-03 12:09:14 - Command: ls
+Date/Time: 2024-11-03 12:09:14 - Command: ls
+Date/Time: 2024-11-03 12:09:14 - Command: ls
+Date/Time: 2024-11-03 12:09:14 - Command: ls
+Date/Time: 2024-11-03 12:09:14 - Command: ls
+Date/Time: 2024-11-03 12:09:14 - Command: ls
+Date/Time: 2024-11-03 12:09:14 - Command: ls
+Date/Time: 2024-11-03 12:09:14 - Command: ls
+Date/Time: 2024-11-03 12:10:42 - Command: Server received your station info.
+Date/Time: 2024-11-03 12:10:46 - Command:  ls
+Date/Time: 2024-11-03 12:10:50 - Command:  whoami

@@ -1,17 +1,6 @@
 #include "serverlib.h"
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <pthread.h>
-#include <sys/stat.h>
-#include <time.h>
-#include <fcntl.h>
-#include <uuid/uuid.h>
 
 #define TOKEN_FILE "client_tokens.txt"
-
-#if 1
 
 pthread_mutex_t client_count_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t clients_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -20,7 +9,68 @@ int client_count = 0;
 struct client_info *clients[MAX_CLIENTS];
 char *log_folder = "client_logs";
 
-#endif
+void initialize_commands()
+{
+    commands = malloc(3 * sizeof(char *));
+    commands[0] = strdup("clear");
+    commands[1] = strdup("exit");
+    commands[2] = NULL;
+}
+
+void add_command(const char *new_command)
+{
+    size_t count = 0;
+    while (commands[count] != NULL)
+    {
+        count++;
+    }
+
+    commands = realloc(commands, (count + 2) * sizeof(char *));
+
+    commands[count] = strdup(new_command);
+    commands[count + 1] = NULL;
+}
+
+int delete_command(const char *command_to_delete)
+{
+    int count = 0;
+    while (commands[count] != NULL)
+    {
+        if (strcmp(commands[count], command_to_delete) == 0)
+        {
+            free(commands[count]);
+
+            int i = count;
+            while (commands[i + 1] != NULL)
+
+            {
+                commands[i] = commands[i + 1];
+                i++;
+            }
+            commands[i] = NULL;
+
+            char **temp = realloc(commands, i * sizeof(char *));
+            if (temp != NULL || i == 0)
+            {
+                commands = temp;
+            }
+            return 1;
+        }
+        count++;
+    }
+    return 0;
+}
+
+void free_commands()
+{
+    size_t i = 0;
+    while (commands[i] != NULL)
+    {
+        free(commands[i]);
+        i++;
+    }
+    free(commands);
+}
 
 void generate_token(char *token)
 {
@@ -107,6 +157,8 @@ void setup_server(struct sockaddr_in *server_addr, int *socket_desc, char *serve
     struct stat st = {0};
     *socket_desc = socket(AF_INET, SOCK_STREAM, 0);
 
+    initialize_commands();
+
     if (stat(log_folder, &st) == -1)
     {
         mkdir(log_folder, 0700);
@@ -174,7 +226,7 @@ void log_command(const char *client_ip, int client_port, const char *station_nam
 
 void accept_clients(int socket_desc, struct sockaddr_in *server_addr)
 {
-    int client_size;
+    socklen_t client_size;
     pthread_t thread_id;
 
     while (1)
@@ -193,6 +245,10 @@ void accept_clients(int socket_desc, struct sockaddr_in *server_addr)
         pthread_mutex_lock(&client_count_mutex);
         client->id = ++client_count;
         pthread_mutex_unlock(&client_count_mutex);
+
+        char client_string[64];
+        snprintf(client_string, 64, "client%d", client->id);
+        add_command(client_string);
 
         printf("client%d connected at IP: %s and port: %i\n",
                client->id, inet_ntoa(client->address.sin_addr), ntohs(client->address.sin_port));
@@ -303,12 +359,26 @@ void *handle_client(void *arg)
 
 void cleanup_client(struct client_info *client)
 {
+    if (client == NULL)
+        return;
     pthread_mutex_lock(&clients_mutex);
-    clients[client->id - 1] = NULL;
+
+    if (client->id > 0 && client->id <= MAX_CLIENTS)
+    {
+        char client_delete[64];
+        snprintf(client_delete, sizeof(client_delete), "client%d", client->id);
+        delete_command(client_delete);
+        clients[client->id - 1] = NULL;
+    }
+
     pthread_mutex_unlock(&clients_mutex);
 
-    close(client->socket);
+    if (client->socket >= 0)
+    {
+        close(client->socket);
+    }
     free(client);
+    client = NULL;
 }
 
 void send_to_client_list(const char *client_list, const char *command)
@@ -357,23 +427,79 @@ void send_to_client_list(const char *client_list, const char *command)
     free(list_copy);
 }
 
+char *command_generator(const char *text, int state)
+{
+    static int list_index, len;
+    const char *name;
+
+    if (!state)
+    {
+        list_index = 0;
+        len = strlen(text);
+    }
+
+    while ((name = commands[list_index]))
+    {
+        list_index++;
+        if (strncmp(name, text, len) == 0)
+        {
+            return strdup(name);
+        }
+    }
+
+    return NULL;
+}
+
+char **custom_completion(const char *text, int start, int end)
+{
+    char **matches = NULL;
+
+    if (start == 0)
+    {
+        matches = rl_completion_matches(text, command_generator);
+    }
+
+    return matches;
+}
+
+void update_active_clients()
+{
+    num_active_clients = 0;
+    for (int i = 0; i < MAX_CLIENTS; i++)
+    {
+        if (clients[i] != NULL)
+        {
+            active_client_numbers[num_active_clients++] = i;
+        }
+    }
+}
+
 void handle_terminal_input()
 {
-    char input[BUFFER_SIZE];
-    printf("Enter command (clientX:command or clientX,Y,Z:command or clientX-Y:command) or 'exit' to quit: \n");
+    char *input;
+
+    rl_attempted_completion_function = custom_completion;
+    rl_completer_word_break_characters = " ";
+
+    printf("Enter command (clientX:command or clientX,Y,Z:command or clientX-Y:command)\n");
+    printf("Use TAB for autocomplete, 'clear' to clear console, or 'exit' to quit:\n");
 
     while (1)
     {
+        input = readline("> ");
 
-        if (fgets(input, sizeof(input), stdin) == NULL)
+        if (input == NULL)
         {
-            printf("Error reading input. Exiting.\n");
+            printf("\nError reading input. Exiting.\n");
             break;
         }
 
-        input[strcspn(input, "\n")] = 0;
+        if (input[0] != '\0')
+        {
+            add_history(input);
+        }
 
-        if (strcmp(input, "exit") == 0)
+        if (strstr(input, "exit") == input)
         {
             printf("Exiting terminal input handler.\n");
             for (int i = 0; i < MAX_CLIENTS; i++)
@@ -384,13 +510,26 @@ void handle_terminal_input()
                     free(clients[i]);
                 }
             }
+            free_commands();
+            free(input);
+            rl_clear_history();
             exit(EXIT_SUCCESS);
-            break;
+        }
+
+        if (strstr(input, "clear") == input)
+        {
+            system("clear");
+            printf("Enter command (clientX:command or clientX,Y,Z:command or clientX-Y:command)\n");
+            printf("Use TAB for autocomplete, 'clear' to clear console, or 'exit' to quit:\n");
+            free(input);
+            continue;
         }
 
         if (strncmp(input, "client", 6) != 0)
         {
             printf("Invalid command format. Use clientX,Y,Z:command or clientX-Y:command\n");
+            printf("Use TAB for autocomplete, 'clear' to clear console, or 'exit' to quit:\n");
+            free(input);
             continue;
         }
 
@@ -398,27 +537,33 @@ void handle_terminal_input()
         if (colon == NULL)
         {
             printf("Invalid command format. Use clientX,Y,Z:command or clientX-Y:command\n");
+            printf("Use TAB for autocomplete, 'clear' to clear console, or 'exit' to quit:\n");
+
+            free(input);
             continue;
         }
 
         *colon = '\0';
-        char *client_list = input + 6; // Skip "client" prefix
+        char *client_list = input + 6;
         char *command = colon + 1;
 
         if (strlen(command) == 0)
         {
             printf("Command cannot be empty.\n");
+            free(input);
             continue;
         }
 
         if (strlen(client_list) == 0)
         {
             printf("Client list cannot be empty.\n");
+            free(input);
             continue;
         }
 
         send_to_client_list(client_list, command);
+        free(input);
 
-        input[0] = '\0';
+        usleep(10000);
     }
 }

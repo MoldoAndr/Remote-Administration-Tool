@@ -2,6 +2,13 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <stdlib.h>
+#include <signal.h>
+
+void handle_sigint(int sig)
+{
+    printf("\nSIGINT signal blocked\n");
+    return;
+}
 
 int main(int argc, char* argv[]) 
 {
@@ -10,6 +17,12 @@ int main(int argc, char* argv[])
     if (argc < 2)
     {
         write(1,"Server IP address MUST be specified\n",36);
+        exit(EXIT_FAILURE);
+    }
+
+    if (signal(SIGINT, handle_sigint) == SIG_ERR)
+    {
+        write(2,"Error handling SIGINT\n",23);
         exit(EXIT_FAILURE);
     }
     
@@ -25,6 +38,6 @@ int main(int argc, char* argv[])
     
     accept_clients(socket_desc, &server_addr);
 
-    pclose(socket_desc);
+    close(socket_desc);
     return 0;
 }

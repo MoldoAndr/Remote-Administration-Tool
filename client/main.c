@@ -3,14 +3,15 @@
 #include <signal.h>
 #include <stdlib.h>
 
-int main(int argc, char *argv[]) 
+
+int main(int argc, char *argv[])
 {
-    if (argc < 3) 
+    if (argc < 3)
     {
-        write(1, "Usage: ./client <server_ip> <server_port>\n", 41);
+        write(STDOUT_FILENO, "Usage: ./client <server_ip> <server_port>\n", 41);
         return -1;
-    }   
-    
+    }
+
     signal(SIGTERM, signal_handler);
 
     daemon_init();
@@ -21,4 +22,3 @@ int main(int argc, char *argv[])
 
     handle_server_messages();
 }
-

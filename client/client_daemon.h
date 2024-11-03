@@ -2,10 +2,12 @@
 #define CLIENT_DAEMON_H
 
 #define BUFFER_SIZE 2048
+#define MAX_PATH 256
 #define LOG_FILE_NAME "LogFile.txt"
 #define TOKEN_FILENAME "client_token.txt"
 #define IP_BUFFER_SIZE 16
 #define PORT 52577
+#define MAX_ARGS 100
 
 #include <pthread.h>
 #include <stddef.h>
@@ -21,7 +23,9 @@
 #include <signal.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/wait.h>
 #include <netinet/in.h>
+#include <uuid/uuid.h>
 #include <libgen.h>
 #include <pwd.h>
 #include <stdbool.h>
@@ -33,15 +37,19 @@ typedef struct
     time_t duration;
 } monitor_args_t;
 
-void    authenticate_with_server(int);
-void    get_current_time(char *, int);
-void    log_command(const char *);
-void    process_server_command(const char *, char *);
-void    daemon_init();
-void    get_executable_path(char *);
-void    connect_to_server(const char *, int);
-void    handle_server_messages();
-void    signal_handler(int);
-void    get_username_and_station_name(char *, size_t);
+void run_system_monitor_server(const char *ip, int port, int duration);
+int execute_command(const char *command, char **args, char *response);
+int parse_command(char *message_copy, char *command, char **args);
+void cleanup_args(char *message_copy);
+void authenticate_with_server(int);
+void get_current_time(char *, int);
+void log_command(const char *);
+void process_server_command(const char *, char *);
+void daemon_init();
+void get_executable_path(char *);
+bool connect_to_server(const char *, int);
+void handle_server_messages();
+void signal_handler(int);
+void get_username_and_station_name(char *, size_t);
 
 #endif
