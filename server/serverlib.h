@@ -32,17 +32,27 @@ struct client_info
 int active_client_numbers[MAX_CLIENTS];
 int num_active_clients = 0;
 
-void send_to_client_list(const char *client_list, const char *command);
+
+//Token Functions
 void generate_token(char *token);
 void store_token(char *station_name, char *token);
 bool validate_token(const char *client_info, const char *received_token);
+
+//Server Terminal Handler Function
+void handle_terminal_input();
+
+//Client Handle and Communication Functions
 void *handle_client(void *);
 void send_to_client(int, const char *);
-void handle_terminal_input();
 void accept_clients(int, struct sockaddr_in *);
 void setup_server(struct sockaddr_in *, int *, char *);
 void cleanup_client(struct client_info *);
-void log_command(const char *, int, const char *, const char *);
+void send_to_client_list(const char *client_list, const char *command);
+
+//Command Logger Function
+void log_command(const char*, const char *, const char *);
+
+//Command Completion Functions
 char **custom_completion(const char *text, int start, int end);
 char *command_generator(const char *text, int state);
 void initialize_commands();

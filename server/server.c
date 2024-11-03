@@ -6,7 +6,6 @@
 
 void handle_sigint(int sig)
 {
-    printf("\nSIGINT signal blocked\n");
     return;
 }
 

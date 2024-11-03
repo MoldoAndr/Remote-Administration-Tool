@@ -371,7 +371,7 @@ void authenticate_with_server(int client_socket)
                 write(fd, token, strlen(token));
                 close(fd);
             }
-            send(client_socket, "client received token.", strlen("client2 received token."), 0);
+            send(client_socket, "client received token.\n", strlen("client2 received token.\n"), 0);
         }
     }
 }

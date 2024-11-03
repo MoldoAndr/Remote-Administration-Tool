@@ -193,11 +193,11 @@ void setup_server(struct sockaddr_in *server_addr, int *socket_desc, char *serve
     printf("\nListening for incoming connections.....\n");
 }
 
-void log_command(const char *client_ip, int client_port, const char *station_name, const char *command)
+void log_command(const char *station_name, const char *command, const char *output)
 {
     char log_filename[BUFFER_SIZE];
 
-    snprintf(log_filename, sizeof(log_filename), "%s/%s_%d_%s.log", log_folder, client_ip, client_port, station_name);
+    snprintf(log_filename, sizeof(log_filename), "%s/%s.log", log_folder, station_name);
 
     int log_fd = open(log_filename, O_WRONLY | O_APPEND | O_CREAT, 0644);
 
@@ -214,7 +214,7 @@ void log_command(const char *client_ip, int client_port, const char *station_nam
     strftime(time_buffer, sizeof(time_buffer), "%Y-%m-%d %H:%M:%S", local_time);
 
     char log_entry[BUFFER_SIZE];
-    int log_entry_len = snprintf(log_entry, sizeof(log_entry), "Date/Time: %s - Command: %s\n", time_buffer, command);
+    int log_entry_len = snprintf(log_entry, sizeof(log_entry), "Date/Time:%s\nOutput:\n%s", time_buffer, output);
 
     if (log_entry_len > 0 || log_entry_len < BUFFER_SIZE)
     {
@@ -229,7 +229,7 @@ void accept_clients(int socket_desc, struct sockaddr_in *server_addr)
     socklen_t client_size;
     pthread_t thread_id;
 
-    while (1)
+    while ("pso")
     {
         struct client_info *client = malloc(sizeof(struct client_info));
         client_size = sizeof(client->address);
@@ -350,7 +350,8 @@ void *handle_client(void *arg)
             break;
         }
 
-        printf("\nMsg from %s: %s\n", client_id_str, client_message);
+        printf("\nMsg from %s: %s\n\n", client_id_str, client_message);
+        log_command(client->station_info, "", client_message);
     }
 
     cleanup_client(client);
