@@ -32,7 +32,6 @@ struct client_info
 int active_client_numbers[MAX_CLIENTS];
 int num_active_clients = 0;
 
-
 //Token Functions
 void generate_token(char *token);
 void store_token(char *station_name, char *token);
