@@ -23,3 +23,546 @@ Date/Time: 2024-11-03 12:43:21 - Command: l
 Date/Time: 2024-11-03 12:43:24 - Command: ls
 Date/Time: 2024-11-03 12:43:42 - Command:  ls Log&
 Date/Time: 2024-11-03 12:43:51 - Command:  ls Log*
+Date/Time: 2024-11-05 16:07:15 - Command: Am primit token
+Date/Time: 2024-11-05 16:07:15 - Command: Server received your station info.
+Date/Time: 2024-11-05 16:07:19 - Command:  ls
+Date/Time: 2024-11-05 16:09:23 - Command: Am primit token
+Date/Time: 2024-11-05 16:09:23 - Command: Server received your station info.
+Date/Time: 2024-11-05 16:09:43 - Command:  monitor
+Date/Time: 2024-11-05 16:10:40 - Command:  ls
+Date/Time: 2024-11-05 16:14:03 - Command: Am primit token
+Date/Time: 2024-11-05 16:14:03 - Command: Server received your station info.
+Date/Time: 2024-11-05 16:14:07 - Command:  fgdfhgs
+Date/Time: 2024-11-05 16:14:24 - Command:  ls -dgfgnmt6 5rfdbg 
+Date/Time: 2024-11-05 16:14:29 - Command: ls
+Date/Time: 2024-11-05 16:14:38 - Command:  ls -dghrtj54 yergbg
+Date/Time: 2024-11-05 16:14:56 - Command:  sleep 5
+Date/Time: 2024-11-05 16:14:56 - Command:  ls
+Date/Time: 2024-11-05 16:22:03 - Command: Server received your station info.
+Date/Time: 2024-11-05 16:39:02 - Command: Server received your station info.
+Date/Time: 2024-11-05 16:39:07 - Command:  exit
+Date/Time: 2024-11-05 16:48:30 - Command: Am primit token
+Date/Time: 2024-11-05 16:48:30 - Command: Server received your station info.
+Date/Time: 2024-11-05 16:48:34 - Command:  ls
+Date/Time: 2024-11-05 16:52:44 - Command: Server received your station info.
+Date/Time: 2024-11-05 16:52:44 - Command: Server received your station info.
+Date/Time: 2024-11-05 16:52:45 - Command: Server received your station info.
+Date/Time: 2024-11-05 16:52:45 - Command: Server received your station info.
+Date/Time: 2024-11-05 16:52:45 - Command: Server received your station info.
+Date/Time: 2024-11-05 16:52:46 - Command: Server received your station info.
+Date/Time: 2024-11-05 16:52:46 - Command: Server received your station info.
+Date/Time: 2024-11-05 16:52:47 - Command: Server received your station info.
+Date/Time: 2024-11-05 16:52:47 - Command: Server received your station info.
+Date/Time: 2024-11-05 16:52:47 - Command: Server received your station info.
+Date/Time: 2024-11-05 16:54:31 - Command: Server received your station info.
+Date/Time: 2024-11-05 16:54:32 - Command: Server received your station info.
+Date/Time: 2024-11-05 16:54:32 - Command: Server received your station info.
+Date/Time: 2024-11-05 16:54:32 - Command: Server received your station info.
+Date/Time: 2024-11-05 16:54:33 - Command: Server received your station info.
+Date/Time: 2024-11-05 16:54:33 - Command: Server received your station info.
+Date/Time: 2024-11-05 16:54:34 - Command: Server received your station info.
+Date/Time: 2024-11-05 16:54:34 - Command: Server received your station info.
+Date/Time: 2024-11-05 16:54:34 - Command: Server received your station info.
+Date/Time: 2024-11-05 16:54:35 - Command: Server received your station info.
+Date/Time: 2024-11-05 16:54:41 - Command: ls
+Date/Time: 2024-11-05 16:54:41 - Command: ls
+Date/Time: 2024-11-05 16:54:41 - Command: ls
+Date/Time: 2024-11-05 16:54:56 - Command: whoami
+Date/Time: 2024-11-05 16:54:56 - Command: whoami
+Date/Time: 2024-11-05 16:54:56 - Command: whoami
+Date/Time: 2024-11-05 16:54:56 - Command: whoami
+Date/Time: 2024-11-05 16:54:56 - Command: whoami
+Date/Time: 2024-11-05 16:56:32 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:02:36 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:02:38 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:02:45 - Command:  exit
+Date/Time: 2024-11-06 23:02:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:02:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:02:57 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:02:57 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:02:58 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:02:58 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:02:58 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:02:59 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:02:59 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:02:59 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:06 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:06 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:07 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:07 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:07 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:08 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:08 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:08 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:09 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:09 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:27 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:28 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:28 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:28 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:29 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:29 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:30 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:30 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:30 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:31 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:31 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:31 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:32 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:32 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:33 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:33 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:33 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:34 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:34 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:34 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:35 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:35 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:36 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:36 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:36 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:37 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:37 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:37 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:38 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:38 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:39 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:39 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:39 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:40 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:40 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:40 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:41 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:41 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:42 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:42 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:42 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:43 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:43 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:43 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:44 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:44 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:44 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:45 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:45 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:09:46 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:13:03 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:14:56 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:15:32 - Command: whoami
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.

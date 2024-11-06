@@ -33,32 +33,85 @@ void add_command(const char *new_command)
 
 int delete_command(const char *command_to_delete)
 {
-    int count = 0;
-    while (commands[count] != NULL)
+    // Validate input parameters
+    if (command_to_delete == NULL || commands == NULL)
     {
-        if (strcmp(commands[count], command_to_delete) == 0)
+        return 0;
+    }
+
+    // Find command length for first pass
+    size_t cmd_count = 0;
+    while (commands[cmd_count] != NULL)
+    {
+        cmd_count++;
+    }
+
+    // Nothing to delete if array is empty
+    if (cmd_count == 0)
+    {
+        return 0;
+    }
+
+    // Find and delete the command
+    size_t read_idx, write_idx;
+    int found = 0;
+    
+    for (read_idx = 0, write_idx = 0; read_idx < cmd_count; read_idx++)
+    {
+        if (strcmp(commands[read_idx], command_to_delete) == 0)
         {
-            free(commands[count]);
+            // Free the found command string
+            free(commands[read_idx]);
+            found = 1;
+            continue;
+        }
+        
+        // If we're shifting elements, move them
+        if (read_idx != write_idx)
+        {
+            commands[write_idx] = commands[read_idx];
+        }
+        write_idx++;
+    }
 
-            int i = count;
-            while (commands[i + 1] != NULL)
+    // If command wasn't found, return without modifying array
+    if (!found)
+    {
+        return 0;
+    }
 
-            {
-                commands[i] = commands[i + 1];
-                i++;
-            }
-            commands[i] = NULL;
+    // Null terminate the array
+    commands[write_idx] = NULL;
 
-            char **temp = realloc(commands, i * sizeof(char *));
-            if (temp != NULL || i == 0)
-            {
-                commands = temp;
-            }
+    // Calculate new size needed (write_idx points to NULL position)
+    size_t new_size = (write_idx + 1) * sizeof(char *);
+    
+    // Only attempt realloc if we have remaining elements
+    if (write_idx > 0)
+    {
+        char **temp = realloc(commands, new_size);
+        if (temp == NULL)
+        {
+            // If realloc fails, original array is unchanged
+            // We've still deleted the command, so return success
             return 1;
         }
-        count++;
+        commands = temp;
     }
-    return 0;
+    else
+    {
+        // If no elements left, free the array and set to new empty array
+        free(commands);
+        commands = malloc(sizeof(char *));
+        if (commands == NULL)
+        {
+            // Memory allocation failed
+            return 0;
+        }
+        commands[0] = NULL;
+    }
+
+    return 1;
 }
 
 void free_commands()
@@ -487,7 +540,7 @@ void handle_terminal_input()
 
     while (1)
     {
-        input = readline("> ");
+        input = readline(NULL);
 
         if (input == NULL)
         {

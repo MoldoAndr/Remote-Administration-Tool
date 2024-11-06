@@ -16,7 +16,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-#define MAX_CLIENTS 64
+#define MAX_CLIENTS 256
 #define BUFFER_SIZE 2048
 
 char **commands = NULL;

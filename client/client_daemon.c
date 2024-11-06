@@ -58,7 +58,7 @@ int get_system_ip(char *ip_buffer, size_t buffer_size)
     }
 
     if (pid == 0)
-    { // Child process
+    {
         close(pipe_fd[0]);
         dup2(pipe_fd[1], STDOUT_FILENO);
         system("hostname --all-ip-addresses");
@@ -131,7 +131,7 @@ void process_server_command(const char *server_message, char *response)
         return;
     }
 
-    if (strstr(server_message, "exit") != NULL)
+    if (strcmp(server_message, "exit") == 0)
     {
         syslog(LOG_INFO, "Server requested daemon shutdown.");
         send(client_socket, "exited with success", strlen("exited with success"), 0);
@@ -411,6 +411,7 @@ void handle_server_messages()
     char server_message[BUFFER_SIZE];
     char response[BUFFER_SIZE];
     bool first_message = true;
+
     while (1)
     {
         memset(server_message, 0, BUFFER_SIZE);
