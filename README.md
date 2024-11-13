@@ -32,13 +32,19 @@ Documentatie
     https://github.com/st4inl3s5/kizagan
     https://github.com/XZB-1248/Spark
 
+Functionalitati
+
+    Realizarea conexiunii
+    Informatii despre sistem
+    Executare de comenzi de la distanta
+    Mecanisme de logging
+
+
 Functionalitati viitoare
     
-    Executare de comenzi de la distanta
     Descarcare de fisiere
     Incarcare de fisiere
     Capturi de ecran
-    Mecanisme de logging
     Key-Logger
     Alerte accesare anumite site-uri
     BlackList pentru fisiere
