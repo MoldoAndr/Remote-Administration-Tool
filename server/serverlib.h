@@ -39,6 +39,7 @@ bool validate_token(const char *client_info, const char *received_token);
 
 //Server Terminal Handler Function
 void handle_terminal_input();
+void list_clients(); 
 
 //Client Handle and Communication Functions
 void *handle_client(void *);

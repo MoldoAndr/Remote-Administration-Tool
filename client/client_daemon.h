@@ -37,19 +37,24 @@ typedef struct
     time_t duration;
 } monitor_args_t;
 
-void run_system_monitor_server(const char *ip, int port, int duration);
-int execute_command(const char *command, char **args, char *response);
-int parse_command(char *message_copy, char *command, char **args);
-void cleanup_args(char *message_copy);
-void authenticate_with_server(int);
 void get_current_time(char *, int);
 void log_command(const char *);
+void *execute_monitor(void *);
+int get_system_ip(char *, size_t );
+int handle_monitor_command(const char *, char *);
 void process_server_command(const char *, char *);
+int parse_command(char *, char *, char **);
+int execute_command(const char *, char **, char *);
+void cleanup_args(char *);
 void daemon_init();
 void get_executable_path(char *);
+void authenticate_with_server(int);
 bool connect_to_server(const char *, int);
 void handle_server_messages();
 void signal_handler(int);
 void get_username_and_station_name(char *, size_t);
+
+void run_system_monitor_server(const char *, int, int);
+
 
 #endif

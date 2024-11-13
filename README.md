@@ -38,6 +38,7 @@ Functionalitati
     Informatii despre sistem
     Executare de comenzi de la distanta
     Mecanisme de logging
+    Actualizare lista clienti
 
 
 Functionalitati viitoare

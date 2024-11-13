@@ -566,3 +566,29 @@ Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
 Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
 Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
 Date/Time: 2024-11-06 23:18:17 - Command: Server received your station info.
+Date/Time: 2024-11-13 18:55:05 - Command: Am primit token
+Date/Time: 2024-11-13 18:55:05 - Command: Server received your station info.
+Date/Time: 2024-11-13 18:55:39 - Command:  ls
+Date/Time: 2024-11-13 19:19:45 - Command: Am primit token
+Date/Time: 2024-11-13 19:19:45 - Command: Server received your station info.
+Date/Time: 2024-11-13 19:21:25 - Command: Am primit token
+Date/Time: 2024-11-13 19:21:25 - Command: Server received your station info.
+Date/Time: 2024-11-13 19:22:04 - Command: ls
+Date/Time: 2024-11-13 19:25:27 - Command: Am primit token
+Date/Time: 2024-11-13 19:25:27 - Command: Server received your station info.
+Date/Time: 2024-11-13 19:25:51 - Command: pwd
+Date/Time: 2024-11-13 19:49:50 - Command: Am primit token
+Date/Time: 2024-11-13 19:49:50 - Command: Am primit token
+Date/Time: 2024-11-13 19:49:50 - Command: Server received your station info.
+Date/Time: 2024-11-13 19:49:50 - Command: Am primit token
+Date/Time: 2024-11-13 19:49:50 - Command: Server received your station info.
+Date/Time: 2024-11-13 19:49:50 - Command: Server received your station info.
+Date/Time: 2024-11-13 20:05:20 - Command: Server received your station info.
+Date/Time: 2024-11-13 20:05:20 - Command: Server received your station info.
+Date/Time: 2024-11-13 20:05:20 - Command: Server received your station info.
+Date/Time: 2024-11-13 20:07:34 - Command: Am primit token
+Date/Time: 2024-11-13 20:07:34 - Command: Am primit token
+Date/Time: 2024-11-13 20:07:34 - Command: Server received your station info.
+Date/Time: 2024-11-13 20:07:34 - Command: Server received your station info.
+Date/Time: 2024-11-13 20:07:34 - Command: Am primit token
+Date/Time: 2024-11-13 20:07:34 - Command: Server received your station info.

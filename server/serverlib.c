@@ -11,10 +11,11 @@ char *log_folder = "client_logs";
 
 void initialize_commands()
 {
-    commands = malloc(3 * sizeof(char *));
+    commands = malloc(4 * sizeof(char *));
     commands[0] = strdup("clear");
     commands[1] = strdup("exit");
-    commands[2] = NULL;
+    commands[2] = strdup("list");
+    commands[3] = NULL;
 }
 
 void add_command(const char *new_command)
@@ -31,9 +32,25 @@ void add_command(const char *new_command)
     commands[count + 1] = NULL;
 }
 
+void list_clients() 
+{
+    pthread_mutex_lock(&clients_mutex); // Blochează mutex-ul pentru acces sigur
+    
+    printf("Clienti conectati:\n");
+    for (int i = 0; i < client_count; i++) 
+    {
+        if (clients[i] != NULL) 
+        {
+            char *ip_address = inet_ntoa(clients[i]->address.sin_addr);
+            printf("Client %d: %s\tPort:%d IP:%s\n", i + 1, clients[i]->station_info, clients[i]->socket, ip_address);
+        }
+    }
+    
+    pthread_mutex_unlock(&clients_mutex); // Deblochează mutex-ul
+}
+
 int delete_command(const char *command_to_delete)
 {
-    // Validate input parameters
     if (command_to_delete == NULL || commands == NULL)
     {
         return 0;
@@ -46,13 +63,11 @@ int delete_command(const char *command_to_delete)
         cmd_count++;
     }
 
-    // Nothing to delete if array is empty
     if (cmd_count == 0)
     {
         return 0;
     }
 
-    // Find and delete the command
     size_t read_idx, write_idx;
     int found = 0;
     
@@ -60,7 +75,6 @@ int delete_command(const char *command_to_delete)
     {
         if (strcmp(commands[read_idx], command_to_delete) == 0)
         {
-            // Free the found command string
             free(commands[read_idx]);
             found = 1;
             continue;
@@ -74,16 +88,12 @@ int delete_command(const char *command_to_delete)
         write_idx++;
     }
 
-    // If command wasn't found, return without modifying array
     if (!found)
     {
         return 0;
     }
 
-    // Null terminate the array
     commands[write_idx] = NULL;
-
-    // Calculate new size needed (write_idx points to NULL position)
     size_t new_size = (write_idx + 1) * sizeof(char *);
     
     // Only attempt realloc if we have remaining elements
@@ -92,20 +102,16 @@ int delete_command(const char *command_to_delete)
         char **temp = realloc(commands, new_size);
         if (temp == NULL)
         {
-            // If realloc fails, original array is unchanged
-            // We've still deleted the command, so return success
             return 1;
         }
         commands = temp;
     }
     else
     {
-        // If no elements left, free the array and set to new empty array
         free(commands);
         commands = malloc(sizeof(char *));
         if (commands == NULL)
         {
-            // Memory allocation failed
             return 0;
         }
         commands[0] = NULL;
@@ -158,15 +164,11 @@ void store_token(char *station_name, char *token)
     strcat(token2, " ");
     strcat(token2, token);
     strcat(token2, "\n");
-    printf("%s", token2);
+   
     ssize_t bytes_written = write(fd, token2, strlen(token2));
     if (bytes_written < 0)
     {
         perror("Error writing to token file");
-    }
-    else
-    {
-        printf("%s", token2);
     }
 
     close(fd);
@@ -575,6 +577,13 @@ void handle_terminal_input()
             system("clear");
             printf("Enter command (clientX:command or clientX,Y,Z:command or clientX-Y:command)\n");
             printf("Use TAB for autocomplete, 'clear' to clear console, or 'exit' to quit:\n");
+            free(input);
+            continue;
+        }
+
+        if (strstr(input, "list") == input) 
+        {
+            list_clients();
             free(input);
             continue;
         }
