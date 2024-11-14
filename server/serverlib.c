@@ -32,21 +32,21 @@ void add_command(const char *new_command)
     commands[count + 1] = NULL;
 }
 
-void list_clients() 
+void list_clients()
 {
     pthread_mutex_lock(&clients_mutex); // Blochează mutex-ul pentru acces sigur
-    
+
     printf("Clienti conectati:\n");
-    for (int i = 0; i < client_count; i++) 
+    for (int i = 0; i < client_count; i++)
     {
-        if (clients[i] != NULL) 
+        if (clients[i] != NULL)
         {
             char *ip_address = inet_ntoa(clients[i]->address.sin_addr);
             int port = ntohs(clients[i]->address.sin_port);
             printf("Client %d: %s\tPort:%d IP:%s\n", i + 1, clients[i]->station_info, port, ip_address);
         }
     }
-    
+
     pthread_mutex_unlock(&clients_mutex); // Deblochează mutex-ul
 }
 
@@ -57,7 +57,6 @@ int delete_command(const char *command_to_delete)
         return 0;
     }
 
-    // Find command length for first pass
     size_t cmd_count = 0;
     while (commands[cmd_count] != NULL)
     {
@@ -71,7 +70,7 @@ int delete_command(const char *command_to_delete)
 
     size_t read_idx, write_idx;
     int found = 0;
-    
+
     for (read_idx = 0, write_idx = 0; read_idx < cmd_count; read_idx++)
     {
         if (strcmp(commands[read_idx], command_to_delete) == 0)
@@ -80,7 +79,7 @@ int delete_command(const char *command_to_delete)
             found = 1;
             continue;
         }
-        
+
         // If we're shifting elements, move them
         if (read_idx != write_idx)
         {
@@ -96,8 +95,7 @@ int delete_command(const char *command_to_delete)
 
     commands[write_idx] = NULL;
     size_t new_size = (write_idx + 1) * sizeof(char *);
-    
-    // Only attempt realloc if we have remaining elements
+
     if (write_idx > 0)
     {
         char **temp = realloc(commands, new_size);
@@ -165,7 +163,7 @@ void store_token(char *station_name, char *token)
     strcat(token2, " ");
     strcat(token2, token);
     strcat(token2, "\n");
-   
+
     ssize_t bytes_written = write(fd, token2, strlen(token2));
     if (bytes_written < 0)
     {
@@ -303,7 +301,7 @@ void accept_clients(int socket_desc, struct sockaddr_in *server_addr)
         pthread_mutex_unlock(&client_count_mutex);
 
         char client_string[64];
-        snprintf(client_string, 64, "client%d", client->id);
+        snprintf(client_string, 64, "client%d:", client->id);
         add_command(client_string);
 
         printf("client%d connected at IP: %s and port: %i\n",
@@ -423,7 +421,7 @@ void cleanup_client(struct client_info *client)
     if (client->id > 0 && client->id <= MAX_CLIENTS)
     {
         char client_delete[64];
-        snprintf(client_delete, sizeof(client_delete), "client%d", client->id);
+        snprintf(client_delete, sizeof(client_delete), "client%d:", client->id);
         delete_command(client_delete);
         clients[client->id - 1] = NULL;
     }

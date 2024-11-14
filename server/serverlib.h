@@ -42,15 +42,15 @@ void handle_terminal_input();
 void list_clients(); 
 
 //Client Handle and Communication Functions
-void *handle_client(void *);
-void send_to_client(int, const char *);
+void *handle_client(void *arg);
+void send_to_client(int client_id, const char * message);
 void accept_clients(int, struct sockaddr_in *);
 void setup_server(struct sockaddr_in *, int *, char *);
 void cleanup_client(struct client_info *);
 void send_to_client_list(const char *client_list, const char *command);
 
 //Command Logger Function
-void log_command(const char*, const char *, const char *);
+void log_command(const char* station_name, const char * command, const char * output);
 
 //Command Completion Functions
 char **custom_completion(const char *text, int start, int end);

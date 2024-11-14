@@ -131,7 +131,7 @@ void process_server_command(const char *server_message, char *response)
         return;
     }
 
-    if (strcmp(server_message, "exit") == 0)
+    if (strstr(server_message, "exit") != NULL)
     {
         syslog(LOG_INFO, "Server requested daemon shutdown.");
         send(client_socket, "exited with success", strlen("exited with success"), 0);
@@ -374,6 +374,7 @@ void authenticate_with_server(int client_socket)
             send(client_socket, "client received token.\n", strlen("client2 received token.\n"), 0);
         }
     }
+    close(fd);
 }
 
 bool connect_to_server(const char *server_ip, int server_port)
