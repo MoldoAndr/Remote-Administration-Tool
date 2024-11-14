@@ -324,19 +324,19 @@ void daemon_init()
     syslog(LOG_INFO, "Daemon started.");
 }
 
-void get_executable_path(char *argv0)
+void get_executable_path()
 {
-    char path_buffer[BUFFER_SIZE];
+    char path_buffer[256];
 
     ssize_t len = readlink("/proc/self/exe", path_buffer, sizeof(path_buffer) - 1);
     if (len != -1)
     {
         path_buffer[len] = '\0';
-        strncpy(executable_path, dirname(path_buffer), BUFFER_SIZE);
+        strncpy(executable_path, dirname(path_buffer), 256);
     }
     else
     {
-        strncpy(executable_path, ".", BUFFER_SIZE);
+        strncpy(executable_path, ".", 256);
     }
 }
 

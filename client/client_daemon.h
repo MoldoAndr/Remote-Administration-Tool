@@ -47,7 +47,7 @@ int parse_command(char *, char *, char **);
 int execute_command(const char *, char **, char *);
 void cleanup_args(char *);
 void daemon_init();
-void get_executable_path(char *);
+void get_executable_path();
 void authenticate_with_server(int);
 bool connect_to_server(const char *, int);
 void handle_server_messages();

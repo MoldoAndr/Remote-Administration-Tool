@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 
     daemon_init();
 
-    get_executable_path(argv[0]);
+    get_executable_path();
 
     connect_to_server(argv[1], atoi(argv[2]));
 

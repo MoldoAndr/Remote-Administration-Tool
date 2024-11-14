@@ -42,7 +42,8 @@ void list_clients()
         if (clients[i] != NULL) 
         {
             char *ip_address = inet_ntoa(clients[i]->address.sin_addr);
-            printf("Client %d: %s\tPort:%d IP:%s\n", i + 1, clients[i]->station_info, clients[i]->socket, ip_address);
+            int port = ntohs(clients[i]->address.sin_port);
+            printf("Client %d: %s\tPort:%d IP:%s\n", i + 1, clients[i]->station_info, port, ip_address);
         }
     }
     
@@ -538,7 +539,7 @@ void handle_terminal_input()
     rl_completer_word_break_characters = " ";
 
     printf("Enter command (clientX:command or clientX,Y,Z:command or clientX-Y:command)\n");
-    printf("Use TAB for autocomplete, 'clear' to clear console, or 'exit' to quit:\n");
+    printf("Use TAB for autocomplete, 'clear' to clear console, or 'exit' to quit or 'list' to list connected clients:\n");
 
     while (1)
     {

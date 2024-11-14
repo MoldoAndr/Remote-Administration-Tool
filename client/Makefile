@@ -36,6 +36,7 @@ run_clients: $(CLIENT)
 		exit 1; \
 	fi
 	@for i in $$(seq 1 $(NR)); do \
+		sleep 0.1; \
 		./$(CLIENT) $(IP) $(PORT) & \
 	done
 
