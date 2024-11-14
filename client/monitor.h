@@ -55,7 +55,7 @@ extern double g_disk_usage;
 
 extern ProcessInfo g_top_processes[MAX_PROCESSES];
 
-void get_cpu_usage(CPUStats *prev, CPUStats *curr);
+void get_cpu_usage(CPUStats *curr);
 
 void get_top_processes();
 
@@ -69,7 +69,7 @@ void get_network_io(NetStats *stats);
 
 void get_disk_usage(const char *path, long *total, long *free);
 
-void system_monitor();
+void* system_monitor();
 
 char *generate_json_data();
 

@@ -53,8 +53,6 @@ bool connect_to_server(const char *, int);
 void handle_server_messages();
 void signal_handler(int);
 void get_username_and_station_name(char *, size_t);
-
 void run_system_monitor_server(const char *, int, int);
-
 
 #endif

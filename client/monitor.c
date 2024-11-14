@@ -10,7 +10,7 @@ long long g_net_rx = 0;
 long long g_net_tx = 0;
 double g_disk_usage = 0.0;
 
-void system_monitor()
+void* system_monitor()
 {
     CPUStats prev_cpu, curr_cpu;
     long total_mem, free_mem;
@@ -21,7 +21,7 @@ void system_monitor()
     {
         usleep(500000);
 
-        get_cpu_usage(&prev_cpu, &curr_cpu);
+        get_cpu_usage(&curr_cpu);
         g_cpu_usage = calculate_cpu_usage(&prev_cpu, &curr_cpu);
         prev_cpu = curr_cpu;
 
@@ -43,6 +43,7 @@ void system_monitor()
         get_disk_usage("/", &total_disk, &free_disk);
         g_disk_usage = (total_disk - free_disk) * 100.0 / total_disk;
     }
+ return NULL;
 }
 
 char *generate_json_data()
@@ -63,13 +64,11 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data)
 
         if (hm->uri.len == 5 && memcmp(hm->uri.buf, "/data", 5) == 0)
         {
-            // Respond with JSON data
             char *json_data = generate_json_data();
             mg_http_reply(nc, 200, "Content-Type: application/json\r\n", json_data);
         }
         else
         {
-            // Serve the main HTML page
             mg_http_reply(nc, 200, "Content-Type: text/html\r\n",
                           "<html>"
                           "<head><title>System Monitor</title>"
@@ -115,31 +114,30 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data)
     }
 }
 
-void get_cpu_usage(CPUStats *prev, CPUStats *curr)
+void get_cpu_usage(CPUStats *curr)
 {
-    int proc_fd = open(PROC_STAT, O_RDONLY); // Deschide fișierul /proc/stat
+    int proc_fd = open(PROC_STAT, O_RDONLY); 
     if (proc_fd < 0)
     {
-        write(2, "Error opening /proc/stat\n", 25); // Afișează eroare dacă nu poate deschide
+        write(2, "Error opening /proc/stat\n", 25);
         exit(1);
     }
 
-    char buffer[BUF_SIZE]; // Buffer pentru stocarea datelor citite
+    char buffer[BUF_SIZE];
     int bytes_read = read(proc_fd, buffer, sizeof(buffer) - 1);
     if (bytes_read > 0)
     {
-        buffer[bytes_read] = '\0';         // Termină șirul de caractere citit
-        char *token = strtok(buffer, " "); // Tokenizează șirul pentru a găsi datele CPU
+        buffer[bytes_read] = '\0';
+        char *token = strtok(buffer, " ");
         if (token && strcmp(token, "cpu") == 0)
         {
-            // Extrage și convertește datele de utilizare a CPU
             curr->user = atoll(strtok(NULL, " "));
             curr->nice = atoll(strtok(NULL, " "));
             curr->system = atoll(strtok(NULL, " "));
             curr->idle = atoll(strtok(NULL, " "));
         }
     }
-    close(proc_fd); // Închide fișierul
+    close(proc_fd);
 }
 
 double calculate_cpu_usage(CPUStats *prev, CPUStats *curr)
@@ -150,120 +148,118 @@ double calculate_cpu_usage(CPUStats *prev, CPUStats *curr)
     long long curr_total = curr->user + curr->nice + curr->system + curr->idle;
     long long total_diff = curr_total - prev_total;
     long long idle_diff = curr_idle - prev_idle;
-    return (total_diff - idle_diff) * 100.0 / total_diff; // Returnează procentajul de utilizare a CPU
+    return (total_diff - idle_diff) * 100.0 / total_diff;
 }
 
 void get_memory_usage(long *total, long *free)
 {
-    int mem_fd = open(PROC_MEMINFO, O_RDONLY); // Deschide fișierul /proc/meminfo
+    int mem_fd = open(PROC_MEMINFO, O_RDONLY);
     if (mem_fd < 0)
     {
-        write(2, "Error opening /proc/meminfo\n", 28); // Afișează eroare dacă nu poate deschide
+        write(2, "Error opening /proc/meminfo\n", 28);
         exit(1);
     }
 
-    char buffer[BUF_SIZE]; // Buffer pentru stocarea datelor citite
+    char buffer[BUF_SIZE];
     int bytes_read = read(mem_fd, buffer, sizeof(buffer) - 1);
     if (bytes_read > 0)
     {
-        buffer[bytes_read] = '\0';         // Termină șirul de caractere citit
-        char *line = strtok(buffer, "\n"); // Tokenizează fiecare linie
+        buffer[bytes_read] = '\0';
+        char *line = strtok(buffer, "\n");
         while (line != NULL)
         {
-            // Extrage totalul și memoria liberă din fișier
             if (strncmp(line, "MemTotal:", 9) == 0)
             {
-                *total = atol(line + 10); // Totalul memoriei
+                *total = atol(line + 10);
             }
             else if (strncmp(line, "MemFree:", 8) == 0)
             {
-                *free = atol(line + 9); // Memoria liberă
+                *free = atol(line + 9);
             }
-            line = strtok(NULL, "\n"); // Continuă cu linia următoare
+            line = strtok(NULL, "\n");
         }
     }
-    close(mem_fd); // Închide fișierul
+    close(mem_fd);
 }
 
 void get_disk_io(long long *reads, long long *writes)
 {
-    int disk_fd = open(PROC_DISKSTATS, O_RDONLY); // Deschide fișierul /proc/diskstats
+    int disk_fd = open(PROC_DISKSTATS, O_RDONLY);
     if (disk_fd < 0)
     {
-        write(2, "Error opening /proc/diskstats\n", 30); // Afișează eroare dacă nu poate deschide
+        write(2, "Error opening /proc/diskstats\n", 30);
         exit(1);
     }
 
-    char buffer[BUF_SIZE]; // Buffer pentru stocarea datelor citite
+    char buffer[BUF_SIZE];
     *reads = 0;
     *writes = 0;
     int bytes_read;
     while ((bytes_read = read(disk_fd, buffer, sizeof(buffer) - 1)) > 0)
     {
-        buffer[bytes_read] = '\0';         // Termină șirul de caractere citit
-        char *line = strtok(buffer, "\n"); // Tokenizează fiecare linie
+        buffer[bytes_read] = '\0';
+        char *line = strtok(buffer, "\n");
         while (line != NULL)
         {
             long long read, write;
-            // Extrage valorile de citire/scriere pentru fiecare linie
             int fields = sscanf(line, "%*d %*d %*s %lld %*d %*d %*d %lld", &read, &write);
             if (fields == 2)
             {
-                *reads += read;   // Adaugă la totalul citirilor
-                *writes += write; // Adaugă la totalul scrierilor
+                *reads += read;
+                *writes += write;
             }
-            line = strtok(NULL, "\n"); // Continuă cu linia următoare
+            line = strtok(NULL, "\n");
         }
     }
-    close(disk_fd); // Închide fișierul
+    close(disk_fd);
 }
 
 void get_network_io(NetStats *stats)
 {
-    int net_fd = open(PROC_NET_DEV, O_RDONLY); // Deschide fișierul /proc/net/dev
+    int net_fd = open(PROC_NET_DEV, O_RDONLY);
     if (net_fd < 0)
     {
-        write(2, "Error opening /proc/net/dev\n", 28); // Afișează eroare dacă nu poate deschide
+        write(2, "Error opening /proc/net/dev\n", 28);
         exit(1);
     }
 
-    char buffer[BUF_SIZE]; // Buffer pentru stocarea datelor citite
+    char buffer[BUF_SIZE];
     int bytes_read = read(net_fd, buffer, sizeof(buffer) - 1);
     if (bytes_read > 0)
     {
-        buffer[bytes_read] = '\0';         // Termină șirul de caractere citit
-        char *line = strtok(buffer, "\n"); // Tokenizează fiecare linie
+        buffer[bytes_read] = '\0';
+        char *line = strtok(buffer, "\n");
         stats->rx_bytes = 0;
         stats->tx_bytes = 0;
         while (line != NULL)
         {
-            if (strstr(line, ":") != NULL) // Salt peste liniile de antet
+            if (strstr(line, ":") != NULL)
             {
                 char iface[20];
                 long long rx, tx;
                 sscanf(line, "%s %lld %*d %*d %*d %*d %*d %*d %*d %lld", iface, &rx, &tx);
-                if (strcmp(iface, "lo:") != 0) // Exclude loopback-ul
+                if (strcmp(iface, "lo:") != 0)
                 {
-                    stats->rx_bytes += rx; // Adaugă la totalul de date recepționate
-                    stats->tx_bytes += tx; // Adaugă la totalul de date transmise
+                    stats->rx_bytes += rx;
+                    stats->tx_bytes += tx;
                 }
             }
-            line = strtok(NULL, "\n"); // Continuă cu linia următoare
+            line = strtok(NULL, "\n");
         }
     }
-    close(net_fd); // Închide fișierul
+    close(net_fd);
 }
 
 void get_disk_usage(const char *path, long *total, long *free)
 {
-    struct statvfs stat; // Structură pentru statistici de sistem de fișiere
+    struct statvfs stat;
     if (statvfs(path, &stat) != 0)
     {
-        write(2, "Error getting disk usage\n", 25); // Afișează eroare dacă nu poate obține datele
+        write(2, "Error getting disk usage\n", 25);
         exit(1);
     }
-    *total = stat.f_blocks * stat.f_frsize; // Total spațiu pe disc
-    *free = stat.f_bfree * stat.f_frsize;   // Spațiu liber pe disc
+    *total = stat.f_blocks * stat.f_frsize;
+    *free = stat.f_bfree * stat.f_frsize;
 }
 
 void run_system_monitor_server(char *ip_address, int port, time_t duration)
