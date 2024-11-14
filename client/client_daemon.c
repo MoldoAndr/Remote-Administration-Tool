@@ -119,7 +119,7 @@ int handle_monitor_command(const char *server_message, char *response)
 
     pthread_detach(monitor_thread);
 
-    snprintf(response, BUFFER_SIZE, "monitor %s:%d", ip, PORT);
+    snprintf(response, BUFFER_SIZE, "monitor http://%s:%d", ip, PORT);
     return 0;
 }
 

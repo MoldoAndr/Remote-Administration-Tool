@@ -45,7 +45,7 @@ clean:
 	rm -f $(OBJS)
 	rm -f $(LIB)
 	rm -f client_token.txt
-
+	rm -f LogFile.txt
 client_daemon.o: client_daemon.c
 mongoose.o: mongoose.c
 monitor.o: monitor.c

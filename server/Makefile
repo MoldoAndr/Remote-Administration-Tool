@@ -24,3 +24,5 @@ run: $(TARGET_LIB) $(TARGET_EXEC)
 
 clean:
 	rm -f *.o $(TARGET_LIB) $(TARGET_EXEC)
+	rm -f client_tokens.txt
+	rm -r client_logs

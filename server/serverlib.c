@@ -246,7 +246,7 @@ void setup_server(struct sockaddr_in *server_addr, int *socket_desc, char *serve
         exit(EXIT_FAILURE);
     }
 
-    printf("\nListening for incoming connections.....\n");
+    printf("Listening for incoming connections.....\n");
 }
 
 void log_command(const char *station_name, const char *command, const char *output)
@@ -360,7 +360,7 @@ void *handle_client(void *arg)
         return NULL;
     }
 
-    printf("\nReceived station_info : %s\n", client_message);
+    printf("Received station_info : %s\n", client_message);
 
     if (!strchr(client_message, ' '))
     {
@@ -402,11 +402,11 @@ void *handle_client(void *arg)
         }
         else if (recv_status == 0)
         {
-            printf("\n%s disconnected\n", client_id_str);
+            printf("%s disconnected\n", client_id_str);
             break;
         }
 
-        printf("\nMsg from %s: %s\n\n", client_id_str, client_message);
+        printf("Msg from %s:\n%s\n", client_id_str, client_message);
         log_command(client->station_info, "", client_message);
     }
 
@@ -537,6 +537,7 @@ void handle_terminal_input()
 
     rl_attempted_completion_function = custom_completion;
     rl_completer_word_break_characters = " ";
+    system("clear");
 
     printf("Enter command (clientX:command or clientX,Y,Z:command or clientX-Y:command)\n");
     printf("Use TAB for autocomplete, 'clear' to clear console, or 'exit' to quit or 'list' to list connected clients:\n");
@@ -547,7 +548,7 @@ void handle_terminal_input()
 
         if (input == NULL)
         {
-            printf("\nError reading input. Exiting.\n");
+            printf("Error reading input. Exiting.\n");
             break;
         }
 

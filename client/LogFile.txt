@@ -600,3 +600,13 @@ Date/Time: 2024-11-14 08:24:09 - Command: Am primit token
 Date/Time: 2024-11-14 08:24:09 - Command: Server received your station info.
 Date/Time: 2024-11-14 08:24:09 - Command: Server received your station info.
 Date/Time: 2024-11-14 08:24:09 - Command: Server received your station info.
+Date/Time: 2024-11-14 18:39:33 - Command: Am primit token
+Date/Time: 2024-11-14 18:39:33 - Command: Server received your station info.
+Date/Time: 2024-11-14 18:41:59 - Command: Server received your station info.
+Date/Time: 2024-11-14 18:45:22 - Command: Server received your station info.
+Date/Time: 2024-11-14 18:45:34 - Command: monitor
+Date/Time: 2024-11-14 18:48:23 - Command: Server received your station info.
+Date/Time: 2024-11-14 18:48:35 - Command: monitor
+Date/Time: 2024-11-14 18:48:44 - Command: ls
+Date/Time: 2024-11-14 18:50:39 - Command: Server received your station info.
+Date/Time: 2024-11-14 18:50:45 - Command: ls

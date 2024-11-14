@@ -293,7 +293,7 @@ void run_system_monitor_server(char *ip_address, int port, time_t duration)
     {
         if (time(NULL) - start_time >= duration)
         {
-            exit(EXIT_SUCCESS);
+           break;
         }
         mg_mgr_poll(&mgr, 600);
     }
