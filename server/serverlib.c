@@ -531,6 +531,12 @@ void update_active_clients()
     }
 }
 
+void info()
+{
+    printf("Enter command (clientX:command or clientX,Y,Z:command or clientX-Y:command)\n");
+    printf("Use TAB for autocomplete, 'clear' to clear console, or 'exit' to quit or 'list' to list connected clients:\n");
+}
+
 void handle_terminal_input()
 {
     char *input;
@@ -538,10 +544,8 @@ void handle_terminal_input()
     rl_attempted_completion_function = custom_completion;
     rl_completer_word_break_characters = " ";
     system("clear");
-
-    printf("Enter command (clientX:command or clientX,Y,Z:command or clientX-Y:command)\n");
-    printf("Use TAB for autocomplete, 'clear' to clear console, or 'exit' to quit or 'list' to list connected clients:\n");
-
+    info();
+   
     while (1)
     {
         input = readline(NULL);
@@ -577,8 +581,7 @@ void handle_terminal_input()
         if (strstr(input, "clear") == input)
         {
             system("clear");
-            printf("Enter command (clientX:command or clientX,Y,Z:command or clientX-Y:command)\n");
-            printf("Use TAB for autocomplete, 'clear' to clear console, or 'exit' to quit:\n");
+            info();
             free(input);
             continue;
         }
@@ -592,8 +595,7 @@ void handle_terminal_input()
 
         if (strncmp(input, "client", 6) != 0)
         {
-            printf("Invalid command format. Use clientX,Y,Z:command or clientX-Y:command\n");
-            printf("Use TAB for autocomplete, 'clear' to clear console, or 'exit' to quit:\n");
+            info();
             free(input);
             continue;
         }
@@ -601,9 +603,7 @@ void handle_terminal_input()
         char *colon = strchr(input, ':');
         if (colon == NULL)
         {
-            printf("Invalid command format. Use clientX,Y,Z:command or clientX-Y:command\n");
-            printf("Use TAB for autocomplete, 'clear' to clear console, or 'exit' to quit:\n");
-
+            info();
             free(input);
             continue;
         }
