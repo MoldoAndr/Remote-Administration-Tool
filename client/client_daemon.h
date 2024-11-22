@@ -5,7 +5,7 @@
 #define MAX_PATH 256
 #define LOG_FILE_NAME "LogFile.txt"
 #define TOKEN_FILENAME "client_token.txt"
-#define IP_BUFFER_SIZE 16
+#define IP_BUFFER_SIZE 64
 #define PORT 52577
 #define MAX_ARGS 100
 

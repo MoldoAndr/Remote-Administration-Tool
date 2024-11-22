@@ -66,14 +66,14 @@ int get_system_ip(char *ip_buffer, size_t buffer_size)
         exit(0);
     }
     else
-    { // Parent process
+    {
         close(pipe_fd[1]);
         ssize_t bytes_read = read(pipe_fd[0], ip_buffer, buffer_size - 1);
         close(pipe_fd[0]);
 
         if (bytes_read > 0)
         {
-            ip_buffer[12] = '\0'; // Ensure null termination
+            ip_buffer[bytes_read - 1] = '\0';
             return 0;
         }
         return -1;
@@ -97,7 +97,7 @@ int handle_monitor_command(const char *server_message, char *response)
         snprintf(response, BUFFER_SIZE, "failed to get system IP");
         return -1;
     }
-
+    ip[strlen(ip) - 1] = '\0';
     monitor_args_t *args = malloc(sizeof(monitor_args_t));
     if (args == NULL)
     {
@@ -105,7 +105,7 @@ int handle_monitor_command(const char *server_message, char *response)
         return -1;
     }
 
-    strncpy(args->ip, ip, IP_BUFFER_SIZE);
+    strncpy(args->ip, ip, strlen(ip));
     args->port = PORT;
     args->duration = (time_t)atoi(token);
 

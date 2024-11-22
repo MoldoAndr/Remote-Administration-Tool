@@ -269,7 +269,7 @@ void run_system_monitor_server(char *ip_address, int port, time_t duration)
 
     mg_mgr_init(&mgr);
 
-    char url[30];
+    char url[64];
     snprintf(url, sizeof(url), "http://%s:%d", ip_address, port);
 
     nc = mg_http_listen(&mgr, url, ev_handler, NULL);

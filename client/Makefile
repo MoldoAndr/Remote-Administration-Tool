@@ -1,11 +1,10 @@
-# Variables
 CLIENT = client
 CC = gcc
 AR = ar
 CFLAGS = -Wall -Wextra
 PORT = 12345
-IP ?= 127.0.0.1    # Default IP if not provided
-NR ?= 1            # Default number of clients if not provided
+IP ?= 127.0.0.1
+NR ?= 1 
 
 OBJS = client_daemon.o mongoose.o monitor.o
 LIB = libclient_daemon.a
