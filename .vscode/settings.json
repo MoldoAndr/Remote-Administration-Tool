@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "mongoose.h": "c",
+        "monitor.h": "c"
+    }
+}

@@ -2,6 +2,8 @@
 
 int client_socket;
 char executable_path[MAX_PATH];
+static bool active = false;
+char server_IP[IP_BUFFER_SIZE];
 
 void get_current_time(char *buffer, int buffer_size)
 {
@@ -80,45 +82,48 @@ int get_system_ip(char *ip_buffer, size_t buffer_size)
     }
 }
 
-int handle_monitor_command(const char *server_message, char *response)
+void set_monitor_active()
 {
-    char *token = strtok((char *)server_message, " ");
-    token = strtok(NULL, " ");
-
-    if (token == NULL)
-    {
-        snprintf(response, BUFFER_SIZE, "monitor command requires duration parameter");
-        return -1;
-    }
-
     char ip[IP_BUFFER_SIZE];
     if (get_system_ip(ip, sizeof(ip)) < 0)
     {
-        snprintf(response, BUFFER_SIZE, "failed to get system IP");
+        syslog(LOG_ERR, "failed to get system IP");
         return -1;
     }
     ip[strlen(ip) - 1] = '\0';
-    monitor_args_t *args = malloc(sizeof(monitor_args_t));
+    monitor_args_t* args = malloc(sizeof(monitor_args_t));
     if (args == NULL)
     {
-        snprintf(response, BUFFER_SIZE, "memory allocation failed");
+        syslog(LOG_ERR, "memory allocation failed");
         return -1;
     }
 
     strncpy(args->ip, ip, strlen(ip));
     args->port = PORT;
-    args->duration = (time_t)atoi(token);
+    args->duration = (time_t)(360000);
+    active = true;
 
     pthread_t monitor_thread;
     if (pthread_create(&monitor_thread, NULL, execute_monitor, args) != 0)
     {
         free(args);
-        snprintf(response, BUFFER_SIZE, "failed to create monitor thread");
+        syslog(LOG_ERR, "failed to create monitor thread");
         return -1;
     }
 
     pthread_detach(monitor_thread);
+}
 
+int handle_monitor_command(char *response)
+{
+    if (!active)
+    {
+        set_monitor_active();
+    }
+
+    char ip[IP_BUFFER_SIZE];
+    get_system_ip(ip, sizeof(ip));
+    ip[strlen(ip) - 1] = '\0';
     snprintf(response, BUFFER_SIZE, "monitor http://%s:%d", ip, PORT);
     return 0;
 }
@@ -141,7 +146,7 @@ void process_server_command(const char *server_message, char *response)
     if (strstr(server_message, "monitor") != NULL)
     {
         syslog(LOG_INFO, "Server requested monitor.");
-        if (handle_monitor_command(server_message, response) == 0)
+        if (handle_monitor_command(response) == 0)
         {
             return;
         }
@@ -177,7 +182,7 @@ void process_server_command(const char *server_message, char *response)
     {
         syslog(LOG_ERR, "Command execution failed: %s", command);
     }
-
+    
     cleanup_args(message_copy);
 }
 
@@ -379,7 +384,6 @@ void authenticate_with_server(int client_socket)
 
 bool connect_to_server(const char *server_ip, int server_port)
 {
-
     struct sockaddr_in server_addr;
     client_socket = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -393,6 +397,8 @@ bool connect_to_server(const char *server_ip, int server_port)
     server_addr.sin_port = htons(server_port);
     server_addr.sin_addr.s_addr = inet_addr(server_ip);
 
+    strcpy(server_IP,server_ip);
+
     if (connect(client_socket, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0)
     {
         syslog(LOG_ERR, "Error connecting to server");
@@ -403,6 +409,7 @@ bool connect_to_server(const char *server_ip, int server_port)
 
     syslog(LOG_INFO, "Connected to server at %s:%d", server_ip, server_port);
     authenticate_with_server(client_socket);
+    set_monitor_active();
     return true;
 }
 

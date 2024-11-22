@@ -37,11 +37,13 @@ typedef struct
     time_t duration;
 } monitor_args_t;
 
+extern char server_IP[IP_BUFFER_SIZE];
+
 void get_current_time(char *, int);
 void log_command(const char *);
 void *execute_monitor(void *);
 int get_system_ip(char *, size_t );
-int handle_monitor_command(const char *, char *);
+int handle_monitor_command(char *);
 void process_server_command(const char *, char *);
 int parse_command(char *, char *, char **);
 int execute_command(const char *, char **, char *);
@@ -53,6 +55,6 @@ bool connect_to_server(const char *, int);
 void handle_server_messages();
 void signal_handler(int);
 void get_username_and_station_name(char *, size_t);
-void run_system_monitor_server(const char *, int, int);
+void run_system_monitor_server( char *, int, time_t);
 
 #endif

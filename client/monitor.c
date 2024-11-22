@@ -1,5 +1,6 @@
 #include "monitor.h"
 #include "mongoose.h"
+#include "client_daemon.h"
 #include <pthread.h>
 
 double g_cpu_usage = 0.0;
@@ -9,6 +10,68 @@ long long g_disk_write = 0;
 long long g_net_rx = 0;
 long long g_net_tx = 0;
 double g_disk_usage = 0.0;
+
+#define MG_SOCK_STRINGIFY_IP 1
+#define MG_SOCK_STRINGIFY_PORT 2
+
+
+int mg_sock_addr_to_str(const struct sockaddr *sa, char *buf, size_t buf_len, int flags) {
+    char tmp[100];
+    
+    if (sa == NULL || buf == NULL || buf_len == 0) {
+        return -1;
+    }
+
+    // Clear the buffer
+    memset(buf, 0, buf_len);
+    
+    // Handle different socket address types
+    switch (sa->sa_family) {
+        case AF_INET: {
+            struct sockaddr_in *sin = (struct sockaddr_in *) sa;
+            
+            if (flags & MG_SOCK_STRINGIFY_IP) {
+                // Convert IP address to string
+                inet_ntop(AF_INET, &(sin->sin_addr), tmp, sizeof(tmp));
+                strncpy(buf, tmp, buf_len - 1);
+            }
+            
+            if (flags & MG_SOCK_STRINGIFY_PORT) {
+                // Append port number
+                snprintf(buf + strlen(buf), buf_len - strlen(buf), 
+                         "%s%d", 
+                         (flags & MG_SOCK_STRINGIFY_IP) ? ":" : "", 
+                         ntohs(sin->sin_port));
+            }
+            break;
+        }
+        
+        case AF_INET6: {
+            struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *) sa;
+            
+            if (flags & MG_SOCK_STRINGIFY_IP) {
+                // Convert IPv6 address to string
+                inet_ntop(AF_INET6, &(sin6->sin6_addr), tmp, sizeof(tmp));
+                strncpy(buf, tmp, buf_len - 1);
+            }
+            
+            if (flags & MG_SOCK_STRINGIFY_PORT) {
+                // Append port number
+                snprintf(buf + strlen(buf), buf_len - strlen(buf), 
+                         "%s%d", 
+                         (flags & MG_SOCK_STRINGIFY_IP) ? ":" : "", 
+                         ntohs(sin6->sin6_port));
+            }
+            break;
+        }
+        
+        default:
+            return -1;
+    }
+    
+    return strlen(buf);
+}
+
 
 void* system_monitor()
 {
@@ -60,6 +123,15 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data)
 {
     if (ev == MG_EV_HTTP_MSG)
     {
+        char client_ip[32];
+        inet_ntop(AF_INET, nc->rem.ip, client_ip, sizeof(client_ip));
+     
+
+        if (strcmp(client_ip, server_IP) != 0)
+        {
+            mg_http_reply(nc, 403, "Content-Type: text/plain\r\n", "Access denied\n");
+            return;
+        }
         struct mg_http_message *hm = (struct mg_http_message *)ev_data;
 
         if (hm->uri.len == 5 && memcmp(hm->uri.buf, "/data", 5) == 0)
@@ -273,7 +345,6 @@ void run_system_monitor_server(char *ip_address, int port, time_t duration)
     snprintf(url, sizeof(url), "http://%s:%d", ip_address, port);
 
     nc = mg_http_listen(&mgr, url, ev_handler, NULL);
-
     if (nc == NULL)
     {
         printf("Failed to create listener\n");
