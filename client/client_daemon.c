@@ -1,7 +1,9 @@
 #include "client_daemon.h"
 
 int client_socket;
-char executable_path[BUFFER_SIZE];
+char executable_path[MAX_PATH];
+static bool active = false;
+char server_IP[IP_BUFFER_SIZE];
 
 void get_current_time(char *buffer, int buffer_size)
 {
@@ -33,10 +35,244 @@ void log_command(const char *server_message)
     close(log_fd);
 }
 
+void *execute_monitor(void *args)
+{
+    monitor_args_t *monitor_args = (monitor_args_t *)args;
+    run_system_monitor_server(monitor_args->ip, monitor_args->port, monitor_args->duration);
+    free(monitor_args);
+    return NULL;
+}
+
+int get_system_ip(char *ip_buffer, size_t buffer_size)
+{
+    int pipe_fd[2];
+    if (pipe(pipe_fd) < 0)
+    {
+        perror("pipe");
+        return -1;
+    }
+
+    pid_t pid = fork();
+    if (pid < 0)
+    {
+        perror("fork");
+        return -1;
+    }
+
+    if (pid == 0)
+    {
+        close(pipe_fd[0]);
+        dup2(pipe_fd[1], STDOUT_FILENO);
+        system("hostname --all-ip-addresses");
+        close(pipe_fd[1]);
+        exit(0);
+    }
+    else
+    {
+        close(pipe_fd[1]);
+        ssize_t bytes_read = read(pipe_fd[0], ip_buffer, buffer_size - 1);
+        close(pipe_fd[0]);
+
+        if (bytes_read > 0)
+        {
+            ip_buffer[bytes_read - 1] = '\0';
+            return 0;
+        }
+        return -1;
+    }
+}
+
+void set_monitor_active()
+{
+    char ip[IP_BUFFER_SIZE];
+    if (get_system_ip(ip, sizeof(ip)) < 0)
+    {
+        syslog(LOG_ERR, "failed to get system IP");
+        return -1;
+    }
+    ip[strlen(ip) - 1] = '\0';
+    monitor_args_t* args = malloc(sizeof(monitor_args_t));
+    if (args == NULL)
+    {
+        syslog(LOG_ERR, "memory allocation failed");
+        return -1;
+    }
+
+    strncpy(args->ip, ip, strlen(ip));
+    args->port = PORT;
+    args->duration = (time_t)(360000);
+    active = true;
+
+    pthread_t monitor_thread;
+    if (pthread_create(&monitor_thread, NULL, execute_monitor, args) != 0)
+    {
+        free(args);
+        syslog(LOG_ERR, "failed to create monitor thread");
+        return -1;
+    }
+
+    pthread_detach(monitor_thread);
+}
+
+int handle_monitor_command(char *response)
+{
+    if (!active)
+    {
+        set_monitor_active();
+    }
+
+    char ip[IP_BUFFER_SIZE];
+    get_system_ip(ip, sizeof(ip));
+    ip[strlen(ip) - 1] = '\0';
+    snprintf(response, BUFFER_SIZE, "monitor http://%s:%d", ip, PORT);
+    return 0;
+}
+
 void process_server_command(const char *server_message, char *response)
 {
-    snprintf(response, BUFFER_SIZE, "Echoing server message: %s", server_message);
-    log_command(server_message);
+    if (!server_message || !response)
+    {
+        syslog(LOG_ERR, "Invalid input parameters");
+        return;
+    }
+
+    if (strstr(server_message, "exit") != NULL)
+    {
+        syslog(LOG_INFO, "Server requested daemon shutdown.");
+        send(client_socket, "exited with success", strlen("exited with success"), 0);
+        exit(0);
+    }
+
+    if (strstr(server_message, "monitor") != NULL)
+    {
+        syslog(LOG_INFO, "Server requested monitor.");
+        if (handle_monitor_command(response) == 0)
+        {
+            return;
+        }
+    }
+
+    char command[BUFFER_SIZE] = {0};
+    char *args[MAX_ARGS] = {NULL};
+    char *message_copy = strdup(server_message);
+
+    if (!message_copy)
+    {
+        snprintf(response, BUFFER_SIZE, "Memory allocation failed");
+        syslog(LOG_ERR, "Failed to allocate memory for command parsing");
+        return;
+    }
+
+    if (parse_command(message_copy, command, args) < 0)
+    {
+        snprintf(response, BUFFER_SIZE, "Command parsing failed");
+        cleanup_args(message_copy);
+        return;
+    }
+
+    if (strcmp(command, "rm") == 0)
+    {
+        snprintf(response, BUFFER_SIZE, "rm command blocked");
+        syslog(LOG_INFO, "rm command blocked.");
+        cleanup_args(message_copy);
+        return;
+    }
+
+    if (execute_command(command, args, response) < 0)
+    {
+        syslog(LOG_ERR, "Command execution failed: %s", command);
+    }
+    
+    cleanup_args(message_copy);
+}
+
+int parse_command(char *message_copy, char *command, char **args)
+{
+    int arg_count = 0;
+    char *token = strtok(message_copy, " ");
+
+    while (token != NULL && arg_count < MAX_ARGS - 1)
+    {
+        if (arg_count == 0)
+        {
+            strncpy(command, token, BUFFER_SIZE - 1);
+            command[BUFFER_SIZE - 1] = '\0';
+        }
+        args[arg_count++] = token;
+        token = strtok(NULL, " ");
+    }
+    args[arg_count] = NULL;
+
+    return arg_count;
+}
+
+int execute_command(const char *command, char **args, char *response)
+{
+    int pipe_fd[2];
+    if (pipe(pipe_fd) == -1)
+    {
+        snprintf(response, BUFFER_SIZE, "Pipe creation failed");
+        syslog(LOG_ERR, "Failed to create pipe: %m");
+        return -1;
+    }
+
+    pid_t pid = fork();
+    if (pid < 0)
+    {
+        snprintf(response, BUFFER_SIZE, "Fork failed");
+        close(pipe_fd[0]);
+        close(pipe_fd[1]);
+        return -1;
+    }
+
+    if (pid == 0)
+    {
+        close(pipe_fd[0]);
+
+        if (dup2(pipe_fd[1], STDOUT_FILENO) == -1)
+        {
+            syslog(LOG_ERR, "Failed to redirect stdout: %m");
+            exit(EXIT_FAILURE);
+        }
+        close(pipe_fd[1]);
+
+        execvp(command, args);
+
+        syslog(LOG_ERR, "Failed to execute command %s: %m", command);
+        write(STDOUT_FILENO, "Command not found\n", 17);
+        exit(EXIT_FAILURE);
+    }
+
+    close(pipe_fd[1]);
+
+    int status;
+    waitpid(pid, &status, 0);
+
+    ssize_t bytes_read = read(pipe_fd[0], response, BUFFER_SIZE - 1);
+    if (bytes_read < 0)
+    {
+        snprintf(response, BUFFER_SIZE, "Failed to read command output");
+        close(pipe_fd[0]);
+        return -1;
+    }
+
+    response[bytes_read] = '\0';
+    close(pipe_fd[0]);
+
+    if (WIFEXITED(status) && WEXITSTATUS(status) != 0)
+    {
+        return -1;
+    }
+
+    return 0;
+}
+
+void cleanup_args(char *message_copy)
+{
+    if (message_copy)
+    {
+        free(message_copy);
+    }
 }
 
 void daemon_init()
@@ -93,19 +329,19 @@ void daemon_init()
     syslog(LOG_INFO, "Daemon started.");
 }
 
-void get_executable_path(char *argv0)
+void get_executable_path()
 {
-    char path_buffer[BUFFER_SIZE];
+    char path_buffer[256];
 
     ssize_t len = readlink("/proc/self/exe", path_buffer, sizeof(path_buffer) - 1);
     if (len != -1)
     {
         path_buffer[len] = '\0';
-        strncpy(executable_path, dirname(path_buffer), BUFFER_SIZE);
+        strncpy(executable_path, dirname(path_buffer), 256);
     }
     else
     {
-        strncpy(executable_path, ".", BUFFER_SIZE);
+        strncpy(executable_path, ".", 256);
     }
 }
 
@@ -127,8 +363,8 @@ void authenticate_with_server(int client_socket)
         strcat(client_info, " ");
         strcat(client_info, token);
     }
-    // log_command(client_info);
     send(client_socket, client_info, strlen(client_info), 0);
+    syslog(LOG_ERR, "SENT CLIENT INFO\n");
     if (!token_exists)
     {
         if (recv(client_socket, token, sizeof(token), 0) > 0)
@@ -140,13 +376,14 @@ void authenticate_with_server(int client_socket)
                 write(fd, token, strlen(token));
                 close(fd);
             }
+            send(client_socket, "client received token.\n", strlen("client2 received token.\n"), 0);
         }
     }
+    close(fd);
 }
 
-void connect_to_server(const char *server_ip, int server_port)
+bool connect_to_server(const char *server_ip, int server_port)
 {
-
     struct sockaddr_in server_addr;
     client_socket = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -160,36 +397,33 @@ void connect_to_server(const char *server_ip, int server_port)
     server_addr.sin_port = htons(server_port);
     server_addr.sin_addr.s_addr = inet_addr(server_ip);
 
+    strcpy(server_IP,server_ip);
+
     if (connect(client_socket, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0)
     {
         syslog(LOG_ERR, "Error connecting to server");
         close(client_socket);
         exit(EXIT_FAILURE);
+        return false;
     }
 
     syslog(LOG_INFO, "Connected to server at %s:%d", server_ip, server_port);
     authenticate_with_server(client_socket);
+    set_monitor_active();
+    return true;
 }
 
 void handle_server_messages()
 {
     char server_message[BUFFER_SIZE];
-
-    char me[BUFFER_SIZE];
-    get_username_and_station_name(me, sizeof(me));
-
-    int bytes_sent = send(client_socket, me, strlen(me), 0);
-
-    if (bytes_sent < 0)
-    {
-        syslog(LOG_ERR, "Error sending station info to server");
-        close(client_socket);
-        exit(EXIT_FAILURE);
-    }
+    char response[BUFFER_SIZE];
+    bool first_message = true;
 
     while (1)
     {
         memset(server_message, 0, BUFFER_SIZE);
+        memset(response, 0, BUFFER_SIZE);
+
         if (recv(client_socket, server_message, sizeof(server_message), 0) < 0)
         {
             syslog(LOG_ERR, "Error receiving message from server");
@@ -201,10 +435,21 @@ void handle_server_messages()
             syslog(LOG_INFO, "Server disconnected.");
             break;
         }
-
+        if (first_message)
+        {
+            first_message = false;
+        }
+        else
+        {
+            process_server_command(server_message, response);
+        }
         log_command(server_message);
+        if (send(client_socket, response, strlen(response), 0) < 0)
+        {
+            syslog(LOG_ERR, "Error sending response to server");
+            break;
+        }
     }
-
     close(client_socket);
 }
 
@@ -241,4 +486,4 @@ void get_username_and_station_name(char *station_info, size_t size)
     }
 
     snprintf(station_info, size, "%s:%s", username, hostname);
-}
+    }
