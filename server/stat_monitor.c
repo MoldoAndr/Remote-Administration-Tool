@@ -110,7 +110,7 @@ char *process_clients_statistics()
 
     for (int i = 0; i < client_count; i++)
     {
-        if (clients[i] != NULL)
+        if (clients[i] != NULL && client_exists(i+1))
         {
             snprintf(url, sizeof(url), "http://%s:52577/data", inet_ntoa(clients[i]->address.sin_addr));
             data = get_metrics(url);

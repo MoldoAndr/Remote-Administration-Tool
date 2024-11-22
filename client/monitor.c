@@ -11,67 +11,6 @@ long long g_net_rx = 0;
 long long g_net_tx = 0;
 double g_disk_usage = 0.0;
 
-#define MG_SOCK_STRINGIFY_IP 1
-#define MG_SOCK_STRINGIFY_PORT 2
-
-
-int mg_sock_addr_to_str(const struct sockaddr *sa, char *buf, size_t buf_len, int flags) {
-    char tmp[100];
-    
-    if (sa == NULL || buf == NULL || buf_len == 0) {
-        return -1;
-    }
-
-    // Clear the buffer
-    memset(buf, 0, buf_len);
-    
-    // Handle different socket address types
-    switch (sa->sa_family) {
-        case AF_INET: {
-            struct sockaddr_in *sin = (struct sockaddr_in *) sa;
-            
-            if (flags & MG_SOCK_STRINGIFY_IP) {
-                // Convert IP address to string
-                inet_ntop(AF_INET, &(sin->sin_addr), tmp, sizeof(tmp));
-                strncpy(buf, tmp, buf_len - 1);
-            }
-            
-            if (flags & MG_SOCK_STRINGIFY_PORT) {
-                // Append port number
-                snprintf(buf + strlen(buf), buf_len - strlen(buf), 
-                         "%s%d", 
-                         (flags & MG_SOCK_STRINGIFY_IP) ? ":" : "", 
-                         ntohs(sin->sin_port));
-            }
-            break;
-        }
-        
-        case AF_INET6: {
-            struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *) sa;
-            
-            if (flags & MG_SOCK_STRINGIFY_IP) {
-                // Convert IPv6 address to string
-                inet_ntop(AF_INET6, &(sin6->sin6_addr), tmp, sizeof(tmp));
-                strncpy(buf, tmp, buf_len - 1);
-            }
-            
-            if (flags & MG_SOCK_STRINGIFY_PORT) {
-                // Append port number
-                snprintf(buf + strlen(buf), buf_len - strlen(buf), 
-                         "%s%d", 
-                         (flags & MG_SOCK_STRINGIFY_IP) ? ":" : "", 
-                         ntohs(sin6->sin6_port));
-            }
-            break;
-        }
-        
-        default:
-            return -1;
-    }
-    
-    return strlen(buf);
-}
-
 
 void* system_monitor()
 {

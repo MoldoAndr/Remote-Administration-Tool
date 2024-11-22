@@ -6,7 +6,7 @@ PORT = 12345
 IP ?= 127.0.0.1
 NR ?= 1 
 
-OBJS = client_daemon.o mongoose.o monitor.o
+OBJS = client_monitor.o network.o process_command.o setup.o utility.o mongoose.o monitor.o
 LIB = libclient_daemon.a
 
 .PHONY: all clean run_client run_clients
@@ -45,6 +45,11 @@ clean:
 	rm -f $(LIB)
 	rm -f client_token.txt
 	rm -f LogFile.txt
-client_daemon.o: client_daemon.c
+
+client_monitor.o: client_monitor.c
+network.o: network.c
+process_command.o: process_command.c
+setup.o: setup.c
+utility.o: utility.c
 mongoose.o: mongoose.c
 monitor.o: monitor.c

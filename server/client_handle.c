@@ -1,5 +1,16 @@
 #include "serverlib.h"
 
+bool client_exists(int client_no)
+{
+    
+    for (int i = 0; i < client_count; ++i)
+    {
+        if(clients[i]->id == client_no)
+            return true;
+    }
+    return false;
+}
+
 void accept_clients(int socket_desc, struct sockaddr_in *server_addr)
 {
     socklen_t client_size;

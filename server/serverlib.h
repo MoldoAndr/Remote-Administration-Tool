@@ -60,6 +60,7 @@ void accept_clients(int, struct sockaddr_in *);
 void setup_server(struct sockaddr_in *, int *, char *);
 void cleanup_client(struct client_info *);
 void send_to_client_list(const char *client_list, const char *command);
+bool client_exists(int client_no);
 
 //Command Logger Function
 void log_command(const char* station_name, const char * command, const char * output);
