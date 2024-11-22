@@ -1,7 +1,0 @@
-{
-    "files.associations": {
-        "*.embeddedhtml": "html",
-        "monitor.h": "c",
-        "mongoose.h": "c"
-    }
-}
