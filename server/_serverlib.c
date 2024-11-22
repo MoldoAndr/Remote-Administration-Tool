@@ -1,6 +1,7 @@
 #include "serverlib.h"
 
 #define TOKEN_FILE "client_tokens.txt"
+#define STATS_FILE "client_stats.txt"
 
 pthread_mutex_t client_count_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t clients_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -15,6 +16,7 @@ void initialize_commands()
     commands[0] = strdup("clear");
     commands[1] = strdup("exit");
     commands[2] = strdup("list");
+    commands[3] = strdup("stats");
     commands[3] = NULL;
 }
 
@@ -34,7 +36,7 @@ void add_command(const char *new_command)
 
 void list_clients()
 {
-    pthread_mutex_lock(&clients_mutex); // Blochează mutex-ul pentru acces sigur
+    pthread_mutex_lock(&clients_mutex);
 
     printf("Clienti conectati:\n");
     for (int i = 0; i < client_count; i++)
@@ -47,7 +49,7 @@ void list_clients()
         }
     }
 
-    pthread_mutex_unlock(&clients_mutex); // Deblochează mutex-ul
+    pthread_mutex_unlock(&clients_mutex);
 }
 
 int delete_command(const char *command_to_delete)
@@ -80,7 +82,6 @@ int delete_command(const char *command_to_delete)
             continue;
         }
 
-        // If we're shifting elements, move them
         if (read_idx != write_idx)
         {
             commands[write_idx] = commands[read_idx];
@@ -242,6 +243,14 @@ void setup_server(struct sockaddr_in *server_addr, int *socket_desc, char *serve
     {
         perror("Error while listening");
         exit(EXIT_FAILURE);
+    }
+
+    pthread_t thread_id;
+
+    if (pthread_create(&thread_id, NULL, background_writer, NULL) < 0)
+    {
+        printf("Could not create thread\n");
+        return;
     }
 
     printf("Listening for incoming connections.....\n");
@@ -531,8 +540,233 @@ void update_active_clients()
 
 void info()
 {
-    printf("Enter command (clientX:command or clientX,Y,Z:command or clientX-Y:command)\n");
-    printf("Use TAB for autocomplete, 'clear' to clear console, or 'exit' to quit or 'list' to list connected clients:\n");
+    printf("\n\n");
+    struct winsize w;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+
+    int terminalWidth = w.ws_col;
+
+    char first[] = "Enter command (clientX:command or clientX,Y,Z:command or clientX-Y:command)\n";
+    char second[] = "Use TAB for autocomplete, 'clear' to clear console, or 'exit' to quit or 'list' to list connected clients or stats:\n";
+
+    int textLength1 = 38;
+    int textLength2 = 35;
+    int textLength3 = strlen(first);
+    int textLength4 = strlen(second);
+
+    int padding1 = (terminalWidth - textLength1) / 2;
+    int padding2 = (terminalWidth - textLength2) / 2;
+    int padding3 = (terminalWidth - textLength3) / 2;
+    int padding4 = (terminalWidth - textLength4) / 2;
+
+    for (int i = 0; i < padding1; i++)
+    {
+        printf(" ");
+    }
+    char RAT_LOGO[][256] = {"  ░▒▓███████▓▒░  ░▒▓██████▓▒░ ▒▓███████▓▒░\n",
+                            "░▒▓█▓▒░░▒▓█▓▒░ ▒▓█▓▒░░▒▓█▓▒░  ░▒▓█▓▒░\n",
+                            "░▒▓█▓▒░░▒▓█▓▒░ ▒▓█▓▒░░▒▓█▓▒░  ░▒▓█▓▒░\n",
+                            "░▒▓███████▓▒░░ ▒▓████████▓▒░  ░▒▓█▓▒░\n",
+                            "░▒▓█▓▒░░▒▓█▓▒░ ▒▓█▓▒░░▒▓█▓▒░  ░▒▓█▓▒░\n",
+                            "░▒▓█▓▒░░▒▓█▓▒░ ▒▓█▓▒░░▒▓█▓▒░  ░▒▓█▓▒░\n",
+                            "░▒▓█▓▒░░▒▓█▓▒░ ▒▓█▓▒░░▒▓█▓▒░  ░▒▓█▓▒░\n"};
+    printf("%s", RAT_LOGO[0]);
+
+    for (int j = 1; j < 6; ++j)
+    {
+        for (int i = 0; i < padding2; ++i)
+        {
+            printf(" ");
+        }
+        printf("%s", RAT_LOGO[j]);
+    }
+
+    for (int i = 0; i < padding3; ++i)
+    {
+        printf(" ");
+    }
+    printf("%s", first);
+
+    for (int i = 0; i < padding4; ++i)
+    {
+        printf(" ");
+    }
+    printf("%s\n", second);
+}
+
+int extract_numbers(const char *str, float *numbers)
+{
+    int count = 0;
+    char *ptr = (char *)str;
+
+    while (*ptr)
+    {
+        while (*ptr && !isdigit(*ptr) && *ptr != '-' && *ptr != '.')
+        {
+            ptr++;
+        }
+
+        if (*ptr)
+        {
+            char *endptr;
+            float num = strtof(ptr, &endptr);
+            if (ptr != endptr)
+            {
+                numbers[count++] = num;
+                ptr = endptr;
+            }
+            else
+            {
+                ptr++;
+            }
+        }
+    }
+    return count;
+}
+
+float *get_metrics(const char *url)
+{
+    int pipefd[2];
+    pid_t pid;
+    static float numbers[MAX_NUMBERS];
+    char buffer[BUFFER_SIZE];
+
+    if (pipe(pipefd) == -1)
+    {
+        perror("pipe");
+        return NULL;
+    }
+
+    pid = fork();
+
+    if (pid == -1)
+    {
+        perror("fork");
+        return NULL;
+    }
+
+    if (pid == 0)
+    {
+        close(pipefd[0]);
+        dup2(pipefd[1], STDOUT_FILENO);
+        close(pipefd[1]);
+        execlp("curl", "curl", "-s", url, NULL);
+        perror("execlp");
+        exit(1);
+    }
+    else
+    {
+        close(pipefd[1]);
+        ssize_t bytes_read = read(pipefd[0], buffer, BUFFER_SIZE - 1);
+        if (bytes_read > 0)
+        {
+            buffer[bytes_read] = '\0';
+            int count = extract_numbers(buffer, numbers);
+            numbers[count] = -1;
+        }
+
+        close(pipefd[0]);
+        wait(NULL);
+    }
+
+    return numbers;
+}
+
+char *format_data(float *data)
+{
+    if (data == NULL)
+    {
+        fprintf(stderr, "Data is NULL\n");
+        return NULL;
+    }
+    char *formatted_data = malloc(256);
+    if (formatted_data == NULL)
+    {
+        perror("malloc failed");
+        exit(EXIT_FAILURE);
+    }
+    snprintf(formatted_data, 256,
+             "\n  CPU:%.2f\n  RAM:%.2f\n  DiskRead:%.2f\n  DiskWrite:%.2f\n  NetRx:%.2f\n  NetTx:%.2f\n  DiskUsage:%.2f\n",
+             data[0], data[1], data[2], data[3], data[4], data[5], data[6]);
+    return formatted_data;
+}
+
+char *process_clients_statistics()
+{
+    float *data;
+    char url[256];
+    char *total_data = (char *)malloc(MAX_CLIENTS * 256);
+    char auxiliar[256];
+
+    pthread_mutex_lock(&clients_mutex);
+
+    for (int i = 0; i < client_count; i++)
+    {
+        if (clients[i] != NULL)
+        {
+            snprintf(url, sizeof(url), "http://%s:52577/data", inet_ntoa(clients[i]->address.sin_addr));
+            data = get_metrics(url);
+
+            if (data != NULL)
+            {
+                char *formatted = format_data(data);
+                if (formatted != NULL)
+                {
+                    snprintf(auxiliar, 256, "==%s==%s\n", clients[i]->station_info, formatted);
+                    if (!i)
+                        strcpy(total_data, auxiliar);
+                    else
+                        strcat(total_data, auxiliar);
+                }
+            }
+            else
+            {
+                fprintf(stderr, "Failed to retrieve metrics for client: %s\n", clients[i]->station_info);
+                return NULL;
+            }
+            memset(url, 0, sizeof(url));
+        }
+    }
+
+    total_data[strlen(total_data) - 1] = '\0';
+    pthread_mutex_unlock(&clients_mutex);
+    return total_data;
+}
+
+void write_statistics()
+{
+    int fd = open(STATS_FILE, O_CREAT | O_WRONLY, 0666);
+
+    if (fd == -1)
+    {
+        write(STDERR_FILENO, "ERROR OPENING THE STATS FILE\n", 30);
+        return;
+    }
+
+    char *processed_output = process_clients_statistics();
+    usleep(10000);
+
+    int written = write(fd, processed_output, strlen(processed_output));
+
+    if (written < 0)
+    {
+        write(STDERR_FILENO, "ERROR WRITTING TO THE STATS FILE\n", 34);
+    }
+
+    free(processed_output);
+    close(fd);
+
+    return;
+}
+
+void *background_writer()
+{
+    while (true)
+    {
+        sleep(1);
+        write_statistics();
+    }
+    return NULL;
 }
 
 void handle_terminal_input()
@@ -543,9 +777,12 @@ void handle_terminal_input()
     rl_completer_word_break_characters = " ";
     system("clear");
     info();
-   
+
     while (1)
     {
+        printf("███▓▒░ ");
+        usleep(10000);
+
         input = readline(NULL);
 
         if (input == NULL)
@@ -584,9 +821,19 @@ void handle_terminal_input()
             continue;
         }
 
-        if (strstr(input, "list") == input) 
+        if (strstr(input, "list") == input)
         {
             list_clients();
+            free(input);
+            continue;
+        }
+
+        if (strstr(input, "stats") == input)
+        {
+            char *processed = process_clients_statistics();
+            printf("%s", processed);
+            if (processed)
+                free(processed);
             free(input);
             continue;
         }

@@ -1,8 +1,4 @@
 #include "serverlib.h"
-#include <stdio.h>
-#include <pthread.h>
-#include <stdlib.h>
-#include <signal.h>
 
 void handle_sigint(int sig)
 {

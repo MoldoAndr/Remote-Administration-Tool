@@ -15,22 +15,33 @@
 #include <uuid/uuid.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include <sys/ioctl.h>
+#include <sys/wait.h>
+#include <signal.h>
 
 #define MAX_CLIENTS 256
 #define BUFFER_SIZE 2048
+#define MAX_NUMBERS 10
 
-char **commands = NULL;
+extern char **commands;
+
+extern pthread_mutex_t client_count_mutex;
+extern pthread_mutex_t clients_mutex;
+
+extern int client_count;
+extern struct client_info *clients[MAX_CLIENTS];
+extern char *log_folder;
+
+extern int active_client_numbers[MAX_CLIENTS];
+extern int num_active_clients;
 
 struct client_info
 {
     int socket;
     struct sockaddr_in address;
     int id;
-    char station_info[BUFFER_SIZE];
+    char station_info[MAX_CLIENTS];
 };
-
-int active_client_numbers[MAX_CLIENTS];
-int num_active_clients = 0;
 
 //Token Functions
 void generate_token(char *token);
@@ -40,6 +51,7 @@ bool validate_token(const char *client_info, const char *received_token);
 //Server Terminal Handler Function
 void handle_terminal_input();
 void list_clients(); 
+void info();
 
 //Client Handle and Communication Functions
 void *handle_client(void *arg);
@@ -59,5 +71,13 @@ void initialize_commands();
 void add_command(const char* new_command);
 int delete_command(const char *command_to_delete);
 void free_commands();
+
+//Monitor Clients Statistics
+char* process_clients_statistics();
+float *get_metrics(const char *url);
+int extract_numbers(const char *str, float *numbers);
+void write_statistics();
+void* background_writer();
+char *format_data(float *data);
 
 #endif
