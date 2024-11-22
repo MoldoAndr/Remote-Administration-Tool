@@ -126,3 +126,60 @@ void handle_terminal_input()
         usleep(10000);
     }
 }
+
+
+void info()
+{
+    printf("\n\n");
+    struct winsize w;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+
+    int terminalWidth = w.ws_col;
+
+    char first[] = "Enter command (clientX:command or clientX,Y,Z:command or clientX-Y:command)\n";
+    char second[] = "Use TAB for autocomplete, 'clear' to clear console, or 'exit' to quit or 'list' to list connected clients or 'stats' to show clients stats:\n";
+
+    int textLength1 = 38;
+    int textLength2 = 35;
+    int textLength3 = strlen(first);
+    int textLength4 = strlen(second);
+
+    int padding1 = (terminalWidth - textLength1) / 2;
+    int padding2 = (terminalWidth - textLength2) / 2;
+    int padding3 = (terminalWidth - textLength3) / 2;
+    int padding4 = (terminalWidth - textLength4) / 2;
+
+    for (int i = 0; i < padding1; i++)
+    {
+        printf(" ");
+    }
+    char RAT_LOGO[][256] = {"  ░▒▓███████▓▒░  ░▒▓██████▓▒░ ▒▓███████▓▒░\n",
+                            "░▒▓█▓▒░░▒▓█▓▒░ ▒▓█▓▒░░▒▓█▓▒░  ░▒▓█▓▒░\n",
+                            "░▒▓█▓▒░░▒▓█▓▒░ ▒▓█▓▒░░▒▓█▓▒░  ░▒▓█▓▒░\n",
+                            "░▒▓███████▓▒░░ ▒▓████████▓▒░  ░▒▓█▓▒░\n",
+                            "░▒▓█▓▒░░▒▓█▓▒░ ▒▓█▓▒░░▒▓█▓▒░  ░▒▓█▓▒░\n",
+                            "░▒▓█▓▒░░▒▓█▓▒░ ▒▓█▓▒░░▒▓█▓▒░  ░▒▓█▓▒░\n",
+                            "░▒▓█▓▒░░▒▓█▓▒░ ▒▓█▓▒░░▒▓█▓▒░  ░▒▓█▓▒░\n"};
+    printf("%s", RAT_LOGO[0]);
+
+    for (int j = 1; j < 6; ++j)
+    {
+        for (int i = 0; i < padding2; ++i)
+        {
+            printf(" ");
+        }
+        printf("%s", RAT_LOGO[j]);
+    }
+
+    for (int i = 0; i < padding3; ++i)
+    {
+        printf(" ");
+    }
+    printf("%s", first);
+
+    for (int i = 0; i < padding4; ++i)
+    {
+        printf(" ");
+    }
+    printf("%s\n", second);
+}
