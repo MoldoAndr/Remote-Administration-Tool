@@ -2,12 +2,14 @@
 
 void initialize_commands()
 {
-    commands = malloc(5 * sizeof(char *));
+    commands = malloc(7 * sizeof(char *));
     commands[0] = strdup("clear");
     commands[1] = strdup("exit");
     commands[2] = strdup("list");
     commands[3] = strdup("stats");
-    commands[4] = NULL;
+    commands[4] = strdup("log");
+    commands[5] = strdup("commands");
+    commands[6] = NULL;
 }
 
 void add_command(const char *new_command)

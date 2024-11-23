@@ -1,11 +1,26 @@
 #include "serverlib.h"
 
+int compare_in_addr(const struct in_addr *addr1, const struct in_addr *addr2)
+{
+    return addr1->s_addr == addr2->s_addr;
+}
+
 bool client_exists(int client_no)
 {
-    
+
     for (int i = 0; i < client_count; ++i)
     {
-        if(clients[i]->id == client_no)
+        if (clients[i]->id == client_no)
+            return true;
+    }
+    return false;
+}
+
+bool already_connected(struct sockaddr_in *info)
+{
+    for (int i = 0; i < client_count; ++i)
+    {
+        if (clients[i] != NULL && compare_in_addr(&clients[i]->address.sin_addr, &info->sin_addr))
             return true;
     }
     return false;
@@ -21,7 +36,12 @@ void accept_clients(int socket_desc, struct sockaddr_in *server_addr)
         struct client_info *client = malloc(sizeof(struct client_info));
         client_size = sizeof(client->address);
         client->socket = accept(socket_desc, (struct sockaddr *)&client->address, &client_size);
-
+        if (client && already_connected(&client->address))
+        {
+            printf("A client that is already connected: %s, tries to connect\nBlocked!\n", client->station_info);
+            free(client);
+            continue;
+        }
         if (client->socket < 0)
         {
             printf("Can't accept\n");

