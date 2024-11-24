@@ -6,7 +6,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/server",
-            "args": ["192.168.50.140"],            
+            "args": ["10.10.22.193"],            
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [

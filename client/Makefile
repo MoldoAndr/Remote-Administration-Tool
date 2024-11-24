@@ -9,9 +9,14 @@ NR ?= 1
 OBJS = client_monitor.o network.o process_command.o setup.o utility.o mongoose.o monitor.o
 LIB = libclient_daemon.a
 
-.PHONY: all clean run_client run_clients
+.PHONY: all clean dependencies run_client run_clients
 
-all: $(CLIENT)
+all: dependencies $(CLIENT)
+
+dependencies:
+	@echo "Installing dependencies..."
+	@sudo apt install -y gnome-screenshot
+	@echo "Dependencies installed."
 
 $(CLIENT): main.c $(LIB)
 	$(CC) $(CFLAGS) $< -L. -lclient_daemon -o $@
@@ -22,7 +27,7 @@ $(LIB): $(OBJS)
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-run_client: $(CLIENT)
+run_client: $(CLIENT) dependencies
 	@if [ -z "$(IP)" ]; then \
 		echo "Error: IP address not provided. Use: make run_client IP=<ip_address>"; \
 		exit 1; \
@@ -53,3 +58,4 @@ setup.o: setup.c
 utility.o: utility.c
 mongoose.o: mongoose.c
 monitor.o: monitor.c
+
