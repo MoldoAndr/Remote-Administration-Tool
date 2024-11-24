@@ -2,6 +2,14 @@
 
 #define STATS_FILE "client_stats.txt"
 
+struct HttpRequestData {
+    const char *url;
+    char *response;
+    int done;
+    pthread_mutex_t mutex;
+    pthread_cond_t cond;
+};
+
 int extract_numbers(const char *str, float *numbers)
 {
     int count = 0;
@@ -32,53 +40,84 @@ int extract_numbers(const char *str, float *numbers)
     return count;
 }
 
-float *get_metrics(const char *url)
-{
-    int pipefd[2];
-    pid_t pid;
-    static float numbers[MAX_NUMBERS];
-    char buffer[BUFFER_SIZE];
 
-    if (pipe(pipefd) == -1)
-    {
-        perror("pipe");
+void* curl_thread(void *arg) {
+    struct HttpRequestData *req = (struct HttpRequestData *)arg;
+    FILE *fp;
+    char command[BUFFER_SIZE];
+    
+    snprintf(command, BUFFER_SIZE, "curl -s %s", req->url);
+    
+    fp = popen(command, "r");
+    if (fp == NULL) {
+        pthread_mutex_lock(&req->mutex);
+        req->done = -1;
+        pthread_cond_signal(&req->cond);
+        pthread_mutex_unlock(&req->mutex);
         return NULL;
     }
-
-    pid = fork();
-
-    if (pid == -1)
-    {
-        perror("fork");
+    
+    req->response = malloc(BUFFER_SIZE);
+    if (req->response == NULL) {
+        pclose(fp);
+        pthread_mutex_lock(&req->mutex);
+        req->done = -1;
+        pthread_cond_signal(&req->cond);
+        pthread_mutex_unlock(&req->mutex);
         return NULL;
     }
-
-    if (pid == 0)
-    {
-        close(pipefd[0]);
-        dup2(pipefd[1], STDOUT_FILENO);
-        close(pipefd[1]);
-        execlp("curl", "curl", "-s", url, NULL);
-        perror("execlp");
-        exit(1);
-    }
-    else
-    {
-        close(pipefd[1]);
-        ssize_t bytes_read = read(pipefd[0], buffer, BUFFER_SIZE - 1);
-        if (bytes_read > 0)
-        {
-            buffer[bytes_read] = '\0';
-            int count = extract_numbers(buffer, numbers);
-            numbers[count] = -1;
-        }
-
-        close(pipefd[0]);
-        wait(NULL);
-    }
-
-    return numbers;
+    
+    size_t bytes_read = fread(req->response, 1, BUFFER_SIZE - 1, fp);
+    req->response[bytes_read] = '\0';
+    
+    pclose(fp);
+    
+    pthread_mutex_lock(&req->mutex);
+    req->done = 1;
+    pthread_cond_signal(&req->cond);
+    pthread_mutex_unlock(&req->mutex);
+    
+    return NULL;
 }
+
+float *get_metrics(const char *url) {
+    static float numbers[MAX_NUMBERS];
+    pthread_t thread;
+    struct HttpRequestData req = {
+        .url = url,
+        .response = NULL,
+        .done = 0
+    };
+    
+    pthread_mutex_init(&req.mutex, NULL);
+    pthread_cond_init(&req.cond, NULL);
+    
+    if (pthread_create(&thread, NULL, curl_thread, &req) != 0) {
+        pthread_mutex_destroy(&req.mutex);
+        pthread_cond_destroy(&req.cond);
+        return NULL;
+    }
+    
+    pthread_mutex_lock(&req.mutex);
+    while (!req.done) {
+        pthread_cond_wait(&req.cond, &req.mutex);
+    }
+    pthread_mutex_unlock(&req.mutex);
+    
+    if (req.done > 0 && req.response != NULL) {
+        int count = extract_numbers(req.response, numbers);
+        numbers[count] = -1;
+        free(req.response);
+    }
+    
+    pthread_join(thread, NULL);
+    pthread_mutex_destroy(&req.mutex);
+    pthread_cond_destroy(&req.cond);
+    
+    return (req.done > 0) ? numbers : NULL;
+}
+
+
 
 char *format_data(float *data)
 {
