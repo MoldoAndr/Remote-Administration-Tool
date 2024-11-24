@@ -38,7 +38,7 @@ void accept_clients(int socket_desc, struct sockaddr_in *server_addr)
         struct client_info *client = malloc(sizeof(struct client_info));
         client_size = sizeof(client->address);
         client->socket = accept(socket_desc, (struct sockaddr *)&client->address, &client_size);
-        
+
         if (client && already_connected(&client->address))
         {
             printf("A client that is already connected: %s, tries to connect\nBlocked!\n", client->station_info);
@@ -46,7 +46,7 @@ void accept_clients(int socket_desc, struct sockaddr_in *server_addr)
                 free(client);
             continue;
         }
-        
+
         if (client->socket < 0)
         {
             printf("Can't accept\n");
@@ -67,7 +67,7 @@ void accept_clients(int socket_desc, struct sockaddr_in *server_addr)
                client->id, inet_ntoa(client->address.sin_addr), ntohs(client->address.sin_port));
 
         pthread_mutex_lock(&clients_mutex);
-        if (client->id>0)
+        if (client->id > 0)
             clients[client->id - 1] = client;
         pthread_mutex_unlock(&clients_mutex);
 
@@ -195,9 +195,9 @@ void cleanup_client(struct client_info *client)
         close(client->socket);
     }
     if (client)
-    {	
-	    free(client);
-	    client = NULL;
+    {
+        free(client);
+        client = NULL;
     }
 }
 

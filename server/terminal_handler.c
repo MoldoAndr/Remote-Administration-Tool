@@ -7,7 +7,7 @@ void print_logs()
 
     DIR *dir;
     struct dirent *entry;
-    char filepath[256];
+    char filepath[270];
 
     dir = opendir("client_logs");
     if (dir == NULL)
@@ -101,58 +101,80 @@ void list_commands()
     printf("\n");
 }
 
+char *trim(char *str)
+{
+    if (!str)
+        return NULL;
+    while (isspace((unsigned char)*str))
+        str++;
+    if (*str == 0)
+        return str;
+    char *end = str + strlen(str) - 1;
+    while (end > str && isspace((unsigned char)*end))
+        end--;
+    end[1] = '\0';
+    return str;
+}
+
+bool valid(char *input)
+{
+    char input_copy[256];
+    strncpy(input_copy, input, sizeof(input_copy) - 1);
+    input_copy[sizeof(input_copy) - 1] = '\0';
+    char *trimmed_input = trim(input_copy);
+    if (strlen(trimmed_input) == 0)
+        return false;
+    int i = 0;
+    while (commands[i])
+    {
+        char cmd_copy[256];
+        strncpy(cmd_copy, commands[i], sizeof(cmd_copy) - 1);
+        cmd_copy[sizeof(cmd_copy) - 1] = '\0';
+        char *trimmed_cmd = trim(cmd_copy);
+        if (strcmp(trimmed_cmd, trimmed_input) == 0)
+        {
+            return true;
+        }
+        if (strstr(trimmed_input, trimmed_cmd) == trimmed_input)
+        {
+            size_t cmd_len = strlen(trimmed_cmd);
+            if (trimmed_input[cmd_len] == '\0' || isspace(trimmed_input[cmd_len]))
+            {
+                return true;
+            }
+        }
+        i++;
+    }
+    return false;
+}
+
+void print_prompt()
+{
+    printf("███▓▒░ ");
+    fflush(stdout);
+}
+
 void handle_terminal_input()
 {
     char *input;
-
     rl_attempted_completion_function = custom_completion;
     rl_completer_word_break_characters = " ";
+
     system("clear");
     info();
 
     while (1)
     {
-        printf("███▓▒░ ");
-        usleep(10000);
-
+        print_prompt();
         input = readline(NULL);
 
         if (input == NULL)
         {
-            printf("Error reading input. Exiting.\n");
+            printf("\nError reading input or EOF received. Exiting.\n");
             break;
         }
 
-        if (input[0] != '\0')
-        {
-            add_history(input);
-        }
-
-        if (strstr(input, "exit") == input)
-        {
-            printf("Exiting terminal input handler.\n");
-            for (int i = 0; i < MAX_CLIENTS; i++)
-            {
-                if (clients[i] != NULL)
-                {
-                    close(clients[i]->socket);
-                    free(clients[i]);
-                }
-            }
-            free_commands();
-            free(input);
-            rl_clear_history();
-            exit(EXIT_SUCCESS);
-        }
-
-        if (strstr(input, "commands") == input)
-        {
-            list_commands();
-            free(input);
-            continue;
-        }
-
-        if (strstr(input, "clear") == input || strlen(input) == 0)
+        if (input[0] == '\0')
         {
             system("clear");
             info();
@@ -160,68 +182,163 @@ void handle_terminal_input()
             continue;
         }
 
-        if (strstr(input, "list") == input)
+        char *trimmed_input = strdup(input);
+        if (trimmed_input)
         {
-            list_clients();
-            free(input);
-            continue;
+            char *start = trimmed_input;
+            char *end = trimmed_input + strlen(trimmed_input) - 1;
+
+            while (*start && isspace(*start))
+                start++;
+            while (end > start && isspace(*end))
+                *end-- = '\0';
+
+            if (*start)
+            {
+                add_history(start);
+            }
+            free(trimmed_input);
         }
 
-        if (strstr(input, "stats") == input)
+        if (!valid(input))
         {
-            char *processed = process_clients_statistics();
-            printf("%s", processed);
-            if (processed)
-                free(processed);
-            free(input);
-            continue;
-        }
-
-        if (strstr(input, "log") == input)
-        {
-            print_logs();
-            free(input);
-            continue;
-        }
-
-        if (strncmp(input, "client", 6) != 0)
-        {
+            system("clear");
             info();
             free(input);
             continue;
         }
 
-        char *colon = strchr(input, ':');
-        if (colon == NULL)
+        if (handle_builtin_commands(input))
         {
-            info();
             free(input);
             continue;
         }
 
-        *colon = '\0';
-        char *client_list = input + 6;
-        char *command = colon + 1;
-
-        if (strlen(command) == 0)
+        if (handle_client_command(input))
         {
-            printf("Command cannot be empty.\n");
             free(input);
             continue;
         }
 
-        if (strlen(client_list) == 0)
-        {
-            printf("Client list cannot be empty.\n");
-            free(input);
-            continue;
-        }
-
-        send_to_client_list(client_list, command);
+        system("clear");
+        info();
         free(input);
-
-        usleep(10000);
     }
+
+    cleanup_and_exit();
+}
+
+bool handle_builtin_commands(const char *input)
+{
+    if (strstr(input, "exit") == input)
+    {
+        printf("Exiting terminal input handler.\n");
+        cleanup_and_exit();
+        exit(EXIT_SUCCESS);
+        return true;
+    }
+
+    if (strstr(input, "commands") == input)
+    {
+        list_commands();
+        return true;
+    }
+
+    if (strstr(input, "clear") == input)
+    {
+        system("clear");
+        info();
+        return true;
+    }
+
+    if (strstr(input, "list") == input)
+    {
+        list_clients();
+        return true;
+    }
+
+    if (strstr(input, "stats") == input)
+    {
+        char *processed = process_clients_statistics();
+        if (processed)
+        {
+            printf("%s", processed);
+            free(processed);
+        }
+        return true;
+    }
+
+    if (strstr(input, "log") == input)
+    {
+        print_logs();
+        return true;
+    }
+
+    return false;
+}
+
+bool handle_client_command(const char *input)
+{
+    if (strncmp(input, "client", 6) != 0)
+    {
+        return false;
+    }
+
+    char *input_copy = strdup(input);
+    if (!input_copy)
+    {
+        printf("Memory allocation error\n");
+        return true;
+    }
+
+    char *colon = strchr(input_copy, ':');
+    if (!colon)
+    {
+        free(input_copy);
+        info();
+        return true;
+    }
+
+    *colon = '\0';
+    char *client_list = input_copy + 6;
+    char *command = colon + 1;
+
+    while (isspace(*client_list))
+        client_list++;
+    while (isspace(*command))
+        command++;
+
+    if (strlen(client_list) == 0)
+    {
+        printf("Client list cannot be empty.\n");
+        free(input_copy);
+        return true;
+    }
+
+    if (strlen(command) == 0)
+    {
+        printf("Command cannot be empty.\n");
+        free(input_copy);
+        return true;
+    }
+
+    send_to_client_list(client_list, command);
+    free(input_copy);
+    return true;
+}
+
+void cleanup_and_exit()
+{
+    for (int i = 0; i < MAX_CLIENTS; i++)
+    {
+        if (clients[i] != NULL)
+        {
+            close(clients[i]->socket);
+            free(clients[i]);
+        }
+    }
+    free_commands();
+    rl_clear_history();
 }
 
 void info()

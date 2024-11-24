@@ -63,9 +63,14 @@ int get_system_ip(char *ip_buffer, size_t buffer_size)
         if (bytes_read > 0)
         {
             ip_buffer[bytes_read - 1] = '\0';
-            return 0;
         }
-        return -1;
+        else
+        {
+            return -1;
+        }
+        int status;
+        waitpid(pid, &status, 0);
+        return 0;
     }
 }
 
