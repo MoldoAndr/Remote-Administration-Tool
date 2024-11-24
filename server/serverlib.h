@@ -23,7 +23,6 @@
 #define MAX_CLIENTS 256
 #define BUFFER_SIZE 2048
 #define MAX_NUMBERS 10
-#define PATH_MAX 256
 
 extern char **commands;
 
