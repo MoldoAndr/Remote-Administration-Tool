@@ -30,18 +30,18 @@ int delete_command(const char *command_to_delete)
 {
     if (command_to_delete == NULL || commands == NULL)
     {
-        return 0;
+        return 0; // Nu avem ce șterge
     }
 
     size_t cmd_count = 0;
     while (commands[cmd_count] != NULL)
     {
-        cmd_count++;
+        cmd_count++; // Numărăm câte comenzi există
     }
 
     if (cmd_count == 0)
     {
-        return 0;
+        return 0; // Nu există comenzi de șters
     }
 
     size_t read_idx, write_idx;
@@ -51,47 +51,33 @@ int delete_command(const char *command_to_delete)
     {
         if (strcmp(commands[read_idx], command_to_delete) == 0)
         {
-            free(commands[read_idx]);
+            free(commands[read_idx]); // Eliberăm memoria pentru comanda găsită
             found = 1;
-            continue;
         }
-
-        if (read_idx != write_idx)
+        else
         {
+            // Mutăm elementele valide spre început
             commands[write_idx] = commands[read_idx];
+            write_idx++;
         }
-        write_idx++;
     }
 
     if (!found)
     {
-        return 0;
+        return 0; // Nu s-a găsit comanda de șters
     }
 
+    // Ultimul element trebuie să fie NULL
     commands[write_idx] = NULL;
-    size_t new_size = (write_idx + 1) * sizeof(char *);
 
-    if (write_idx > 0)
+    // Redimensionăm array-ul
+    char **temp = realloc(commands, (write_idx + 1) * sizeof(char *));
+    if (temp != NULL)
     {
-        char **temp = realloc(commands, new_size);
-        if (temp == NULL)
-        {
-            return 1;
-        }
         commands = temp;
     }
-    else
-    {
-        free(commands);
-        commands = malloc(sizeof(char *));
-        if (commands == NULL)
-        {
-            return 0;
-        }
-        commands[0] = NULL;
-    }
 
-    return 1;
+    return 1; // Comanda a fost ștearsă cu succes
 }
 
 void free_commands()

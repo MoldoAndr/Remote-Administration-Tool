@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -fPIC
+CFLAGS = -Wall -fPIC -g
 LDFLAGS = -shared
 TARGET_LIB = libserverlib.so
 TARGET_EXEC = server
@@ -22,12 +22,18 @@ server.o: server.c serverlib.h
 	$(CC) $(CFLAGS) -c server.c -o server.o
 
 run: $(TARGET_LIB) $(TARGET_EXEC)
-	-sudo kill -9 $$(sudo lsof -t -i:12345) 2>/dev/null
+	@echo "Checking for processes on port 12345..."
+	-sudo kill -9 $$(sudo lsof -t -i:12345) 2>/dev/null || echo "No process found on port 12345."
 	LD_LIBRARY_PATH=. ./server $$(hostname --all-ip-addresses)
+
+memcheck: $(TARGET_EXEC)
+	@echo "Running Valgrind memcheck..."
+	LD_LIBRARY_PATH=. valgrind --tool=memcheck --leak-check=full --error-exitcode=1 ./server $$(hostname --all-ip-addresses)
 
 clean:
 	rm -f *.o $(TARGET_LIB) $(TARGET_EXEC)
 	rm -f client_tokens.txt client_stats.txt
 	rm -rf client_logs
 
-.PHONY: all clean run
+.PHONY: all clean run memcheck
+

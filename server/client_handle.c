@@ -1,8 +1,10 @@
 #include "serverlib.h"
 
-int compare_in_addr(const struct in_addr *addr1, const struct in_addr *addr2)
+bool compare_in_addr(const struct in_addr *addr1, const struct in_addr *addr2)
 {
-    return addr1->s_addr == addr2->s_addr;
+    if (addr1->s_addr == addr2->s_addr)
+        return true;
+    return false;
 }
 
 bool client_exists(int client_no)
@@ -10,7 +12,7 @@ bool client_exists(int client_no)
 
     for (int i = 0; i < client_count; ++i)
     {
-        if (clients[i]->id == client_no)
+        if (clients[i] && clients[i]->id == client_no)
             return true;
     }
     return false;
@@ -36,16 +38,20 @@ void accept_clients(int socket_desc, struct sockaddr_in *server_addr)
         struct client_info *client = malloc(sizeof(struct client_info));
         client_size = sizeof(client->address);
         client->socket = accept(socket_desc, (struct sockaddr *)&client->address, &client_size);
+        
         if (client && already_connected(&client->address))
         {
             printf("A client that is already connected: %s, tries to connect\nBlocked!\n", client->station_info);
-            free(client);
+            if (client)
+                free(client);
             continue;
         }
+        
         if (client->socket < 0)
         {
             printf("Can't accept\n");
-            free(client);
+            if (client)
+                free(client);
             continue;
         }
 
@@ -61,7 +67,8 @@ void accept_clients(int socket_desc, struct sockaddr_in *server_addr)
                client->id, inet_ntoa(client->address.sin_addr), ntohs(client->address.sin_port));
 
         pthread_mutex_lock(&clients_mutex);
-        clients[client->id - 1] = client;
+        if (client->id>0)
+            clients[client->id - 1] = client;
         pthread_mutex_unlock(&clients_mutex);
 
         if (pthread_create(&thread_id, NULL, handle_client, (void *)client) < 0)
@@ -170,7 +177,6 @@ void cleanup_client(struct client_info *client)
     if (client == NULL)
         return;
     pthread_mutex_lock(&clients_mutex);
-
     if (client->id > 0 && client->id <= MAX_CLIENTS)
     {
         char client_delete[64];
@@ -178,15 +184,21 @@ void cleanup_client(struct client_info *client)
         delete_command(client_delete);
         clients[client->id - 1] = NULL;
     }
+    else
+    {
+        printf("Invalid client ID: %d\n", client->id);
+    }
 
     pthread_mutex_unlock(&clients_mutex);
-
     if (client->socket >= 0)
     {
         close(client->socket);
     }
-    free(client);
-    client = NULL;
+    if (client)
+    {	
+	    free(client);
+	    client = NULL;
+    }
 }
 
 void send_to_client_list(const char *client_list, const char *command)

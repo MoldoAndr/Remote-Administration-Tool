@@ -64,7 +64,7 @@ void setup_server(struct sockaddr_in *, int *, char *);
 void cleanup_client(struct client_info *);
 void send_to_client_list(const char *client_list, const char *command);
 bool client_exists(int client_no);
-int compare_in_addr(const struct in_addr *addr1, const struct in_addr *addr2);
+bool compare_in_addr(const struct in_addr *addr1, const struct in_addr *addr2);
 
 // Command Logger Function
 void log_command(const char *station_name, const char *command, const char *output);

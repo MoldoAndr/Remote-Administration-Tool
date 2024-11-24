@@ -1,3 +1,4 @@
+#define __USE_GNU
 #include "serverlib.h"
 
 void print_logs()
@@ -6,7 +7,7 @@ void print_logs()
 
     DIR *dir;
     struct dirent *entry;
-    char filepath[PATH_MAX];
+    char filepath[256];
 
     dir = opendir("client_logs");
     if (dir == NULL)
