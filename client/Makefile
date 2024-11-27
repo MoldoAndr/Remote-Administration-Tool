@@ -15,6 +15,7 @@ all: dependencies $(CLIENT)
 
 dependencies:
 	@echo "Installing dependencies..."
+	@sudo apt install -y libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libavdevice-dev
 	@sudo apt install -y gnome-screenshot
 	@echo "Dependencies installed."
 

@@ -16,7 +16,7 @@ $(TARGET_LIB): $(LIB_OBJS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(TARGET_EXEC): server.o $(TARGET_LIB)
-	$(CC) -o $(TARGET_EXEC) server.o -L. -lserverlib -lpthread -luuid -lreadline
+	$(CC) -o $(TARGET_EXEC) server.o -L. -lserverlib -lpthread -luuid -lreadline -lefence
 
 server.o: server.c serverlib.h
 	$(CC) $(CFLAGS) -c server.c -o server.o
@@ -28,7 +28,7 @@ run: $(TARGET_LIB) $(TARGET_EXEC)
 
 memcheck: $(TARGET_EXEC)
 	@echo "Running Valgrind memcheck..."
-	LD_LIBRARY_PATH=. valgrind --tool=memcheck --leak-check=full --error-exitcode=1 ./server $$(hostname --all-ip-addresses)
+	LD_LIBRARY_PATH=. valgrind --leak-check=full --show-leak-kinds=all --tool=memcheck --leak-check=full --error-exitcode=1 ./server $$(hostname --all-ip-addresses)
 
 clean:
 	rm -f *.o $(TARGET_LIB) $(TARGET_EXEC)

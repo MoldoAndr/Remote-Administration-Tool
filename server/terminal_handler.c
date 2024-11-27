@@ -15,7 +15,6 @@ void print_logs()
         perror("Error opening client_logs directory");
         return;
     }
-    write(1, "trying", 6);
     while ((entry = readdir(dir)) != NULL)
     {
         if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)

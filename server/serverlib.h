@@ -16,10 +16,11 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <sys/ioctl.h>
+#include <sys/ioctl.h>
 #include <sys/wait.h>
 #include <signal.h>
 #include <dirent.h>
-#include <sys/ioctl.h>
+#include <errno.h>
 
 #define MAX_CLIENTS 256
 #define BUFFER_SIZE 2048

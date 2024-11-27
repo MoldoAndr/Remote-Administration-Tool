@@ -27,31 +27,36 @@ bool already_connected(struct sockaddr_in *info)
     }
     return false;
 }
-
 void accept_clients(int socket_desc, struct sockaddr_in *server_addr)
 {
     socklen_t client_size;
     pthread_t thread_id;
-
-    while ("pso")
+    while (1)
     {
         struct client_info *client = malloc(sizeof(struct client_info));
+
+        memset(client, 0, sizeof(struct client_info));
+
         client_size = sizeof(client->address);
         client->socket = accept(socket_desc, (struct sockaddr *)&client->address, &client_size);
-
-        if (client && already_connected(&client->address))
-        {
-            printf("A client that is already connected: %s, tries to connect\nBlocked!\n", client->station_info);
-            if (client)
-                free(client);
-            continue;
-        }
 
         if (client->socket < 0)
         {
             printf("Can't accept\n");
-            if (client)
-                free(client);
+            free(client);
+            continue;
+        }
+
+        snprintf(client->station_info, sizeof(client->station_info),
+                 "%s:%d",
+                 inet_ntoa(client->address.sin_addr),
+                 ntohs(client->address.sin_port));
+
+        if (already_connected(&client->address))
+        {
+            printf("A client that is already connected: %s, tries to connect\nBlocked!\n",
+                   client->station_info);
+            free(client);
             continue;
         }
 
