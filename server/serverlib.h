@@ -9,6 +9,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
+#include <regex.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <pthread.h>
@@ -91,7 +92,7 @@ void free_commands();
 char *process_clients_statistics();
 float *get_metrics(const char *url);
 int extract_numbers(const char *str, float *numbers);
-void write_statistics();
+void write_statistics_once(void **mapped_mem, size_t *current_size, int fd, const char *processed_output);
 void *background_writer();
 char *format_data(float *data);
 

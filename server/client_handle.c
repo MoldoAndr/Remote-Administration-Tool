@@ -27,6 +27,7 @@ bool already_connected(struct sockaddr_in *info)
     }
     return false;
 }
+
 void accept_clients(int socket_desc, struct sockaddr_in *server_addr)
 {
     socklen_t client_size;

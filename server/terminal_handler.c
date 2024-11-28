@@ -100,53 +100,6 @@ void list_commands()
     printf("\n");
 }
 
-char *trim(char *str)
-{
-    if (!str)
-        return NULL;
-    while (isspace((unsigned char)*str))
-        str++;
-    if (*str == 0)
-        return str;
-    char *end = str + strlen(str) - 1;
-    while (end > str && isspace((unsigned char)*end))
-        end--;
-    end[1] = '\0';
-    return str;
-}
-
-bool valid(char *input)
-{
-    char input_copy[256];
-    strncpy(input_copy, input, sizeof(input_copy) - 1);
-    input_copy[sizeof(input_copy) - 1] = '\0';
-    char *trimmed_input = trim(input_copy);
-    if (strlen(trimmed_input) == 0)
-        return false;
-    int i = 0;
-    while (commands[i])
-    {
-        char cmd_copy[256];
-        strncpy(cmd_copy, commands[i], sizeof(cmd_copy) - 1);
-        cmd_copy[sizeof(cmd_copy) - 1] = '\0';
-        char *trimmed_cmd = trim(cmd_copy);
-        if (strcmp(trimmed_cmd, trimmed_input) == 0)
-        {
-            return true;
-        }
-        if (strstr(trimmed_input, trimmed_cmd) == trimmed_input)
-        {
-            size_t cmd_len = strlen(trimmed_cmd);
-            if (trimmed_input[cmd_len] == '\0' || isspace(trimmed_input[cmd_len]))
-            {
-                return true;
-            }
-        }
-        i++;
-    }
-    return false;
-}
-
 void print_prompt()
 {
     printf("███▓▒░ ");
@@ -182,6 +135,7 @@ void handle_terminal_input()
         }
 
         char *trimmed_input = strdup(input);
+
         if (trimmed_input)
         {
             char *start = trimmed_input;
@@ -197,14 +151,6 @@ void handle_terminal_input()
                 add_history(start);
             }
             free(trimmed_input);
-        }
-
-        if (!valid(input))
-        {
-            system("clear");
-            info();
-            free(input);
-            continue;
         }
 
         if (handle_builtin_commands(input))
@@ -282,28 +228,25 @@ bool handle_client_command(const char *input)
     {
         return false;
     }
-
     char *input_copy = strdup(input);
     if (!input_copy)
     {
         printf("Memory allocation error\n");
         return true;
     }
-
     char *colon = strchr(input_copy, ':');
     if (!colon)
     {
+        printf("Invalid command format. Use: client<list>: <command>\n");
         free(input_copy);
-        info();
         return true;
     }
-
     *colon = '\0';
     char *client_list = input_copy + 6;
-    char *command = colon + 1;
-
     while (isspace(*client_list))
         client_list++;
+
+    char *command = colon + 1;
     while (isspace(*command))
         command++;
 
@@ -322,6 +265,7 @@ bool handle_client_command(const char *input)
     }
 
     send_to_client_list(client_list, command);
+
     free(input_copy);
     return true;
 }
