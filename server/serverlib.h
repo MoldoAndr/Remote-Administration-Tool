@@ -1,8 +1,11 @@
+#define _GNU_SOURCE
+
 #ifndef SERVERLIB_H
 #define SERVERLIB_H
 
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <sys/mman.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
