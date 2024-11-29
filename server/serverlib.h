@@ -62,7 +62,6 @@ void handle_terminal_input();
 void list_clients();
 void print_logs();
 void list_commands();
-bool valid(char *input);
 void cleanup_and_exit();
 bool handle_client_command(const char *input);
 bool handle_builtin_commands(const char *input);
