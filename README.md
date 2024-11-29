@@ -1,12 +1,14 @@
-Remote Administration Tool (RAT)
+# Remote Administration Tool (RAT)
 
+
+## Descriere
     Instrument de administrare la distanta (RAT) dezvoltat in C 
     pentru Linux, folosind sockets pentru comunicare. 
     Serverul centralizat poate administra mai multi agenti (clienti) 
     instalati pe calculatoarele remote pentru colectarea datelor, 
     executarea de comenzi si monitorizarea activitatii.
 
-Structura:
+## Structura:
 
     Server:
         Administreaza mai multi agenti si gestioneaza conexiunile acestora
@@ -26,7 +28,7 @@ Structura:
         Biblioteci statice pentru compatibilitate,
             portabilitate și distributie simplificata
 
-Documentatie
+## Documentatie
 
     https://github.com/tiagorlampert/CHAOS
     https://github.com/LimerBoy/BlazeRAT
@@ -34,7 +36,7 @@ Documentatie
     https://github.com/st4inl3s5/kizagan
     https://github.com/XZB-1248/Spark
 
-Functionalitati
+## Functionalitati
 
     Realizarea conexiunii
     Informatii despre sistem
@@ -42,21 +44,19 @@ Functionalitati
     Mecanisme de logging
     Actualizare lista clienti
     Monitorizare statistici de sistem in timp real
+    Generare de site web pe partea de client cu datele de sistem in timp real
+    Blocarea accesului la site cu exceptia serverului
 
-Functionalitati viitoare
+## Functionalitati viitoare
     
     Descarcare de fisiere
-    Incarcare de fisiere
     Capturi de ecran
-    Key-Logger
     Alerte accesare anumite site-uri
-    BlackList pentru fisiere
     
-Disclaimer:
+## Disclaimer:
 
-    Pentru generarea in timp real a datelor de sistem pe partea de client,
-    s-a folosit biblioteca mongoose.
+    Pentru crearea unui serverului web pe partea de client, s-a folosit biblioteca mongoose.
 
-Diagrama
+## Diagrama
 
 ![Untitled Diagram](https://github.com/user-attachments/assets/6cc06881-98bb-4b4d-9f81-655ce6390ed5)
