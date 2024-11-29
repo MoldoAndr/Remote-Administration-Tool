@@ -56,24 +56,14 @@ void populate_commands(void)
     strcpy(commands[5], "list");
 }
 
-char *command_generator(const char *text, int *state)
+char *command_generator(const char *text)
 {
-    static int list_index, len;
-    
-    if (!*state)
+    for (int i = 0; i < MAX_COMMANDS; i++)
     {
-        list_index = 0;
-        len = strlen(text);
-    }
-    
-    while (list_index < MAX_COMMANDS && commands[hash_command(text)][0] != '\0')
-    {
-        const char *name = commands[list_index];
-        list_index++;
-        
-        if (strncmp(name, text, len) == 0)
+        if (commands[i][0] != '\0' && 
+            strncmp(commands[i], text, strlen(text)) == 0)
         {
-            return strdup(name);
+            return strdup(commands[i]);
         }
     }
     return NULL;
@@ -106,3 +96,4 @@ int delete_command(const char *command_to_delete)
     
     return 0;
 }
+

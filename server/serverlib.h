@@ -29,8 +29,10 @@
 #define MAX_CLIENTS 256
 #define BUFFER_SIZE 2048
 #define MAX_NUMBERS 10
+#define MAX_COMMANDS 262
+#define MAX_COMMAND_LENGTH 15
 
-extern char **commands;
+extern char commands[MAX_COMMANDS][MAX_COMMAND_LENGTH];
 
 extern pthread_mutex_t client_count_mutex;
 extern pthread_mutex_t clients_mutex;
@@ -84,9 +86,10 @@ void log_command(const char *station_name, const char *command, const char *outp
 char **custom_completion(const char *text, int start, int end);
 char *command_generator(const char *text, int state);
 void initialize_commands();
+unsigned int hash_command(const char *str);
 void add_command(const char *new_command);
 int delete_command(const char *command_to_delete);
-void free_commands();
+//void free_commands();
 
 // Monitor Clients Statistics
 char *process_clients_statistics();

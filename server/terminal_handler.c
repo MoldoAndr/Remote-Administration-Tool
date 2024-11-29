@@ -111,7 +111,7 @@ void handle_terminal_input()
     char *input;
     rl_attempted_completion_function = custom_completion;
     rl_completer_word_break_characters = " ";
-
+   
     system("clear");
     info();
 
@@ -280,7 +280,7 @@ void cleanup_and_exit()
             free(clients[i]);
         }
     }
-    free_commands();
+    //free_commands();
     rl_clear_history();
 }
 
