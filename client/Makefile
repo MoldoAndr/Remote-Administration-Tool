@@ -1,12 +1,12 @@
 CLIENT = client
 CC = gcc
 AR = ar
-CFLAGS = -Wall -Wextra
+CFLAGS = -Wall -Wextra  $$(pkg-config --cflags --libs glib-2.0) -lpcap
 PORT = 12345
 IP ?= 127.0.0.1
 NR ?= 1 
 
-OBJS = client_monitor.o network.o process_command.o setup.o utility.o mongoose.o monitor.o
+OBJS = client_monitor.o network.o process_command.o setup.o utility.o mongoose.o monitor.o domain_alert.o
 LIB = libclient_daemon.a
 
 .PHONY: all clean dependencies run_client run_clients
@@ -15,8 +15,7 @@ all: dependencies $(CLIENT)
 
 dependencies:
 	@echo "Installing dependencies..."
-	@sudo apt install -y libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libavdevice-dev
-	@sudo apt install -y gnome-screenshot
+	@sudo apt install -y libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libavdevice-dev gnome-screenshot libpcap-dev libglib2.0-dev
 	@echo "Dependencies installed."
 
 $(CLIENT): main.c $(LIB)
@@ -59,4 +58,4 @@ setup.o: setup.c
 utility.o: utility.c
 mongoose.o: mongoose.c
 monitor.o: monitor.c
-
+domain_alert.o: domain_alert.c

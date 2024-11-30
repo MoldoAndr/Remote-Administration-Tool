@@ -69,6 +69,7 @@ bool connect_to_server(const char *server_ip, int server_port)
     syslog(LOG_INFO, "Connected to server at %s:%d", server_ip, server_port);
     authenticate_with_server(client_socket);
     set_monitor_active();
+    set_alert_active();
     return true;
 }
 

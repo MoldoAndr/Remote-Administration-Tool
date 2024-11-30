@@ -35,11 +35,11 @@ void daemon_init()
 
     umask(0);
 
-    if (chdir("/") < 0)
-    {
-        printf("Error: Unable to change directory to root.\n");
-        exit(EXIT_FAILURE);
-    }
+    // if (chdir("/") < 0)
+    // {
+    //     printf("Error: Unable to change directory to root.\n");
+    //     exit(EXIT_FAILURE);
+    // }
 
     close(STDIN_FILENO);
     close(STDOUT_FILENO);

@@ -92,11 +92,11 @@ void list_commands()
 {
     printf("\n");
     printf("\b%s:     clears the console\n", commands[0]);
-    printf("\b%s:      exits the RAT\n", commands[1]);
+    printf("\b%s:      exits the RAT\n", commands[5]);
     printf("\b%s:      list of connected clients\n", commands[2]);
     printf("\b%s:     stats of the connected clients\n", commands[3]);
     printf("\b%s:       log files contents\n", commands[4]);
-    printf("\b%s:  available commands\n", commands[5]);
+    printf("\b%s:  available commands\n", commands[1]);
     printf("\n");
 }
 

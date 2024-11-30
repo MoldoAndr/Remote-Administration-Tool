@@ -10,9 +10,10 @@ long long g_disk_write = 0;
 long long g_net_rx = 0;
 long long g_net_tx = 0;
 double g_disk_usage = 0.0;
+char name[64];
+static char *html_content = NULL;
 
-
-void* system_monitor()
+void *system_monitor()
 {
     CPUStats prev_cpu, curr_cpu;
     long total_mem, free_mem;
@@ -45,16 +46,24 @@ void* system_monitor()
         get_disk_usage("/", &total_disk, &free_disk);
         g_disk_usage = (total_disk - free_disk) * 100.0 / total_disk;
     }
- return NULL;
+    return NULL;
 }
 
 char *generate_json_data()
 {
     static char json_output[256];
+    char host[32];
+    gethostname(host, sizeof(host));
+    strcpy(name, getenv("USER"));
+    strcat(name, ":");
+    strcat(name, host);
+
     snprintf(json_output, sizeof(json_output),
-             "{\"cpu_usage\": %.2f, \"mem_usage\": %.2f, \"disk_read\": %lld, \"disk_write\": %lld, \"net_rx\": %lld, \"net_tx\": %lld, \"disk_usage\": %.2f}",
+             "{\"cpu_usage\": %.2f, \"mem_usage\": %.2f, \"disk_read\": %lld, \"disk_write\": %lld, "
+             "\"net_rx\": %lld, \"net_tx\": %lld, \"disk_usage\": %.2f, \"hostname\": \"%s\"}",
              g_cpu_usage, g_mem_usage, g_disk_read, g_disk_write,
-             g_net_rx, g_net_tx, g_disk_usage);
+             g_net_rx, g_net_tx, g_disk_usage, name);
+
     return json_output;
 }
 
@@ -64,7 +73,6 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data)
     {
         char client_ip[32];
         inet_ntop(AF_INET, nc->rem.ip, client_ip, sizeof(client_ip));
-     
 
         if (strcmp(client_ip, server_IP) != 0)
         {
@@ -82,7 +90,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data)
         {
             mg_http_reply(nc, 200, "Content-Type: text/html\r\n",
                           "<html>"
-                          "<head><title>System Monitor</title>"
+                          "<head><title id='name'>MONITOR</title>"
                           "<style>"
                           "body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; }"
                           "h1 { color: #333; }"
@@ -102,13 +110,13 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data)
                           "      document.getElementById('net_rx').innerText = data.net_rx;"
                           "      document.getElementById('net_tx').innerText = data.net_tx;"
                           "      document.getElementById('disk_usage').innerText = data.disk_usage.toFixed(2) + '%';"
+                          "      document.getElementById('name').innerText = data.hostname;"
                           "    });"
                           "}"
                           "setInterval(updateData, 1000);"
                           "</script>"
                           "</head>"
                           "<body>"
-                          "<h1>System Monitor</h1>"
                           "<table>"
                           "<tr><th>Metric</th><th>Value</th></tr>"
                           "<tr><td>CPU Usage</td><td id='cpu_usage'>0.00%</td></tr>"
@@ -127,7 +135,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data)
 
 void get_cpu_usage(CPUStats *curr)
 {
-    int proc_fd = open(PROC_STAT, O_RDONLY); 
+    int proc_fd = open(PROC_STAT, O_RDONLY);
     if (proc_fd < 0)
     {
         write(2, "Error opening /proc/stat\n", 25);
@@ -299,7 +307,7 @@ void run_system_monitor_server(char *ip_address, int port, time_t duration)
     {
         if (time(NULL) - start_time >= duration)
         {
-           break;
+            break;
         }
         mg_mgr_poll(&mgr, 600);
     }
