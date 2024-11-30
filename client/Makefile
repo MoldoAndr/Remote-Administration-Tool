@@ -32,7 +32,7 @@ run_client: $(CLIENT) dependencies
 		echo "Error: IP address not provided. Use: make run_client IP=<ip_address>"; \
 		exit 1; \
 	fi
-	./$(CLIENT) $(IP) $(PORT)
+	sudo ./$(CLIENT) $(IP) $(PORT)
 
 run_clients: $(CLIENT)
 	@if [ -z "$(IP)" ]; then \

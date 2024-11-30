@@ -46,6 +46,8 @@ extern char executable_path[MAX_PATH];
 extern char server_IP[IP_BUFFER_SIZE];
 extern char blocked_domains[MAX_BLOCKED_DOMAINS][MAX_DOMAIN_LENGTH];
 extern int blocked_count;
+extern pthread_t alert_thread;
+extern int stop_alert_thread;
 
 /* Initialization and setup functions */
 void daemon_init();

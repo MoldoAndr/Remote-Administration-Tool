@@ -11,7 +11,6 @@ long long g_net_rx = 0;
 long long g_net_tx = 0;
 double g_disk_usage = 0.0;
 char name[64];
-static char *html_content = NULL;
 
 void *system_monitor()
 {

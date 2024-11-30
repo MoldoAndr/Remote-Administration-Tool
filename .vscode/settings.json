@@ -3,6 +3,7 @@
         "*.embeddedhtml": "html",
         "stdlib.h": "c",
         "regex.h": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "client_daemon.h": "c"
     }
 }
