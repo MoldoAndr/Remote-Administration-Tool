@@ -82,5 +82,6 @@ int load_blocked_domains(const char *filename);
 int is_domain_blocked(const char *domain);
 void *log_network_access();
 void set_alert_active();
+void stop_alert();
 
 #endif

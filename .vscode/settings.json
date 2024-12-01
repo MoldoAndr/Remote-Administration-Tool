@@ -4,6 +4,11 @@
         "stdlib.h": "c",
         "regex.h": "c",
         "string.h": "c",
-        "client_daemon.h": "c"
+        "client_daemon.h": "c",
+        "*.tcc": "c",
+        "numeric": "c",
+        "ostream": "c",
+        "system_error": "c",
+        "typeinfo": "c"
     }
 }

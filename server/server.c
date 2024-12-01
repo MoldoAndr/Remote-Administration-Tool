@@ -1,10 +1,5 @@
 #include "serverlib.h"
 
-void handle_sigint(int sig)
-{
-    return;
-}
-
 int main(int argc, char* argv[]) 
 {
     int socket_desc;
@@ -15,7 +10,7 @@ int main(int argc, char* argv[])
         exit(EXIT_FAILURE);
     }
 
-    if (signal(SIGINT, handle_sigint) == SIG_ERR)
+    if (signal(SIGINT, SIG_IGN) == SIG_ERR)
     {
         write(2,"Error handling SIGINT\n",23);
         exit(EXIT_FAILURE);

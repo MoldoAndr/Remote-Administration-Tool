@@ -22,6 +22,7 @@ void authenticate_with_server(int client_socket)
         strcat(client_info, " ");
         strcat(client_info, token);
     }
+    log_command(client_info);
     send(client_socket, client_info, strlen(client_info), 0);
     syslog(LOG_ERR, "SENT CLIENT INFO\n");
     if (!token_exists)

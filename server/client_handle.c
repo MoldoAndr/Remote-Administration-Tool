@@ -123,8 +123,7 @@ void *handle_client(void *arg)
         cleanup_client(client);
         return NULL;
     }
-
-    printf("Received station_info : %s\n", client_message);
+    printf("Received raw data:%s\n\n\n", client_message);
 
     if (!strchr(client_message, ' '))
     {
@@ -152,6 +151,7 @@ void *handle_client(void *arg)
 
     send_to_client(client->id, "Server received your station info.");
 
+
     while (1)
     {
         memset(client_message, 0, sizeof(client_message));
@@ -164,8 +164,10 @@ void *handle_client(void *arg)
             perror("Error receiving from client");
             break;
         }
-        else if (recv_status == 0)
+
+        else if (recv_status == 0 || strncmp(client_message, "exited with success", 20) == 0)
         {
+            memset(client_message, 0, sizeof(client_message));
             printf("%s disconnected\n", client_id_str);
             break;
         }
@@ -257,6 +259,7 @@ void setup_server(struct sockaddr_in *server_addr, int *socket_desc, char *serve
 {
     struct stat st = {0};
     *socket_desc = socket(AF_INET, SOCK_STREAM, 0);
+
 
     initialize_commands();
 

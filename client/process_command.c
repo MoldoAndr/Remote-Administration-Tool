@@ -12,6 +12,7 @@ void process_server_command(const char *server_message, char *response)
     {
         syslog(LOG_INFO, "Server requested daemon shutdown.");
         send(client_socket, "exited with success", strlen("exited with success"), 0);
+        stop_alert();
         exit(0);
     }
 

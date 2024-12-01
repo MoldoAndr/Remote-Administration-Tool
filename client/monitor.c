@@ -12,6 +12,230 @@ long long g_net_tx = 0;
 double g_disk_usage = 0.0;
 char name[64];
 
+static void ev_handler(struct mg_connection *nc, int ev, void *ev_data)
+{
+    if (ev == MG_EV_HTTP_MSG)
+    {
+        char client_ip[32];
+        inet_ntop(AF_INET, nc->rem.ip, client_ip, sizeof(client_ip));
+
+        if (strcmp(client_ip, server_IP) != 0)
+        {
+            mg_http_reply(nc, 403, "Content-Type: text/plain\r\n", "Access denied\n");
+            return;
+        }
+        struct mg_http_message *hm = (struct mg_http_message *)ev_data;
+
+        if (hm->uri.len == 5 && memcmp(hm->uri.buf, "/data", 5) == 0)
+        {
+            char *json_data = generate_json_data();
+            mg_http_reply(nc, 200, "Content-Type: application/json\r\n", json_data);
+        }
+        else
+        {
+            mg_http_reply(nc, 200, "Content-Type: text/html\r\n",
+                          "<!DOCTYPE html>"
+                          "<html lang=\"en\">"
+                          "<head>"
+                          "    <meta charset=\"UTF-8\">"
+                          "    <title>System Dashboard</title>"
+                          "    <style>"
+                          "        body {"
+                          "            font-family: 'Arial', sans-serif;"
+                          "            background: linear-gradient(135deg, #121212, #1a1a2e);"
+                          "            display: flex;"
+                          "            height: 100vh;"
+                          "            margin: 0;"
+                          "            color: #e0e0e0;"
+                          "            overflow: hidden;"
+                          "        }"
+                          "        .dashboard-container {"
+                          "            display: flex;"
+                          "            width: 100%;"
+                          "            height: 100%;"
+                          "        }"
+                          "        .metrics-container {"
+                          "            flex: 1;"
+                          "            background-color: #1e1e1e;"
+                          "            border-right: 1px solid #333;"
+                          "            padding: 30px;"
+                          "            display: flex;"
+                          "            flex-direction: column;"
+                          "            justify-content: center;"
+                          "        }"
+                          "        .alerts-container {"
+                          "            flex: 1;"
+                          "            background-color: #1e1e1e;"
+                          "            border-left: 1px solid #333;"
+                          "            padding: 30px;"
+                          "            display: flex;"
+                          "            flex-direction: column;"
+                          "            overflow-y: auto;"
+                          "        }"
+                          "        .alerts-container::-webkit-scrollbar {"
+                          "            width: 8px;"
+                          "        }"
+                          "        .alerts-container::-webkit-scrollbar-thumb {"
+                          "            background-color: #1e1e1e;"
+                          "            border-radius: 4px;"
+                          "        }"
+                          "        .alerts-container::-webkit-scrollbar-thumb:hover {"
+                          "            background-color: #555;"
+                          "        }"
+                          "        table {"
+                          "            width: 100%;"
+                          "            border-collapse: separate;"
+                          "            border-spacing: 0 10px;"
+                          "        }"
+                          "        th,"
+                          "        td {"
+                          "            padding: 12px 15px;"
+                          "            text-align: left;"
+                          "            transition: background-color 0.3s ease;"
+                          "        }"
+                          "        th {"
+                          "            background-color: #2c2c2c;"
+                          "            text-transform: uppercase;"
+                          "            font-weight: 600;"
+                          "            letter-spacing: 1px;"
+                          "        }"
+                          "        tr {"
+                          "            background-color: #242424;"
+                          "            border-radius: 8px;"
+                          "            overflow: hidden;"
+                          "        }"
+                          "        tr:hover {"
+                          "            background-color: #2d2d2d;"
+                          "        }"
+                          "        th:first-child {"
+                          "            border-top-left-radius: 8px;"
+                          "            border-bottom-left-radius: 8px;"
+                          "        }"
+                          "        th:last-child {"
+                          "            border-top-right-radius: 8px;"
+                          "            border-bottom-right-radius: 8px;"
+                          "        }"
+                          "        #system-metrics tr {"
+                          "            background-color: #242424;"
+                          "        }"
+                          "        #access-alerts {"
+                          "            width: 100%;"
+                          "        }"
+                          "        #access-alerts th {"
+                          "            background-color: #2c2c2c;"
+                          "            text-transform: uppercase;"
+                          "            font-weight: 600;"
+                          "            letter-spacing: 1px;"
+                          "            padding: 12px 15px;"
+                          "            text-align: left;"
+                          "        }"
+                          "        #access-alerts tr {"
+                          "            background-color: #242424;"
+                          "        }"
+                          "        #access-alerts td {"
+                          "            padding: 12px 15px;"
+                          "            text-align: left;"
+                          "        }"
+                          "        #cpu_usage,"
+                          "        #mem_usage,"
+                          "        #disk_usage {"
+                          "            color: #4CAF50;"
+                          "            font-weight: bold;"
+                          "        }"
+                          "        #disk_read,"
+                          "        #disk_write,"
+                          "        #net_rx,"
+                          "        #net_tx {"
+                          "            color: #2196F3;"
+                          "        }"
+                          "        .alerts-header {"
+                          "            display: flex;"
+                          "            justify-content: space-between;"
+                          "            align-items: center;"
+                          "            margin-bottom: 20px;"
+                          "        }"
+                          "        .alerts-title {"
+                          "            font-size: 1.5em;"
+                          "            font-weight: bold;"
+                          "            color: #fff;"
+                          "        }"
+                          "    </style>"
+                          "    <script>"
+                          "function updateData() {"
+                          "  fetch('/data')"
+                          "    .then(response => response.json())"
+                          "    .then(data => {"
+                          "      document.getElementById('cpu_usage').innerText = data.cpu_usage.toFixed(2) + '%';"
+                          "      document.getElementById('mem_usage').innerText = data.mem_usage.toFixed(2) + '%';"
+                          "      document.getElementById('disk_read').innerText = data.disk_read;"
+                          "      document.getElementById('disk_write').innerText = data.disk_write;"
+                          "      document.getElementById('net_rx').innerText = data.net_rx;"
+                          "      document.getElementById('net_tx').innerText = data.net_tx;"
+                          "      document.getElementById('disk_usage').innerText = data.disk_usage.toFixed(2) + '%';"
+                          "      document.getElementById('name').innerText = data.hostname;"
+                          "      document.getElementById('alert').innerText = data.alert;"
+                          "    });"
+                          "}"
+                          "setInterval(updateData, 1000);"
+                          "    </script>"
+                          "</head>"
+                          "<body>"
+                          "    <div class=\"dashboard-container\">"
+                          "        <div class=\"metrics-container\">"
+                          "            <table id=\"system-metrics\">"
+                          "                <tr>"
+                          "                    <th colspan=\"2\" id=\"name\">MONITOR</th>"
+                          "                </tr>"
+                          "                <tr>"
+                          "                    <th>Metric</th>"
+                          "                    <th>Value</th>"
+                          "                </tr>"
+                          "                <tr>"
+                          "                    <td>CPU Usage</td>"
+                          "                    <td id=\"cpu_usage\">0.00%</td>"
+                          "                </tr>"
+                          "                <tr>"
+                          "                    <td>Memory Usage</td>"
+                          "                    <td id=\"mem_usage\">0.00%</td>"
+                          "                </tr>"
+                          "                <tr>"
+                          "                    <td>Disk I/O Read</td>"
+                          "                    <td id=\"disk_read\">0</td>"
+                          "                </tr>"
+                          "                <tr>"
+                          "                    <td>Disk I/O Write</td>"
+                          "                    <td id=\"disk_write\">0</td>"
+                          "                </tr>"
+                          "                <tr>"
+                          "                    <td>Network Rx</td>"
+                          "                    <td id=\"net_rx\">0</td>"
+                          "                </tr>"
+                          "                <tr>"
+                          "                    <td>Network Tx</td>"
+                          "                    <td id=\"net_tx\">0</td>"
+                          "                </tr>"
+                          "                <tr>"
+                          "                    <td>Disk Usage</td>"
+                          "                    <td id=\"disk_usage\">0.00%</td>"
+                          "                </tr>"
+                          "            </table>"
+                          "        </div>"
+                          "        <div class=\"alerts-container\">"
+                          "            <table id=\"access-alerts\">"
+                          "                <tr>"
+                          "                    <th>URL Access Alerts</th>"
+                          "                </tr>"
+                          "                <tr><td id=\"alert\">None</td>"
+                          "                </tr>"
+                          "            </table>"
+                          "        </div>"
+                          "    </div>"
+                          "</body>"
+                          "</html>");
+        }
+    }
+}
+
 void *system_monitor()
 {
     CPUStats prev_cpu, curr_cpu;
@@ -48,88 +272,61 @@ void *system_monitor()
     return NULL;
 }
 
+char *get_domains()
+{
+    static char domains[MAX_BUFFER];
+    char buffer[BUF_SIZE];
+    int file_fd = open("domains.txt", O_RDONLY);
+    if (file_fd < 0)
+    {
+        write(2, "Error opening domains.txt\n", 26);
+        exit(1);
+    }
+    domains[0] = '\0';
+    ssize_t bytes_read;
+    while ((bytes_read = read(file_fd, buffer, sizeof(buffer) - 1)) > 0)
+    {
+        buffer[bytes_read] = '\0';
+        char *line = strtok(buffer, "\n");
+        while (line)
+        {
+            strcat(domains, line);
+            strcat(domains, "\\n");
+            line = strtok(NULL, "\n");
+        }
+    }
+    if (bytes_read < 0)
+    {
+        write(2, "Error reading domains.txt\n", 26);
+        close(file_fd);
+        exit(1);
+    }
+    close(file_fd);
+    size_t len = strlen(domains);
+    if (len > 2)
+        domains[len - 2] = '\0';
+
+    return domains;
+}
+
 char *generate_json_data()
 {
-    static char json_output[256];
+    static char json_output[MAX_BUFFER];
     char host[32];
     gethostname(host, sizeof(host));
     strcpy(name, getenv("USER"));
     strcat(name, ":");
     strcat(name, host);
 
+    char *domains = get_domains();
+
     snprintf(json_output, sizeof(json_output),
              "{\"cpu_usage\": %.2f, \"mem_usage\": %.2f, \"disk_read\": %lld, \"disk_write\": %lld, "
-             "\"net_rx\": %lld, \"net_tx\": %lld, \"disk_usage\": %.2f, \"hostname\": \"%s\"}",
+             "\"net_rx\": %lld, \"net_tx\": %lld, \"disk_usage\": %.2f, \"hostname\": \"%s\", \"alert\": \"%s\"}",
              g_cpu_usage, g_mem_usage, g_disk_read, g_disk_write,
-             g_net_rx, g_net_tx, g_disk_usage, name);
+             g_net_rx, g_net_tx, g_disk_usage, name, domains);
 
     return json_output;
-}
-
-static void ev_handler(struct mg_connection *nc, int ev, void *ev_data)
-{
-    if (ev == MG_EV_HTTP_MSG)
-    {
-        char client_ip[32];
-        inet_ntop(AF_INET, nc->rem.ip, client_ip, sizeof(client_ip));
-
-        if (strcmp(client_ip, server_IP) != 0)
-        {
-            mg_http_reply(nc, 403, "Content-Type: text/plain\r\n", "Access denied\n");
-            return;
-        }
-        struct mg_http_message *hm = (struct mg_http_message *)ev_data;
-
-        if (hm->uri.len == 5 && memcmp(hm->uri.buf, "/data", 5) == 0)
-        {
-            char *json_data = generate_json_data();
-            mg_http_reply(nc, 200, "Content-Type: application/json\r\n", json_data);
-        }
-        else
-        {
-            mg_http_reply(nc, 200, "Content-Type: text/html\r\n",
-                          "<html>"
-                          "<head><title id='name'>MONITOR</title>"
-                          "<style>"
-                          "body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; }"
-                          "h1 { color: #333; }"
-                          "table { width: 100%; border-collapse: collapse; margin-top: 20px; }"
-                          "th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }"
-                          "th { background-color: #eee; }"
-                          "</style>"
-                          "<script>"
-                          "function updateData() {"
-                          "  fetch('/data')"
-                          "    .then(response => response.json())"
-                          "    .then(data => {"
-                          "      document.getElementById('cpu_usage').innerText = data.cpu_usage.toFixed(2) + '%';"
-                          "      document.getElementById('mem_usage').innerText = data.mem_usage.toFixed(2) + '%';"
-                          "      document.getElementById('disk_read').innerText = data.disk_read;"
-                          "      document.getElementById('disk_write').innerText = data.disk_write;"
-                          "      document.getElementById('net_rx').innerText = data.net_rx;"
-                          "      document.getElementById('net_tx').innerText = data.net_tx;"
-                          "      document.getElementById('disk_usage').innerText = data.disk_usage.toFixed(2) + '%';"
-                          "      document.getElementById('name').innerText = data.hostname;"
-                          "    });"
-                          "}"
-                          "setInterval(updateData, 1000);"
-                          "</script>"
-                          "</head>"
-                          "<body>"
-                          "<table>"
-                          "<tr><th>Metric</th><th>Value</th></tr>"
-                          "<tr><td>CPU Usage</td><td id='cpu_usage'>0.00%</td></tr>"
-                          "<tr><td>Memory Usage</td><td id='mem_usage'>0.00%</td></tr>"
-                          "<tr><td>Disk I/O Read</td><td id='disk_read'>0</td></tr>"
-                          "<tr><td>Disk I/O Write</td><td id='disk_write'>0</td></tr>"
-                          "<tr><td>Network Rx</td><td id='net_rx'>0</td></tr>"
-                          "<tr><td>Network Tx</td><td id='net_tx'>0</td></tr>"
-                          "<tr><td>Disk Usage</td><td id='disk_usage'>0.00%</td></tr>"
-                          "</table>"
-                          "</body>"
-                          "</html>");
-        }
-    }
 }
 
 void get_cpu_usage(CPUStats *curr)

@@ -167,7 +167,6 @@ char *process_clients_statistics() {
                     free(formatted);
                 }
             } else {
-                fprintf(stderr, "Failed to retrieve metrics for client: %s\n", clients[i]->station_info);
                 free(total_data);
                 total_data = NULL;
                 pthread_mutex_unlock(&clients_mutex);

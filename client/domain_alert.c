@@ -9,8 +9,6 @@ int stop_alert_thread = 0;
 
 int load_blocked_domains(const char *filename)
 {
-    log_command("Loading blocked domains from file");
-
     int fd = open(filename, O_RDONLY);
     if (fd < 0)
     {
@@ -26,7 +24,6 @@ int load_blocked_domains(const char *filename)
 
     while ((bytes_read = read(fd, buffer + buffer_len, sizeof(buffer) - buffer_len - 1)) > 0)
     {
-        log_command("Read bytes from file\n");
         buffer_len += bytes_read;
         buffer[buffer_len] = '\0';
 
@@ -38,9 +35,6 @@ int load_blocked_domains(const char *filename)
             {
                 strncpy(blocked_domains[blocked_count], buffer + line_start, MAX_DOMAIN_LENGTH - 1);
                 blocked_domains[blocked_count][MAX_DOMAIN_LENGTH - 1] = '\0';
-                char logger[256]; 
-                snprintf(logger, 256,"Loaded blocked domain: %s\n", blocked_domains[blocked_count]);
-                log_command(logger);
                 blocked_count++;
             }
             line_start = line - buffer + 1;
@@ -65,7 +59,6 @@ int load_blocked_domains(const char *filename)
         return 0;
     }
 
-    log_command("Finished loading blocked domains. \n");
     close(fd);
     return blocked_count;
 }
@@ -101,25 +94,17 @@ void *alert_thread_function(void *arg)
 
     FILE *tcpdump = popen("sudo tcpdump -i wlp1s0 port 53 -A -n", "r");
     if (!tcpdump)
-    {
-        log_command("Error running tcpdump");
-        
         return NULL;
-    }
-    else 
-        log_command("succesfully run tcpdump");
 
     int output_fd = open("domains.txt", O_WRONLY | O_CREAT | O_APPEND, 0644);
     if (output_fd < 0)
     {
-        log_command("Error opening output file");
         pclose(tcpdump);
         return NULL;
     }
 
     char buffer[128];
     char domain[256];
-    log_command("trying to loop");
     while (!stop_alert_thread)
     {
         while (fgets(buffer, sizeof(buffer), tcpdump))
@@ -132,10 +117,8 @@ void *alert_thread_function(void *arg)
 
                 strncpy(domain, buffer + start, end - start);
                 domain[end - start] = '\0';
-                log_command("search for blocked domain");
                 if (is_domain_blocked(domain))
                 {
-                    log_command("Found blocked domain\n");
                     write(output_fd, domain, strlen(domain));
                     write(output_fd, "\n", 1);
                 }
@@ -143,7 +126,6 @@ void *alert_thread_function(void *arg)
         }
         usleep(10000);
     }
-    log_command("end");
     close(output_fd);
     int status = pclose(tcpdump);
     if (status != 0)
@@ -165,7 +147,7 @@ void set_alert_active()
     stop_alert_thread = 0;
     if (pthread_create(&alert_thread, &attr, alert_thread_function, NULL) != 0)
     {
-        log_command("Failed to create alert thread");
+        log_command("failed to create alert thread");
         return;
     }
     pthread_attr_destroy(&attr);
@@ -174,5 +156,4 @@ void set_alert_active()
 void stop_alert()
 {
     stop_alert_thread = 1;
-    usleep(100000);
 }

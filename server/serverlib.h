@@ -65,7 +65,6 @@ void list_commands();
 void cleanup_and_exit();
 bool handle_client_command(const char *input);
 bool handle_builtin_commands(const char *input);
-char *trim(char *str);
 void info();
 
 // Client Handle and Communication Functions
