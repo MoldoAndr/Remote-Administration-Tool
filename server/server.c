@@ -1,7 +1,11 @@
 #include "serverlib.h"
+#include <sys/mman.h>
 
 int main(int argc, char* argv[]) 
 {
+
+    mlockall(MCL_FUTURE);
+    
     int socket_desc;
     struct sockaddr_in server_addr;
     if (argc < 2)
