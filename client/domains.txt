@@ -1,59 +1,20 @@
-gemini.google.com
-gemini.google.com
-gemini.google.com
-gemini.google.com
-gemini.google.com
-gemini.google.com
-gemini.google.com
-gemini.google.com
-gemini.google.com
-apis.google.com
-apis.google.com
-apis.google.com
-apis.google.com
-apis.google.com
-apis.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
-www.google.com
+[2024-12-12 16:20:05] Blocked Domain: gemini.google.com
+[2024-12-12 16:20:05] Blocked Domain: gemini.google.com
+[2024-12-12 16:20:05] Blocked Domain: gemini.google.com
+[2024-12-12 16:20:05] Blocked Domain: www.google.com
+[2024-12-12 16:20:05] Blocked Domain: www.google.com
+[2024-12-12 16:20:05] Blocked Domain: www.google.com
+[2024-12-12 16:20:05] Blocked Domain: accounts.google.com
+[2024-12-12 16:20:05] Blocked Domain: accounts.google.com
+[2024-12-12 16:20:05] Blocked Domain: accounts.google.com
+[2024-12-12 16:20:05] Blocked Domain: accounts.google.com
+[2024-12-12 16:20:05] Blocked Domain: accounts.google.com
+[2024-12-12 16:20:05] Blocked Domain: accounts.google.com
+[2024-12-12 16:20:05] Blocked Domain: ogs.google.com
+[2024-12-12 16:20:05] Blocked Domain: ogs.google.com
+[2024-12-12 16:20:05] Blocked Domain: ogs.google.com
+[2024-12-12 16:20:05] Blocked Domain: ogs.google.com
+[2024-12-12 16:20:05] Blocked Domain: ogs.google.com
+[2024-12-12 16:20:05] Blocked Domain: ogs.google.com
+[2024-12-12 17:49:53] Blocked Domain: cloud-dns-hostmaster.google.com
+[2024-12-12 17:49:54] Blocked Domain: ns-hostmaster.google.com

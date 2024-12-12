@@ -1,6 +1,7 @@
 #define _GNU_SOURCE
 
 #include "client_daemon.h"
+#include <time.h>
 
 char blocked_domains[MAX_BLOCKED_DOMAINS][MAX_DOMAIN_LENGTH];
 int blocked_count = 0;
@@ -119,8 +120,25 @@ void *alert_thread_function(void *arg)
                 domain[end - start] = '\0';
                 if (is_domain_blocked(domain))
                 {
-                    write(output_fd, domain, strlen(domain));
-                    write(output_fd, "\n", 1);
+                    // Get current time
+                    time_t current_time;
+                    struct tm *time_info;
+                    char timestamp[64];
+
+                    time(&current_time);
+                    time_info = localtime(&current_time);
+                    
+                    // Format timestamp: YYYY-MM-DD HH:MM:SS
+                    strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", time_info);
+
+                    // Prepare log entry with timestamp and domain
+                    char log_entry[512];
+                    int log_len = snprintf(log_entry, sizeof(log_entry), 
+                                           "[%s] Blocked Domain: %s\n", 
+                                           timestamp, domain);
+
+                    // Write log entry
+                    write(output_fd, log_entry, log_len);
                 }
             }
         }

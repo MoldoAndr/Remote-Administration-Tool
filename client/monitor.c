@@ -283,8 +283,12 @@ char *get_domains()
         char *line = strtok(buffer, "\n");
         while (line)
         {
-            strcat(domains, line);
-            strcat(domains, "\\n");
+            // Skip the timestamp part and extract only the domain
+            if (strstr(line, "Blocked Domain: "))
+            {
+                strcat(domains, line);
+                strcat(domains, "\\n");
+            }
             line = strtok(NULL, "\n");
         }
     }
@@ -295,6 +299,7 @@ char *get_domains()
         exit(1);
     }
     close(file_fd);
+
     size_t len = strlen(domains);
     if (len > 2)
         domains[len - 2] = '\0';
