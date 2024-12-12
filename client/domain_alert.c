@@ -93,7 +93,7 @@ void *alert_thread_function(void *arg)
         return NULL;
     }
 
-    FILE *tcpdump = popen("sudo tcpdump -i wlp1s0 port 53 -A -n", "r");
+    FILE *tcpdump = popen("sudo tcpdump -i $(ip -o link show | awk -F': ' '{print $2}' | grep -v '^lo$') port 53 -A -n", "r");
     if (!tcpdump)
         return NULL;
 
