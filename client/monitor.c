@@ -283,7 +283,6 @@ char *get_domains()
         char *line = strtok(buffer, "\n");
         while (line)
         {
-            // Skip the timestamp part and extract only the domain
             if (strstr(line, "Blocked Domain: "))
             {
                 strcat(domains, line);

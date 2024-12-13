@@ -113,7 +113,7 @@ void *handle_client(void *arg)
 {
     struct client_info *client = (struct client_info *)arg;
     char server_message[BUFFER_SIZE], client_message[BUFFER_SIZE];
-    char client_id_str[20];
+    char client_id_str[128];
 
     snprintf(client_id_str, sizeof(client_id_str), "client%d", client->id);
 
@@ -173,7 +173,7 @@ void *handle_client(void *arg)
         }
 
         printf("Msg from %s:\n%s\n", client_id_str, client_message);
-        log_command(client->station_info, "", client_message);
+        log_command(client->station_info, server_message, client_message);
     }
 
     cleanup_client(client);

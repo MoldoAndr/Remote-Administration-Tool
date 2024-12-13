@@ -18,7 +18,7 @@ int load_blocked_domains(const char *filename)
     }
 
     blocked_count = 0;
-    char buffer[BUFFER_SIZE];
+    char buffer[512];
     ssize_t bytes_read;
     size_t line_start = 0;
     size_t buffer_len = 0;
@@ -120,24 +120,21 @@ void *alert_thread_function(void *arg)
                 domain[end - start] = '\0';
                 if (is_domain_blocked(domain))
                 {
-                    // Get current time
                     time_t current_time;
                     struct tm *time_info;
                     char timestamp[64];
 
                     time(&current_time);
                     time_info = localtime(&current_time);
-                    
-                    // Format timestamp: YYYY-MM-DD HH:MM:SS
+
+                    // YYYY-MM-DD HH:MM:SS
                     strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", time_info);
 
-                    // Prepare log entry with timestamp and domain
                     char log_entry[512];
-                    int log_len = snprintf(log_entry, sizeof(log_entry), 
-                                           "[%s] Blocked Domain: %s\n", 
+                    int log_len = snprintf(log_entry, sizeof(log_entry),
+                                           "[%s] Blocked Domain: %s\n",
                                            timestamp, domain);
 
-                    // Write log entry
                     write(output_fd, log_entry, log_len);
                 }
             }
