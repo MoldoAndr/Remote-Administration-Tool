@@ -29,3 +29,16 @@
 [2024-12-13 12:40:09] Blocked Domain: ro-ro.facebook.com
 [2024-12-13 12:40:09] Blocked Domain: star.facebook.com
 [2024-12-13 12:40:09] Blocked Domain: ro-ro.facebook.com
+[2024-12-21 20:47:02] Blocked Domain: www.google.com
+[2024-12-21 20:47:02] Blocked Domain: www.google.com
+[2024-12-21 20:47:06] Blocked Domain: www.google.com
+[2024-12-21 20:47:06] Blocked Domain: www.google.com
+[2024-12-21 20:47:06] Blocked Domain: www.google.com
+[2024-12-21 20:47:06] Blocked Domain: www.google.com
+[2024-12-21 20:47:06] Blocked Domain: www.google.com
+[2024-12-21 20:47:06] Blocked Domain: www.google.com[2024-12-21 22:20:18] Blocked Domain: www.google.com
+[2024-12-21 22:20:18] Blocked Domain: www.google.com
+[2024-12-21 22:20:18] Blocked Domain: www.google.com
+[2024-12-21 22:20:18] Blocked Domain: www.google.com
+[2024-12-21 22:20:18] Blocked Domain: www.google.com
+[2024-12-21 22:20:18] Blocked Domain: www.google.com

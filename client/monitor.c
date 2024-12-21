@@ -309,7 +309,7 @@ char *get_domains()
 char *generate_json_data()
 {
     static char json_output[MAX_BUFFER];
-    char host[32];
+    char host[64];
     gethostname(host, sizeof(host));
     strcpy(name, getenv("USER"));
     strcat(name, ":");

