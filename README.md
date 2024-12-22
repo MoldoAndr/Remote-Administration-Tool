@@ -46,10 +46,6 @@
     Monitorizare statistici de sistem in timp real
     Generare de site web pe partea de client cu datele de sistem in timp real
     Blocarea accesului la site cu exceptia serverului
-
-## Functionalitati viitoare
-    
-    Descarcare de fisiere
     Capturi de ecran
     Alerte accesare anumite site-uri
     
