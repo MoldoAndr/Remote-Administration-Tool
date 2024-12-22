@@ -9,13 +9,49 @@ bool compare_in_addr(const struct in_addr *addr1, const struct in_addr *addr2)
 
 bool client_exists(int client_no)
 {
-
     for (int i = 0; i < client_count; ++i)
     {
         if (clients[i] && clients[i]->id == client_no)
             return true;
     }
     return false;
+}
+
+int send_packet(int socket, struct DataPacket *packet)
+{
+    size_t total_sent = 0;
+    const char *ptr = (const char *)packet;
+    size_t length = sizeof(*packet);
+
+    while (total_sent < length)
+    {
+        ssize_t bytes_sent = send(socket, ptr + total_sent, length - total_sent, 0);
+        if (bytes_sent < 0)
+        {
+            perror("Failed to send packet");
+            return -1;
+        }
+        total_sent += bytes_sent;
+    }
+    return 0;
+}
+
+int recv_packet(int socket, struct DataPacket *packet)
+{
+    size_t total_received = 0;
+    char *ptr = (char *)packet;
+    size_t length = sizeof(*packet);
+
+    while (total_received < length)
+    {
+        ssize_t bytes = recv(socket, ptr + total_received, length - total_received, 0);
+        if (bytes <= 0)
+        {
+            return -1;
+        }
+        total_received += bytes;
+    }
+    return 0;
 }
 
 bool already_connected(struct sockaddr_in *info)
@@ -95,10 +131,20 @@ void send_to_client(int client_id, const char *message)
     if (client_id > 0 && client_id <= MAX_CLIENTS && clients[client_id - 1] != NULL)
     {
         struct client_info *client = clients[client_id - 1];
+        struct DataPacket packet;
 
-        if (send(client->socket, message, strlen(message), 0) < 0)
+        memset(&packet, 0, sizeof(packet));
+        packet.type = TEXT;
+        strncpy(packet.data, message, CHUNK_SIZE);
+        packet.data_size = strlen(packet.data);
+
+        if (send_packet(client->socket, &packet) < 0)
         {
             printf("Failed to send message to client%d\n", client_id);
+        }
+        else
+        {
+            printf("Message sent to client%d: %s\n", client_id, message);
         }
     }
     else
@@ -112,72 +158,162 @@ void send_to_client(int client_id, const char *message)
 void *handle_client(void *arg)
 {
     struct client_info *client = (struct client_info *)arg;
-    char server_message[BUFFER_SIZE], client_message[BUFFER_SIZE];
-    char client_id_str[128];
+    struct DataPacket packet;
 
-    snprintf(client_id_str, sizeof(client_id_str), "client%d", client->id);
-
-    if (recv(client->socket, client_message, sizeof(client_message), 0) <= 0)
+    if (recv_packet(client->socket, &packet) < 0)
     {
-        printf("Client disconnected before initial message, %s\n", client_id_str);
+        printf("Client disconnected before initial message, client%d\n", client->id);
         cleanup_client(client);
         return NULL;
     }
-    printf("Received raw data:%s\n\n\n", client_message);
 
-    if (!strchr(client_message, ' '))
+    printf("Received initial raw data from client%d: %s\n\n", client->id, packet.data);
+
+    if (!strchr(packet.data, ' '))
     {
         char token[37];
         generate_token(token);
-        send_to_client(client->id, token);
-        store_token(client_message, token);
+
+        struct DataPacket token_packet;
+        memset(&token_packet, 0, sizeof(token_packet));
+        token_packet.type = TEXT;
+        strncpy(token_packet.data, token, CHUNK_SIZE - 1);
+        token_packet.data_size = strlen(token_packet.data);
+
+        if (send_packet(client->socket, &token_packet) < 0)
+        {
+            printf("Failed to send token to client%d\n", client->id);
+            cleanup_client(client);
+            return NULL;
+        }
+
+        store_token(packet.data, token);
     }
     else
     {
-        char *station_name = strtok(client_message, " ");
+        char copy_data[BUFFER_SIZE];
+        strncpy(copy_data, packet.data, sizeof(copy_data) - 1);
+        copy_data[sizeof(copy_data) - 1] = '\0';
+
+        char *station_name = strtok(copy_data, " ");
         char *received_token = strtok(NULL, " ");
+
         if (!validate_token(station_name, received_token))
         {
-            printf("Invalid token received from %s\n", client_id_str);
+            printf("Invalid token received from client%d\n", client->id);
             cleanup_client(client);
             return NULL;
         }
         else
         {
-            printf("Token validated for %s\n", client_id_str);
+            printf("Token validated for client%d\n", client->id);
         }
     }
-    strcpy(client->station_info, client_message);
 
-    send_to_client(client->id, "Server received your station info.");
+    strncpy(client->station_info, packet.data, sizeof(client->station_info) - 1);
+    client->station_info[sizeof(client->station_info) - 1] = '\0';
 
+    {
+        struct DataPacket ack_packet;
+        memset(&ack_packet, 0, sizeof(ack_packet));
+        ack_packet.type = TEXT;
+        snprintf(ack_packet.data, CHUNK_SIZE, "Server received your station info.");
+        ack_packet.data_size = strlen(ack_packet.data);
+
+        if (send_packet(client->socket, &ack_packet) < 0)
+        {
+            printf("Failed to send station info acknowledgment to client%d\n", client->id);
+            cleanup_client(client);
+            return NULL;
+        }
+    }
 
     while (1)
     {
-        memset(client_message, 0, sizeof(client_message));
-        memset(server_message, 0, sizeof(server_message));
+        memset(&packet, 0, sizeof(packet));
 
-        ssize_t recv_status = recv(client->socket, client_message, sizeof(client_message), 0);
-
-        if (recv_status < 0)
+        if (recv_packet(client->socket, &packet) < 0)
         {
-            perror("Error receiving from client");
-            break;
+            printf("Client disconnected: %s\n", client->station_info);
+            cleanup_client(client);
+            return NULL;
         }
 
-        else if (recv_status == 0 || strncmp(client_message, "exited with success", 20) == 0)
+        if (packet.type == TEXT)
         {
-            memset(client_message, 0, sizeof(client_message));
-            printf("%s disconnected\n", client_id_str);
-            break;
-        }
+            printf("Received text from client%d: %s\n", client->id, packet.data);
 
-        printf("Msg from %s:\n%s\n", client_id_str, client_message);
-        log_command(client->station_info, server_message, client_message);
+            if (strncmp(packet.data, "exited with success", 19) == 0)
+            {
+                printf("Client %s disconnected gracefully.\n", client->station_info);
+                cleanup_client(client);
+                return NULL;
+            }
+
+            char server_message[BUFFER_SIZE] = {0};
+            log_command(client->station_info, server_message, packet.data);
+        }
+        else if (packet.type == FILE_TRANSFER)
+        {
+            printf("Receiving file '%s' from client%d\n", packet.filename, client->id);
+            FILE *file = fopen(packet.filename, "wb");
+            if (!file)
+            {
+                perror("Error creating file");
+                continue;
+            }
+            fwrite(packet.data, 1, packet.data_size, file);
+            fclose(file);
+            printf("File '%s' saved successfully.\n", packet.filename);
+        }
     }
 
     cleanup_client(client);
     return NULL;
+}
+
+
+void send_file_to_client(int client_id, const char *file_path)
+{
+    pthread_mutex_lock(&clients_mutex);
+
+    if (client_id > 0 && client_id <= MAX_CLIENTS && clients[client_id - 1] != NULL)
+    {
+        struct client_info *client = clients[client_id - 1];
+        FILE *file = fopen(file_path, "rb");
+        if (!file)
+        {
+            printf("Error opening file: %s\n", file_path);
+            pthread_mutex_unlock(&clients_mutex);
+            return;
+        }
+
+        struct DataPacket packet;
+        memset(&packet, 0, sizeof(packet));
+        packet.type = FILE_TRANSFER;
+        strncpy(packet.filename, file_path, MAX_FILENAME_SIZE);
+
+        size_t bytes_read;
+        while ((bytes_read = fread(packet.data, 1, CHUNK_SIZE, file)) > 0)
+        {
+            packet.data_size = bytes_read;
+            if (send_packet(client->socket, &packet) < 0)
+            {
+                printf("Failed to send file chunk to client%d\n", client_id);
+                break;
+            }
+            memset(packet.data, 0, CHUNK_SIZE);
+        }
+
+        fclose(file);
+        printf("File '%s' sent to client%d\n", file_path, client_id);
+    }
+    else
+    {
+        printf("Client%d not found or disconnected\n", client_id);
+    }
+
+    pthread_mutex_unlock(&clients_mutex);
 }
 
 void cleanup_client(struct client_info *client)
@@ -259,7 +395,6 @@ void setup_server(struct sockaddr_in *server_addr, int *socket_desc, char *serve
 {
     struct stat st = {0};
     *socket_desc = socket(AF_INET, SOCK_STREAM, 0);
-
 
     initialize_commands();
 

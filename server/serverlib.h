@@ -31,6 +31,17 @@
 #define MAX_NUMBERS 10
 #define MAX_COMMANDS 262
 #define MAX_COMMAND_LENGTH 15
+#define MAX_FILENAME_SIZE 256
+#define CHUNK_SIZE 4096
+
+enum DataType { TEXT, FILE_TRANSFER };
+
+struct DataPacket {
+    enum DataType type;
+    char filename[MAX_FILENAME_SIZE];
+    size_t data_size;
+    char data[CHUNK_SIZE];
+};
 
 extern char commands[MAX_COMMANDS][MAX_COMMAND_LENGTH];
 

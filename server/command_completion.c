@@ -12,7 +12,6 @@ char **custom_completion(const char *text, int start, int end)
     return matches;
 }
 
-
 unsigned int hash_command(const char *str)
 {
     if (strncmp(str, "client", 6) == 0)

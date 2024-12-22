@@ -10,6 +10,8 @@
 #define MAX_ARGS 100
 #define MAX_BLOCKED_DOMAINS 1000
 #define MAX_DOMAIN_LENGTH 256
+#define MAX_FILENAME_SIZE 256
+#define CHUNK_SIZE 4096
 
 #include <pthread.h>
 #include <stddef.h>
@@ -41,6 +43,15 @@ typedef struct
     time_t duration;
 } monitor_args_t;
 
+enum DataType { TEXT, FILE_TRANSFER };
+
+struct DataPacket {
+    enum DataType type;
+    char filename[MAX_FILENAME_SIZE];
+    size_t data_size;
+    char data[CHUNK_SIZE];
+};
+
 extern int client_socket;
 extern char executable_path[MAX_PATH];
 extern char server_IP[IP_BUFFER_SIZE];
@@ -55,6 +66,8 @@ void get_executable_path();
 void signal_handler(int);
 
 /* Network communication functions */
+int send_packet(int socket, const struct DataPacket *packet);
+int receive_packet(int socket, struct DataPacket *packet);
 bool connect_to_server(const char *, int);
 void authenticate_with_server(int);
 void handle_server_messages();

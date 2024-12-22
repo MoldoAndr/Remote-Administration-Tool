@@ -35,10 +35,3 @@
 [2024-12-21 20:47:06] Blocked Domain: www.google.com
 [2024-12-21 20:47:06] Blocked Domain: www.google.com
 [2024-12-21 20:47:06] Blocked Domain: www.google.com
-[2024-12-21 20:47:06] Blocked Domain: www.google.com
-[2024-12-21 20:47:06] Blocked Domain: www.google.com[2024-12-21 22:20:18] Blocked Domain: www.google.com
-[2024-12-21 22:20:18] Blocked Domain: www.google.com
-[2024-12-21 22:20:18] Blocked Domain: www.google.com
-[2024-12-21 22:20:18] Blocked Domain: www.google.com
-[2024-12-21 22:20:18] Blocked Domain: www.google.com
-[2024-12-21 22:20:18] Blocked Domain: www.google.com

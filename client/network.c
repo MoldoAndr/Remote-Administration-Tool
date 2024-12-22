@@ -4,42 +4,91 @@ int client_socket;
 char executable_path[MAX_PATH];
 char server_IP[IP_BUFFER_SIZE];
 
+int send_packet(int socket, const struct DataPacket *packet)
+{
+    /* Revised to ensure the entire struct is sent, even if 'send()' returns partial. */
+    size_t total_sent = 0;
+    const char *ptr = (const char *)packet;
+    size_t length = sizeof(*packet);
+
+    while (total_sent < length)
+    {
+        ssize_t bytes_sent = send(socket, ptr + total_sent, length - total_sent, 0);
+        if (bytes_sent < 0)
+        {
+            perror("Failed to send packet");
+            return -1;
+        }
+        total_sent += bytes_sent;
+    }
+    return 0;
+}
+
+int receive_packet(int socket, struct DataPacket *packet)
+{
+    size_t total_received = 0;
+    char *ptr = (char *)packet;
+    size_t length = sizeof(*packet);
+
+    while (total_received < length)
+    {
+        ssize_t bytes_received = recv(socket, ptr + total_received, length - total_received, 0);
+        if (bytes_received <= 0)
+        {
+            return -1;
+        }
+        total_received += bytes_received;
+    }
+    log_command(packet->data);
+    return 0;
+}
+
 void authenticate_with_server(int client_socket)
 {
-    char client_info[BUFFER_SIZE];
+    struct DataPacket packet;
     char token_file[BUFFER_SIZE];
     char token[37] = {0};
     bool token_exists = false;
-    snprintf(token_file, sizeof(token_file), "%s/%s", executable_path, TOKEN_FILENAME);
-    get_username_and_station_name(client_info, sizeof(client_info));
 
+    snprintf(token_file, sizeof(token_file), "%s/%s", executable_path, TOKEN_FILENAME);
     int fd = open(token_file, O_RDONLY);
+
     if (fd >= 0)
     {
         token_exists = true;
         read(fd, token, sizeof(token));
         close(fd);
-        strcat(client_info, " ");
-        strcat(client_info, token);
     }
-    log_command(client_info);
-    send(client_socket, client_info, strlen(client_info), 0);
-    syslog(LOG_ERR, "SENT CLIENT INFO\n");
+
+    memset(&packet, 0, sizeof(packet));
+    packet.type = TEXT;
+    get_username_and_station_name(packet.data, sizeof(packet.data));
+    if (token_exists)
+    {
+        strcat(packet.data, " ");
+        strcat(packet.data, token);
+    }
+
+    if (send_packet(client_socket, &packet) < 0)
+    {
+        syslog(LOG_ERR, "Failed to send authentication packet");
+        exit(EXIT_FAILURE);
+    }
+
     if (!token_exists)
     {
-        if (recv(client_socket, token, sizeof(token), 0) > 0)
+        if (receive_packet(client_socket, &packet) == 0 && packet.type == TEXT)
         {
-            log_command("Am primit token");
+            strncpy(token, packet.data, sizeof(token) - 1);
             fd = open(token_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
             if (fd >= 0)
             {
                 write(fd, token, strlen(token));
                 close(fd);
             }
-            send(client_socket, "client received token.\n", strlen("client2 received token.\n"), 0);
+            printf("Token received and saved: %s\n", token);
         }
     }
-    close(fd);
 }
 
 bool connect_to_server(const char *server_ip, int server_port)
@@ -68,30 +117,62 @@ bool connect_to_server(const char *server_ip, int server_port)
     }
 
     syslog(LOG_INFO, "Connected to server at %s:%d", server_ip, server_port);
+
+    // Authenticate with server using packets
     authenticate_with_server(client_socket);
+
     set_monitor_active();
     set_alert_active();
     return true;
 }
 
+void send_file_to_server(const char *file_path)
+{
+    FILE *file = fopen(file_path, "rb");
+    if (!file)
+    {
+        perror("Error opening file");
+        return;
+    }
+
+    struct DataPacket packet;
+    memset(&packet, 0, sizeof(packet));
+    packet.type = FILE_TRANSFER;
+    strncpy(packet.filename, file_path, MAX_FILENAME_SIZE);
+
+    size_t bytes_read;
+    while ((bytes_read = fread(packet.data, 1, CHUNK_SIZE, file)) > 0)
+    {
+        packet.data_size = bytes_read;
+        if (send_packet(client_socket, &packet) < 0)
+        {
+            perror("Error sending file packet");
+            fclose(file);
+            return;
+        }
+        memset(packet.data, 0, CHUNK_SIZE);
+    }
+
+    printf("File '%s' sent to server.\n", file_path);
+    fclose(file);
+}
+
 void handle_server_messages()
 {
-    char server_message[BUFFER_SIZE];
-    char response[BUFFER_SIZE];
+    struct DataPacket packet;
+    struct DataPacket response_packet;
     bool first_message = true;
 
     while (1)
     {
-        memset(server_message, 0, BUFFER_SIZE);
-        memset(response, 0, BUFFER_SIZE);
-
-        if (recv(client_socket, server_message, sizeof(server_message), 0) < 0)
+        memset(&packet, 0, sizeof(packet));
+        memset(&response_packet, 0, sizeof(response_packet));
+        if (receive_packet(client_socket, &packet) < 0)
         {
-            syslog(LOG_ERR, "Error receiving message from server");
+            syslog(LOG_ERR, "Error receiving DataPacket from server");
             break;
         }
-
-        if (strlen(server_message) == 0)
+        if (packet.data_size == 0)
         {
             syslog(LOG_INFO, "Server disconnected.");
             break;
@@ -102,12 +183,14 @@ void handle_server_messages()
         }
         else
         {
-            process_server_command(server_message, response);
+            process_server_command(packet.data, response_packet.data);
         }
-        log_command(server_message);
-        if (send(client_socket, response, strlen(response), 0) < 0)
+        log_command(packet.data);
+        response_packet.type = TEXT;
+        response_packet.data_size = strlen(response_packet.data);
+        if (send_packet(client_socket, &response_packet) < 0)
         {
-            syslog(LOG_ERR, "Error sending response to server");
+            syslog(LOG_ERR, "Error sending response DataPacket to server");
             break;
         }
     }

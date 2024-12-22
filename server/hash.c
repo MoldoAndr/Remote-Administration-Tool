@@ -60,7 +60,7 @@ char *command_generator(const char *text)
 {
     for (int i = 0; i < MAX_COMMANDS; i++)
     {
-        if (commands[i][0] != '\0' && 
+        if (commands[i][0] != '\0' &&
             strncmp(commands[i], text, strlen(text)) == 0)
         {
             return strdup(commands[i]);
@@ -72,7 +72,7 @@ char *command_generator(const char *text)
 void add_command(const char *new_command)
 {
     unsigned int hash = hash_command(new_command);
-    
+
     if (commands[hash][0] == '\0')
     {
         strncpy(commands[hash], new_command, MAX_COMMAND_LENGTH - 1);
@@ -87,13 +87,12 @@ void add_command(const char *new_command)
 int delete_command(const char *command_to_delete)
 {
     unsigned int hash = hash_command(command_to_delete);
-    
+
     if (strcmp(commands[hash], command_to_delete) == 0)
     {
         memset(commands[hash], 0, MAX_COMMAND_LENGTH);
         return 1;
     }
-    
+
     return 0;
 }
-
