@@ -186,8 +186,11 @@ char *process_clients_statistics()
             {
                 continue;
             }
-
-            char *formatted = format_data(data);
+            char helper[256];
+            snprintf(helper, 276, "\n\n\n====Client:%s=====\n", clients[i]->station_info);
+            char *helper_2 = format_data(data);
+            char* formatted = helper;
+            strcat(formatted, helper_2);
             if (!formatted)
             {
                 continue;
@@ -199,10 +202,10 @@ char *process_clients_statistics()
             if (current_len + formatted_len + 2 < MAX_CLIENTS * 256)
             {
                 strncat(total_data, formatted, formatted_len);
-                strncat(total_data, "\n", 1);
+                strcat(total_data, "\n");
             }
 
-            free(formatted);
+            free(helper_2);
         }
     }
     pthread_mutex_unlock(&clients_mutex);

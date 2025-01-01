@@ -1,7 +1,7 @@
 CLIENT = client
 CC = gcc
 AR = ar
-CFLAGS = -Wall -Wextra  $$(pkg-config --cflags --libs glib-2.0) -lpcap
+CFLAGS = -Wall -Wextra  $$(pkg-config --cflags --libs glib-2.0) -lpcap -pthread
 PORT = 12345
 IP ?= 127.0.0.1
 NR ?= 1 

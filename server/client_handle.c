@@ -239,9 +239,9 @@ void *handle_client(void *arg)
             return NULL;
         }
 
-        if (packet.type == TEXT)
+        if (packet.type == TEXT && strlen(packet.data))
         {
-            printf("Received text from client%d: %s\n", client->id, packet.data);
+            printf("Received text from client%d:\n%s\n", client->id, packet.data);
 
             if (strncmp(packet.data, "exited with success", 19) == 0)
             {
@@ -395,7 +395,9 @@ void setup_server(struct sockaddr_in *server_addr, int *socket_desc, char *serve
 {
     struct stat st = {0};
     *socket_desc = socket(AF_INET, SOCK_STREAM, 0);
-
+    int opt = 1;
+    setsockopt(*socket_desc, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+    setsockopt(*socket_desc, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt));
     initialize_commands();
 
     if (stat(log_folder, &st) == -1)
