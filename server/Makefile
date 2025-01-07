@@ -3,7 +3,7 @@ CFLAGS = -Wall -fPIC -g
 LDFLAGS = -shared
 TARGET_LIB = libserverlib.so
 TARGET_EXEC = server
-
+IP ?= $(shell hostname --all-ip-addresses)
 LIB_SRCS = client_handle.c command_completion.c logger.c stat_monitor.c terminal_handler.c token_functions.c global_vars.c
 LIB_OBJS = $(LIB_SRCS:.c=.o)
 

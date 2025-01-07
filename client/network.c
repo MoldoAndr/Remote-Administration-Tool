@@ -6,7 +6,6 @@ char server_IP[IP_BUFFER_SIZE];
 
 int send_packet(int socket, const struct DataPacket *packet)
 {
-    /* Revised to ensure the entire struct is sent, even if 'send()' returns partial. */
     size_t total_sent = 0;
     const char *ptr = (const char *)packet;
     size_t length = sizeof(*packet);

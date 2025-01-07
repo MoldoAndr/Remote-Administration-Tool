@@ -3,7 +3,7 @@ CC = gcc
 AR = ar
 CFLAGS = -Wall -Wextra  $$(pkg-config --cflags --libs glib-2.0) -lpcap -pthread
 PORT = 12345
-IP ?= 127.0.0.1
+IP ?= $(shell hostname --all-ip-addresses)
 NR ?= 1 
 
 OBJS = client_monitor.o network.o process_command.o setup.o utility.o mongoose.o monitor.o domain_alert.o
@@ -15,7 +15,7 @@ all: dependencies $(CLIENT)
 
 dependencies:
 	@echo "Installing dependencies..."
-	@sudo apt install -y libpcap-dev libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libavdevice-dev gnome-screenshot libpcap-dev libglib2.0-dev
+	@sudo apt install -y libpcap-dev scrot ffmpeg libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libavdevice-dev gnome-screenshot libpcap-dev libglib2.0-dev
 	@echo "Dependencies installed."
 
 $(CLIENT): main.c $(LIB)

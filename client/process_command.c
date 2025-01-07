@@ -7,62 +7,112 @@ bool livestream(const char *server_message, char *response)
         strcpy(response, "Error: Invalid parameters");
         return false;
     }
+
     char filename[256];
     int duration_seconds;
-    if (sscanf(server_message, "livestream %s %d", filename, &duration_seconds) != 2)
+
+    // Expect input format:  livestream <filename> <duration_in_seconds>
+    if (sscanf(server_message, "livestream %255s %d", filename, &duration_seconds) != 2)
     {
         strcpy(response, "Error: Invalid command format. Expected: livestream \"filename\" \"duration\"");
         return false;
     }
+
     if (duration_seconds <= 0)
     {
         strcpy(response, "Error: Duration must be positive");
         return false;
     }
+
+    // Detect if we’re on Wayland or Xorg by checking $XDG_SESSION_TYPE
+    const char *xdg_session_type = getenv("XDG_SESSION_TYPE");
+    bool use_wayland = false;
+    if (xdg_session_type != NULL && strcmp(xdg_session_type, "wayland") == 0)
+    {
+        use_wayland = true;
+    }
+
+    // Create a pipe to capture ffmpeg's stdout
     int pipefd[2];
     if (pipe(pipefd) == -1)
     {
-        strcpy(response, "Error: Failed to create pipe");
+        snprintf(response, 256, "Error: Failed to create pipe (%s)", strerror(errno));
         return false;
     }
+
     pid_t pid = fork();
     if (pid < 0)
     {
-        strcpy(response, "Error: Failed to fork process");
+        snprintf(response, 256, "Error: Failed to fork process (%s)", strerror(errno));
         close(pipefd[0]);
         close(pipefd[1]);
         return false;
     }
+
     if (pid == 0)
     {
+        // Child Process
         close(pipefd[0]);
         dup2(pipefd[1], STDOUT_FILENO);
         close(pipefd[1]);
+
+        // Build the duration as a string
         char duration_str[16];
         snprintf(duration_str, sizeof(duration_str), "%d", duration_seconds);
-        execlp("ffmpeg", "ffmpeg",
-               "-f", "x11grab",
-               "-i", ":0.0",
-               "-t", duration_str,
-               "-c:v", "libx264",
-               "-preset", "ultrafast",
-               filename,
-               NULL);
 
+        /*
+         * Depending on the session type, use either:
+         *   Xorg:     ffmpeg -f x11grab    -i :0.0
+         *   Wayland:  ffmpeg -f pipewire   -i server=pipewire-0
+         *
+         * Additional ffmpeg flags can be added as needed.
+         */
+
+        if (use_wayland)
+        {
+            // Wayland capture via PipeWire
+            execlp("ffmpeg", "ffmpeg",
+                   "-f", "pipewire",
+                   "-i", "server=pipewire-0",
+                   "-t", duration_str,
+                   "-c:v", "libx264",
+                   "-preset", "ultrafast",
+                   filename,
+                   NULL);
+        }
+        else
+        {
+            // Xorg capture
+            // Change ":0.0" if your DISPLAY is different (e.g., :1.0)
+            execlp("ffmpeg", "ffmpeg",
+                   "-f", "x11grab",
+                   "-i", ":0.0",
+                   "-t", duration_str,
+                   "-c:v", "libx264",
+                   "-preset", "ultrafast",
+                   filename,
+                   NULL);
+        }
+
+        // If execlp fails:
         perror("execlp");
         exit(1);
     }
     else
     {
+        // Parent Process
         close(pipefd[1]);
         char buffer[1024];
         while (read(pipefd[0], buffer, sizeof(buffer)) > 0)
         {
+            // Discard or log ffmpeg's stdout data here
         }
         close(pipefd[0]);
+
         int status;
         waitpid(pid, &status, 0);
-        if (WIFEXITED(status) && WEXITSTATUS(status) == 0)
+
+        if (WIFEXITED(status) && (WEXITSTATUS(status) == 0))
         {
             snprintf(response, 256, "Livestream successfully saved to %s", filename);
             return true;

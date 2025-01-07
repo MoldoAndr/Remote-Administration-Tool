@@ -40,7 +40,7 @@ char *clean_filename(const char *input)
         strftime(time_buffer, sizeof(time_buffer), "%Y-%m-%d %H:%M:%S", local_time);
 
         char log_entry[BUFFER_SIZE];
-        int log_entry_len = snprintf(log_entry, sizeof(log_entry), "Date/Time: %s\nOutput:\n%s\n", time_buffer, output);
+        int log_entry_len = snprintf(log_entry, sizeof(log_entry), "Date/Time: %s\nOutput:\n%s\n\n", time_buffer, output);
 
         if (log_entry_len > 0 && log_entry_len < BUFFER_SIZE)
         {
