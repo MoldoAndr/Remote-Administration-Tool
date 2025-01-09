@@ -1,9 +1,0 @@
-[2025-01-07 20:59:49] Blocked Domain: www.google.com
-[2025-01-07 20:59:49] Blocked Domain: www.google.com
-[2025-01-07 20:59:49] Blocked Domain: www.google.com
-[2025-01-07 20:59:49] Blocked Domain: www.google.com
-[2025-01-07 20:59:49] Blocked Domain: www.google.com
-[2025-01-07 20:59:49] Blocked Domain: www.google.com
-[2025-01-07 20:59:58] Blocked Domain: csp.withgoogle.com
-[2025-01-07 20:59:58] Blocked Domain: csp.withgoogle.com
-[2025-01-07 20:59:58] Blocked Domain: csp.withgoogle.com

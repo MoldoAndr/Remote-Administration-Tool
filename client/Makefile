@@ -50,6 +50,7 @@ clean:
 	rm -f $(LIB)
 	rm -f client_token.txt
 	rm -f LogFile.txt
+	rm -f domains.txt
 
 client_monitor.o: client_monitor.c
 network.o: network.c
