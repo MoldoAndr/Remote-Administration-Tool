@@ -18,7 +18,7 @@ int receive_data(int socket, char *buffer, size_t max_length) {
     if (bytes_received <= 0) {
         return -1;
     }
-    buffer[bytes_received] = '\0';  // Null terminate the received string
+    buffer[bytes_received] = '\0';
     log_command(buffer);
     return bytes_received;
 }
@@ -38,7 +38,6 @@ void authenticate_with_server(int client_socket) {
         close(fd);
     }
 
-    // Prepare authentication message
     get_username_and_station_name(auth_buffer, sizeof(auth_buffer));
     if (token_exists) {
         strcat(auth_buffer, " ");
@@ -104,10 +103,8 @@ void send_file_to_server(const char *file_path) {
     char buffer[CHUNK_SIZE];
     size_t bytes_read;
     
-    // First send the filename
     send_data(client_socket, file_path, strlen(file_path));
     
-    // Then send the file contents
     while ((bytes_read = fread(buffer, 1, CHUNK_SIZE, file)) > 0) {
         if (send_data(client_socket, buffer, bytes_read) < 0) {
             perror("Error sending file data");

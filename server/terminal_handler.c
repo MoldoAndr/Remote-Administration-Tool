@@ -280,7 +280,6 @@ void cleanup_and_exit()
             free(clients[i]);
         }
     }
-    // free_commands();
     rl_clear_history();
 }
 

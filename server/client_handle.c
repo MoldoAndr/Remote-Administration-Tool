@@ -26,7 +26,7 @@ int recv_data(int socket, char *buffer, size_t max_length) {
     if (bytes <= 0) {
         return -1;
     }
-    buffer[bytes] = '\0';  // Null terminate received string
+    buffer[bytes] = '\0';
     return bytes;
 }
 
@@ -114,7 +114,6 @@ void *handle_client(void *arg) {
     struct client_info *client = (struct client_info *)arg;
     char buffer[BUFFER_SIZE];
 
-    // Receive initial authentication data
     if (recv_data(client->socket, buffer, BUFFER_SIZE) < 0) {
         printf("Client disconnected before initial message, client%d\n", client->id);
         cleanup_client(client);
@@ -124,7 +123,6 @@ void *handle_client(void *arg) {
     printf("Received initial raw data from client%d: %s\n\n", client->id, buffer);
 
     if (!strchr(buffer, ' ')) {
-        // New client needs token
         char token[37];
         generate_token(token);
 
@@ -136,7 +134,6 @@ void *handle_client(void *arg) {
 
         store_token(buffer, token);
     } else {
-        // Existing client with token
         char copy_data[BUFFER_SIZE];
         strncpy(copy_data, buffer, sizeof(copy_data) - 1);
         copy_data[sizeof(copy_data) - 1] = '\0';
@@ -156,7 +153,6 @@ void *handle_client(void *arg) {
     strncpy(client->station_info, buffer, sizeof(client->station_info) - 1);
     client->station_info[sizeof(client->station_info) - 1] = '\0';
 
-    // Send acknowledgment
     const char *ack_message = "Server received your station info.";
     if (send_data(client->socket, ack_message, strlen(ack_message)) < 0) {
         printf("Failed to send station info acknowledgment to client%d\n", client->id);
@@ -164,7 +160,6 @@ void *handle_client(void *arg) {
         return NULL;
     }
 
-    // Main communication loop
     while (1) {
         memset(buffer, 0, BUFFER_SIZE);
 
@@ -204,10 +199,8 @@ void send_file_to_client(int client_id, const char *file_path) {
             return;
         }
 
-        // Send filename first
         send_data(client->socket, file_path, strlen(file_path));
 
-        // Send file contents
         char buffer[CHUNK_SIZE];
         size_t bytes_read;
         while ((bytes_read = fread(buffer, 1, CHUNK_SIZE, file)) > 0) {

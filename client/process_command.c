@@ -11,7 +11,6 @@ bool livestream(const char *server_message, char *response)
     char filename[256];
     int duration_seconds;
 
-    // Expect input format:  livestream <filename> <duration_in_seconds>
     if (sscanf(server_message, "livestream %255s %d", filename, &duration_seconds) != 2)
     {
         strcpy(response, "Error: Invalid command format. Expected: livestream \"filename\" \"duration\"");
@@ -24,7 +23,6 @@ bool livestream(const char *server_message, char *response)
         return false;
     }
 
-    // Detect if we’re on Wayland or Xorg by checking $XDG_SESSION_TYPE
     const char *xdg_session_type = getenv("XDG_SESSION_TYPE");
     bool use_wayland = false;
     if (xdg_session_type != NULL && strcmp(xdg_session_type, "wayland") == 0)
@@ -32,7 +30,6 @@ bool livestream(const char *server_message, char *response)
         use_wayland = true;
     }
 
-    // Create a pipe to capture ffmpeg's stdout
     int pipefd[2];
     if (pipe(pipefd) == -1)
     {
@@ -51,12 +48,10 @@ bool livestream(const char *server_message, char *response)
 
     if (pid == 0)
     {
-        // Child Process
         close(pipefd[0]);
         dup2(pipefd[1], STDOUT_FILENO);
         close(pipefd[1]);
 
-        // Build the duration as a string
         char duration_str[16];
         snprintf(duration_str, sizeof(duration_str), "%d", duration_seconds);
 
@@ -70,7 +65,6 @@ bool livestream(const char *server_message, char *response)
 
         if (use_wayland)
         {
-            // Wayland capture via PipeWire
             execlp("ffmpeg", "ffmpeg",
                    "-f", "pipewire",
                    "-i", "server=pipewire-0",
@@ -82,8 +76,6 @@ bool livestream(const char *server_message, char *response)
         }
         else
         {
-            // Xorg capture
-            // Change ":0.0" if your DISPLAY is different (e.g., :1.0)
             execlp("ffmpeg", "ffmpeg",
                    "-f", "x11grab",
                    "-i", ":0.0",
@@ -94,18 +86,15 @@ bool livestream(const char *server_message, char *response)
                    NULL);
         }
 
-        // If execlp fails:
         perror("execlp");
         exit(1);
     }
     else
     {
-        // Parent Process
         close(pipefd[1]);
         char buffer[1024];
         while (read(pipefd[0], buffer, sizeof(buffer)) > 0)
         {
-            // Discard or log ffmpeg's stdout data here
         }
         close(pipefd[0]);
 
@@ -181,11 +170,9 @@ bool execute_screenshot(const char *server_message, char *response)
         return false;
     }
 
-    // Read command output
     char output[256] = {0};
     if (fgets(output, sizeof(output), fp) != NULL)
     {
-        // Remove newline if present
         output[strcspn(output, "\n")] = 0;
     }
 
