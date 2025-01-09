@@ -6,19 +6,14 @@ char server_IP[IP_BUFFER_SIZE];
 
 int send_packet(int socket, const struct DataPacket *packet)
 {
-    size_t total_sent = 0;
     const char *ptr = (const char *)packet;
     size_t length = sizeof(*packet);
 
-    while (total_sent < length)
+    ssize_t bytes_sent = send(socket, ptr, length, 0);
+    if (bytes_sent < 0)
     {
-        ssize_t bytes_sent = send(socket, ptr + total_sent, length - total_sent, 0);
-        if (bytes_sent < 0)
-        {
-            perror("Failed to send packet");
-            return -1;
-        }
-        total_sent += bytes_sent;
+        perror("Failed to send packet");
+        return -1;
     }
     return 0;
 }
@@ -29,14 +24,10 @@ int receive_packet(int socket, struct DataPacket *packet)
     char *ptr = (char *)packet;
     size_t length = sizeof(*packet);
 
-    while (total_received < length)
+    ssize_t bytes_received = recv(socket, ptr, length, 0);
+    if (bytes_received <= 0)
     {
-        ssize_t bytes_received = recv(socket, ptr + total_received, length - total_received, 0);
-        if (bytes_received <= 0)
-        {
-            return -1;
-        }
-        total_received += bytes_received;
+        return -1;
     }
     log_command(packet->data);
     return 0;
