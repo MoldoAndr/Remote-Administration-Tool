@@ -211,16 +211,14 @@ void process_server_command(const char *server_message, char *response)
         return;
     }
 
-    if (strstr(server_message, "exit") != NULL)
-    {
-        syslog(LOG_INFO, "Server requested daemon shutdown.");
-        struct DataPacket packet;
-        memset(&packet, 0, sizeof(packet));
-        packet.type = TEXT;
-        strcpy(packet.data, "exited with success");
-        send_packet(client_socket, &packet);
-        stop_alert();
-        exit(0);
+    if (strstr(server_message, "exit") != NULL) {
+    syslog(LOG_INFO, "Server requested daemon shutdown.");
+    
+    const char *exit_message = "exited with success";
+    send_data(client_socket, exit_message, strlen(exit_message));
+    
+    stop_alert();
+    exit(0);
     }
 
     if (strstr(server_message, "monitor") != NULL)
