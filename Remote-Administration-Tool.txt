@@ -1,0 +1,58 @@
+	Server centralizator care asigura conexiunea, comunicarea si extragerea datelor de la mai multe statii simultan, 
+pune la dispozitie metode diverse de transmitere de comenzi clientilor, vizualizare de informatii de sistem in timp real, 
+verificare de comenzi disponibile, realizare de screenshot-uri si de livestream-uri, clientul punand la dispozitie un server web
+pentru vizualizare de date despre sistem.
+
+Cerinte functionale:
+
+	protocol de autentificare/inregistrare 
+		-	realizat cu token-uri unice generate de catre server pentru securitate folosind libraria uuid
+
+	management de clienti multipli in acelasi timp
+		-	prin trimiterea unei liste de clienti 
+
+	executie de comenzi la distanta
+		-	dupa trimiterea comenzii serverul primeste rezultatul comenzii sau un mesaj de eroare
+
+	realizare de screenshot-uri
+		-	cu ajutorul comenzii scrot
+
+	realizare de livestream-uri
+		-	cu ajutorul comenzii ffmpeg
+
+	informatii despre sistem
+		-	folosind folderul /proc
+
+	mecanisme de logging
+		-	folosind syslog si fisiere de log
+
+	alerta accesare anumite domenii 
+		- 	folosind tcpdump + regex in C
+
+	server web pe partea de client 
+		- 	realizat folosind mongoose
+		- 	modificare in timp real a datelor folosind o structura json
+		- 	monitorizare in timp real a datelor de sistem
+		- 	monitorizare in timp real a site-urilor accesate
+		- 	restrictionare vizitare doar de catre server
+
+	actualizare in timp real a listei de clienti conectati
+		-	verificand clientii din vector, acestia fiind eliberati in cazul deconectarii
+
+	actualizare in timp real a statisticilor 
+		-	este realizata prin preluarea informatiilor de sistem preluate din site-ul web al fiecarui client din lista
+
+
+Cerinte nefunctionale
+
+	transfer de fisiere
+		-	functiile sunt disponibile dar nu sunt incluse in workflow
+		-	se facea initial cu un struct: DataPacket
+
+	suport pentru screenshot si livestream pe protocolul Wayland
+
+Flux de executie:
+	se porneste serverul prima oara apoi maxim 1 client pe o statie si se conecteaza la server
+	se pot executa comenzi prin clientX:"command", se pot face screenshot-uri si livestream-uri
+	deconectarea se face prin clientX:exit
+	

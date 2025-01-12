@@ -15,7 +15,7 @@ all: dependencies $(CLIENT)
 
 dependencies:
 	@echo "Installing dependencies..."
-	@sudo apt install -y libpcap-dev scrot ffmpeg libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libavdevice-dev gnome-screenshot libpcap-dev libglib2.0-dev
+	@sudo apt install -y libpcap-dev scrot ffmpeg libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libavdevice-dev gnome-screenshot libpcap-dev libglib2.0-dev uuid-dev libreadline-dev electric-fence
 	@echo "Dependencies installed."
 
 $(CLIENT): main.c $(LIB)

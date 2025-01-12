@@ -58,7 +58,7 @@ void authenticate_with_server(int client_socket) {
                 write(fd, token, strlen(token));
                 close(fd);
             }
-            printf("Token received and saved: %s\n", token);
+            //printf("Token received and saved: %s\n", token);
         }
     }
 }
